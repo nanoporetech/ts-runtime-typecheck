@@ -4,7 +4,8 @@
   "description": "A collection of common types for TypeScript along with dynamic type cast methods.",
   "main": "dist/main.js",
   "scripts": {
-    "test": "jest",
+    "test": "jest --verbose --coverage",
+    "lint": "eslint",
     "build": "tsc"
   },
   "repository": {
