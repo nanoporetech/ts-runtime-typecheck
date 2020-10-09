@@ -1,4 +1,4 @@
-import { isNullish } from '../type-check/is-primative';
+import { isNullish } from '../type-check/is-primitive';
 
 export function optTypeCast<Input, Output> (test: (obj: Input) => Output): (obj: Input | undefined) => Output | undefined {
   return (obj: Input | undefined) => {
