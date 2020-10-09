@@ -2,6 +2,7 @@ import type { Indexable } from '../Index.type';
 import type { ObjectDict } from '../ObjectDict.type';
 
 import { isString, isNullish, isNumber, isDefined, isArray, isBoolean, isFunction, isIndex, isRecord } from '../type-check/is-primitive';
+import { UnknownFunction } from '../UnknownFunction.type';
 import { optTypeCast, typeCast } from './type-cast';
 
 export const asString = typeCast('String', isString);
@@ -23,39 +24,64 @@ export const asOptArray = optTypeCast(asArray);
 export const asOptRecord = optTypeCast(asRecord);
 export const asOptFunction = optTypeCast(asFunction);
 
-export function asArrayRecursive<T>(obj: unknown, visitor: (obj: unknown) => T, fallback?: T[]): T[] {
-  if (isNullish(obj) && typeof fallback !== 'undefined') {
-    return fallback;
+const arrayMemo: WeakMap<UnknownFunction, UnknownFunction> = new WeakMap();
+const recordMemo: WeakMap<UnknownFunction, UnknownFunction> = new WeakMap();
+
+export function asArrayRecursive<T>(visitor: (obj: unknown) => T): (obj: unknown, fallback?: T[]) => T[] {
+  let fn: unknown = arrayMemo.get(visitor);
+  if (!fn) {
+
+    fn = (obj: unknown, fallback?: T[]) => {
+      if (isNullish(obj) && typeof fallback !== 'undefined') {
+        return fallback;
+      }
+      return asArray(obj, fallback).map((val: unknown) => visitor(val));
+    };
+
+    arrayMemo.set(visitor, fn as UnknownFunction);
   }
-  return asArray(obj, fallback).map((val: unknown) => visitor(val));
+  return fn as (obj: unknown, fallback?: T[]) => T[];
 }
 
 export function asRecordRecursive<T>(
-  obj: unknown,
-  visitor: (obj: unknown) => T,
-  fallback?: ObjectDict<T>,
-): ObjectDict<T> {
-  if (isNullish(obj) && typeof fallback !== 'undefined') {
-    return fallback;
+  visitor: (obj: unknown) => T
+): (obj: unknown, fallback?: ObjectDict<T>) => ObjectDict<T> {
+  let fn: unknown = recordMemo.get(visitor);
+  if (!fn) {
+
+    fn = (obj: unknown, fallback?: ObjectDict<T>) => {
+      if (isNullish(obj) && typeof fallback !== 'undefined') {
+        return fallback;
+      }
+      const source = asRecord(obj);
+      const record: ObjectDict<T> = {};
+      for (const key in source) {
+        record[key] = visitor(source[key]);
+      }
+      return record;
+    };
+    
+    recordMemo.set(visitor, fn as UnknownFunction);
   }
-  const source = asRecord(obj);
-  const record: ObjectDict<T> = {};
-  for (const key in source) {
-    record[key] = visitor(source[key]);
-  }
-  return record;
+  return fn as (obj: unknown, fallback?: ObjectDict<T>) => ObjectDict<T>;
 }
 
-export function asOptArrayRecursive<T>(obj: unknown, visitor: (obj: unknown) => T): T[] | undefined {
-  if (isNullish(obj)) {
-    return undefined;
-  }
-  return asArrayRecursive(obj, visitor);
+export function asOptArrayRecursive<T>(visitor: (obj: unknown) => T): (obj: unknown) => T[] | undefined {
+  const convert = asArrayRecursive(visitor);
+  return (obj) => {
+    if (isNullish(obj)) {
+      return undefined;
+    }
+    return convert(obj);
+  };
 }
 
-export function asOptRecordRecursive<T>(obj: unknown, visitor: (obj: unknown) => T): ObjectDict<T> | undefined {
-  if (isNullish(obj)) {
-    return undefined;
-  }
-  return asRecordRecursive(obj, visitor);
+export function asOptRecordRecursive<T>(visitor: (obj: unknown) => T): (obj: unknown) => ObjectDict<T> | undefined {
+  const convert = asRecordRecursive(visitor);
+  return (obj) => {
+    if (isNullish(obj)) {
+      return undefined;
+    }
+    return convert(obj);
+  };
 }

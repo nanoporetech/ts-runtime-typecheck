@@ -1,4 +1,3 @@
-import { isString } from '../type-check/is-primitive';
 import { asArray, asArrayRecursive, asBoolean, asDefined, asFunction, asIndex, asIndexable, asNumber, asOptArrayRecursive, asOptRecordRecursive, asOptString, asRecord, asRecordRecursive, asString } from './as-primitive';
 
 describe('primative casts', () => {
@@ -151,38 +150,57 @@ describe('recursive casts', () => {
   const fn = () => false;
 
   it('asArrayRecursive', () => {
-    expect(asArrayRecursive([], isString)).toEqual([]);
-    expect(asArrayRecursive(['test', 'test'], asString)).toEqual(['test', 'test']);
-    expect(asArrayRecursive([null, 'test'], asOptString)).toEqual([undefined, 'test']);
+    const asStringArray = asArrayRecursive(asString);
+    const asOptStringArray = asArrayRecursive(asOptString);
+    // intended
+    expect(asStringArray([])).toEqual([]);
+    expect(asStringArray(['test', 'test'])).toEqual(['test', 'test']);
+    expect(asOptStringArray([null, 'test'])).toEqual([undefined, 'test']);
     // fallback
-    expect(asArrayRecursive(null, asString, [])).toEqual([]);
-    expect(asArrayRecursive(undefined, asString, [])).toEqual([]);
+    expect(asStringArray(null, [])).toEqual([]);
+    expect(asStringArray(undefined, [])).toEqual([]);
     // should fail
-    expect(() => asArrayRecursive([null, 'test'], asString)).toThrow('Unable to cast object to String');
-    expect(() => asArrayRecursive(12, asString)).toThrow('Unable to cast number to Array');
-    expect(() => asArrayRecursive('hi', asString)).toThrow('Unable to cast string to Array');
-    expect(() => asArrayRecursive(false, asString)).toThrow('Unable to cast boolean to Array');
-    expect(() => asArrayRecursive(null, asString)).toThrow('Unable to cast object to Array');
-    expect(() => asArrayRecursive(undefined, asString)).toThrow('Unable to cast undefined to Array');
-    expect(() => asArrayRecursive({}, asString)).toThrow('Unable to cast object to Array');
-    expect(() => asArrayRecursive(fn, asString)).toThrow('Unable to cast function to Array');
+    expect(() => asStringArray([null, 'test'])).toThrow('Unable to cast object to String');
+    expect(() => asStringArray(12)).toThrow('Unable to cast number to Array');
+    expect(() => asStringArray('hi')).toThrow('Unable to cast string to Array');
+    expect(() => asStringArray(false)).toThrow('Unable to cast boolean to Array');
+    expect(() => asStringArray(null)).toThrow('Unable to cast object to Array');
+    expect(() => asStringArray(undefined)).toThrow('Unable to cast undefined to Array');
+    expect(() => asStringArray({})).toThrow('Unable to cast object to Array');
+    expect(() => asStringArray(fn)).toThrow('Unable to cast function to Array');
   });
+
+  it('asArrayRecursive memoization', () => {
+    const asStringArray = asArrayRecursive(asString);
+    expect(asStringArray).toBe(asArrayRecursive(asString));
+    expect(asStringArray).not.toBe(asArrayRecursive(asNumber));
+  });
+
   it('asRecordRecursive', () => {
-    expect(asRecordRecursive({}, isString)).toEqual({});
-    expect(asRecordRecursive({ a: 'test', b: 'test' }, asString)).toEqual({ a: 'test', b: 'test' });
-    expect(asRecordRecursive({ a: 'test', b: null }, asOptString)).toEqual({ a: 'test', b: undefined });
+    const asStringRecord = asRecordRecursive(asString);
+    const asOptStringRecord = asRecordRecursive(asOptString);
+
+    expect(asStringRecord({})).toEqual({});
+    expect(asStringRecord({ a: 'test', b: 'test' })).toEqual({ a: 'test', b: 'test' });
+    expect(asOptStringRecord({ a: 'test', b: null })).toEqual({ a: 'test', b: undefined });
     // fallback
-    expect(asRecordRecursive(null, asString, {})).toEqual({});
-    expect(asRecordRecursive(undefined, asString, {})).toEqual({});
+    expect(asStringRecord(null, {})).toEqual({});
+    expect(asStringRecord(undefined, {})).toEqual({});
     // should fail
-    expect(() => asRecordRecursive({ a: 'test', b: null }, asString)).toThrow('Unable to cast object to String');
-    expect(() => asRecordRecursive(12, asString)).toThrow('Unable to cast number to Record');
-    expect(() => asRecordRecursive('hi', asString)).toThrow('Unable to cast string to Record');
-    expect(() => asRecordRecursive(false, asString)).toThrow('Unable to cast boolean to Record');
-    expect(() => asRecordRecursive(null, asString)).toThrow('Unable to cast object to Record');
-    expect(() => asRecordRecursive(undefined, asString)).toThrow('Unable to cast undefined to Record');
-    expect(() => asRecordRecursive([], asString)).toThrow('Unable to cast object to Record');
-    expect(() => asRecordRecursive(fn, asString)).toThrow('Unable to cast function to Record');
+    expect(() => asStringRecord({ a: 'test', b: null })).toThrow('Unable to cast object to String');
+    expect(() => asStringRecord(12)).toThrow('Unable to cast number to Record');
+    expect(() => asStringRecord('hi')).toThrow('Unable to cast string to Record');
+    expect(() => asStringRecord(false)).toThrow('Unable to cast boolean to Record');
+    expect(() => asStringRecord(null)).toThrow('Unable to cast object to Record');
+    expect(() => asStringRecord(undefined)).toThrow('Unable to cast undefined to Record');
+    expect(() => asStringRecord([])).toThrow('Unable to cast object to Record');
+    expect(() => asStringRecord(fn)).toThrow('Unable to cast function to Record');
+  });
+
+  it('asRecordRecursive memoization', () => {
+    const asStringRecord = asRecordRecursive(asString);
+    expect(asStringRecord).toBe(asRecordRecursive(asString));
+    expect(asStringRecord).not.toBe(asRecordRecursive(asNumber));
   });
 });
 
@@ -190,36 +208,40 @@ describe('optional recursive casts', () => {
   const fn = () => false;
 
   it('asOptArrayRecursive', () => {
+    const asOptStringArray = asOptArrayRecursive(asString);
+    const asOptOptStringArray = asOptArrayRecursive(asOptString);
     // intended
-    expect(asOptArrayRecursive([], asString)).toEqual([]);
-    expect(asOptArrayRecursive(['test', 'test'], asString)).toEqual(['test', 'test']);
-    expect(asOptArrayRecursive([null, 'test'], asOptString)).toEqual([undefined, 'test']);
+    expect(asOptStringArray([])).toEqual([]);
+    expect(asOptStringArray(['test', 'test'])).toEqual(['test', 'test']);
+    expect(asOptOptStringArray([null, 'test'])).toEqual([undefined, 'test']);
     // optionality
-    expect(asOptArrayRecursive(null, asString)).toEqual(undefined);
-    expect(asOptArrayRecursive(undefined, asString)).toEqual(undefined);
+    expect(asOptStringArray(null)).toEqual(undefined);
+    expect(asOptStringArray(undefined)).toEqual(undefined);
     // should fail
-    expect(() => asOptArrayRecursive([null, 'test'], asString)).toThrow('Unable to cast object to String');
-    expect(() => asOptArrayRecursive(12, asString)).toThrow('Unable to cast number to Array');
-    expect(() => asOptArrayRecursive('hi', asString)).toThrow('Unable to cast string to Array');
-    expect(() => asOptArrayRecursive(false, asString)).toThrow('Unable to cast boolean to Array');
-    expect(() => asOptArrayRecursive({}, asString)).toThrow('Unable to cast object to Array');
-    expect(() => asOptArrayRecursive(fn, asString)).toThrow('Unable to cast function to Array');
+    expect(() => asOptStringArray([null, 'test'])).toThrow('Unable to cast object to String');
+    expect(() => asOptStringArray(12)).toThrow('Unable to cast number to Array');
+    expect(() => asOptStringArray('hi')).toThrow('Unable to cast string to Array');
+    expect(() => asOptStringArray(false)).toThrow('Unable to cast boolean to Array');
+    expect(() => asOptStringArray({})).toThrow('Unable to cast object to Array');
+    expect(() => asOptStringArray(fn)).toThrow('Unable to cast function to Array');
   });
   it('asOptRecordRecursive', () => {
+    const asOptStringRecord = asOptRecordRecursive(asString);
+    const asOptOptStringRecord = asOptRecordRecursive(asOptString);
     // intended
-    expect(asOptRecordRecursive({}, asString)).toEqual({});
-    expect(asOptRecordRecursive({ a: 'test', b: 'test' }, asString)).toEqual({ a: 'test', b: 'test' });
-    expect(asOptRecordRecursive({ a: 'test', b: null }, asOptString)).toEqual({ a: 'test', b: undefined });
+    expect(asOptStringRecord({})).toEqual({});
+    expect(asOptStringRecord({ a: 'test', b: 'test' })).toEqual({ a: 'test', b: 'test' });
+    expect(asOptOptStringRecord({ a: 'test', b: null })).toEqual({ a: 'test', b: undefined });
     // optionality
-    expect(asOptRecordRecursive(null, asString)).toEqual(undefined);
-    expect(asOptRecordRecursive(undefined, asString)).toEqual(undefined);
+    expect(asOptStringRecord(null)).toEqual(undefined);
+    expect(asOptStringRecord(undefined)).toEqual(undefined);
     // should fail
-    expect(() => asOptRecordRecursive({ a: 'test', b: null }, asString)).toThrow('Unable to cast object to String');
-    expect(() => asRecordRecursive(12, asString)).toThrow('Unable to cast number to Record');
-    expect(() => asRecordRecursive('hi', asString)).toThrow('Unable to cast string to Record');
-    expect(() => asRecordRecursive(false, asString)).toThrow('Unable to cast boolean to Record');
-    expect(() => asRecordRecursive([], asString)).toThrow('Unable to cast object to Record');
-    expect(() => asRecordRecursive(fn, asString)).toThrow('Unable to cast function to Record');
+    expect(() => asOptStringRecord({ a: 'test', b: null })).toThrow('Unable to cast object to String');
+    expect(() => asOptStringRecord(12)).toThrow('Unable to cast number to Record');
+    expect(() => asOptStringRecord('hi')).toThrow('Unable to cast string to Record');
+    expect(() => asOptStringRecord(false)).toThrow('Unable to cast boolean to Record');
+    expect(() => asOptStringRecord([])).toThrow('Unable to cast object to Record');
+    expect(() => asOptStringRecord(fn)).toThrow('Unable to cast function to Record');
 
   });
 });
