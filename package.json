@@ -2,7 +2,9 @@
   "name": "ts-extended-types",
   "version": "1.0.0",
   "description": "A collection of common types for TypeScript along with dynamic type cast methods.",
+  "type": "module",
   "main": "dist/main.js",
+  "module": "dist/main.js",
   "scripts": {
     "test": "jest --verbose --coverage",
     "lint": "eslint",
