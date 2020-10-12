@@ -225,6 +225,13 @@ describe('optional recursive casts', () => {
     expect(() => asOptStringArray({})).toThrow('Unable to cast object to Array');
     expect(() => asOptStringArray(fn)).toThrow('Unable to cast function to Array');
   });
+
+  it('asOptArrayRecursive memoization', () => {
+    const asOptStringArray = asOptArrayRecursive(asString);
+    expect(asOptStringArray).toBe(asOptArrayRecursive(asString));
+    expect(asOptStringArray).not.toBe(asOptArrayRecursive(asNumber));
+  });
+
   it('asOptRecordRecursive', () => {
     const asOptStringRecord = asOptRecordRecursive(asString);
     const asOptOptStringRecord = asOptRecordRecursive(asOptString);
@@ -242,6 +249,11 @@ describe('optional recursive casts', () => {
     expect(() => asOptStringRecord(false)).toThrow('Unable to cast boolean to Record');
     expect(() => asOptStringRecord([])).toThrow('Unable to cast object to Record');
     expect(() => asOptStringRecord(fn)).toThrow('Unable to cast function to Record');
+  });
 
+  it('asOptRecordRecursive memoization', () => {
+    const asOptStringRecord = asOptRecordRecursive(asString);
+    expect(asOptStringRecord).toBe(asOptRecordRecursive(asString));
+    expect(asOptStringRecord).not.toBe(asOptRecordRecursive(asNumber));
   });
 });
