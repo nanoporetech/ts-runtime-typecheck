@@ -1,6 +1,9 @@
 import { isNullish } from '../type-check/is-primitive';
+import type { Optional } from '../Optional.type';
+import type { TypeAssert } from '../TypeAssert.type';
+import type { OptionalTypeCast, TypeCast } from '../TypeCast.type';
 
-export function optTypeCast<Input, Output> (test: (obj: Input) => Output): (obj: Input | undefined) => Output | undefined {
+export function optTypeCast<Input, Output> (test: TypeCast<Output, Input>): OptionalTypeCast<Output, Optional<Input>> {
   return (obj: Input | undefined) => {
     if (isNullish(obj)) {
       return undefined;
@@ -9,7 +12,7 @@ export function optTypeCast<Input, Output> (test: (obj: Input) => Output): (obj:
   };
 }
 
-export function typeCast<Output> (typename: string, isType: (obj: unknown) => obj is Output): (obj: unknown, fallback?: Output) => Output {
+export function typeCast<Output> (typename: string, isType: TypeAssert<Output>): (obj: unknown, fallback?: Output) => Output {
   return (obj: unknown, fallback?: Output) => {
     if (isType(obj)) {
       return obj as Output;

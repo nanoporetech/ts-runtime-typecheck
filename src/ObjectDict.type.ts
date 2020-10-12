@@ -1,3 +1,5 @@
+import type { Optional } from './Optional.type';
+
 /*
   This is a safer way of creating arbitrary option objects in TS
   It's similar to `{ [key: string]: unknown }`
@@ -11,4 +13,4 @@
   over values that the values are (incorrectly) a union type, but
   it's worth the frustration for the additional safety it gives.
 */
-export type ObjectDict<T = unknown> = Record<string, T | undefined>;
+export type ObjectDict<T = unknown> = Record<string, Optional<T>>;
