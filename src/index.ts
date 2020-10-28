@@ -6,6 +6,6 @@ export * from './type-coerce/make-primative';
 
 export { Index, Indexable } from './Index.type';
 export { JSONValue, JSONArray, JSONObject } from './JSONValue.type';
-export { ObjectDict } from './ObjectDict.type';
+export { Dictionary } from './Dictionary.type';
 export { Optional } from './Optional.type';
 export { UnknownFunction, UnknownAsyncFunction } from './UnknownFunction.type';

@@ -1,9 +1,10 @@
 import type { Index } from '../Index.type';
-import type { ObjectDict } from '../ObjectDict.type';
+import type { Nullish } from '../Nullish.type';
+import type { Dictionary } from '../Dictionary.type';
 import type { Optional } from '../Optional.type';
 import type { UnknownFunction } from '../UnknownFunction.type';
 
-export function isRecord(obj: unknown): obj is ObjectDict {
+export function isRecord(obj: unknown): obj is Dictionary {
   return obj !== null && typeof obj === 'object' && Array.isArray(obj) === false;
 }
 
@@ -35,7 +36,7 @@ export function isUndefined(obj: unknown): obj is undefined {
   return typeof obj === 'undefined';
 }
 
-export function isNullish(obj: unknown): obj is null | undefined {
+export function isNullish(obj: unknown): obj is Nullish {
   return obj === null || typeof obj === 'undefined';
 }
 

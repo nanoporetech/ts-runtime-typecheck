@@ -1,20 +1,33 @@
 import type { Indexable } from '../Index.type';
-import type { ObjectDict } from '../ObjectDict.type';
+import type { Dictionary } from '../Dictionary.type';
 import type { OptionalTypeCast, TypeCast } from '../TypeCast.type';
 import type { UnknownFunction } from '../UnknownFunction.type';
+import type { Optional } from '../Optional.type';
 
 import { isString, isNullish, isNumber, isDefined, isArray, isBoolean, isFunction, isIndex, isRecord } from '../type-check/is-primitive';
 import { optTypeCast, typeCast } from './type-cast';
 
 export const asString = typeCast('String', isString);
 export const asNumber = typeCast('Number', isNumber);
-export const asDefined = typeCast('Defined', isDefined);
 export const asIndex = typeCast('Index', isIndex);
 export const asIndexable = typeCast<Indexable>('Indexable', isRecord);
 export const asBoolean = typeCast('Boolean', isBoolean);
 export const asArray = typeCast('Array', isArray);
 export const asRecord = typeCast('Record', isRecord);
 export const asFunction = typeCast('Function', isFunction);
+
+// NOTE this *could* work with the typeCast helper
+// but unfortunately generic parameters cannot be preserved
+// when a function is placed into a value
+export function asDefined<T> (obj: Optional<T>, fallback?: T): T {
+  if (isDefined(obj)) {
+    return obj as T;
+  }
+  if (typeof fallback !== 'undefined') {
+    return fallback;
+  }
+  throw new Error(`Unable to cast ${typeof obj} to Defined`);
+}
 
 export const asOptString = optTypeCast(asString);
 export const asOptNumber = optTypeCast(asNumber);
@@ -46,13 +59,13 @@ export const asArrayRecursive = memoize(<T> (visitor: (obj: unknown) => T): Type
   };
 });
 
-export const asRecordRecursive = memoize(<T> (visitor: (obj: unknown) => T): TypeCast<ObjectDict<T>> => {
-  return (obj: unknown, fallback?: ObjectDict<T>) => {
+export const asRecordRecursive = memoize(<T> (visitor: (obj: unknown) => T): TypeCast<Dictionary<T>> => {
+  return (obj: unknown, fallback?: Dictionary<T>) => {
     if (isNullish(obj) && typeof fallback !== 'undefined') {
       return fallback;
     }
     const source = asRecord(obj);
-    const record: ObjectDict<T> = {};
+    const record: Dictionary<T> = {};
     for (const key in source) {
       record[key] = visitor(source[key]);
     }
@@ -70,7 +83,7 @@ export const asOptArrayRecursive = memoize(<T>(visitor: (obj: unknown) => T): Op
   };
 });
 
-export const asOptRecordRecursive = memoize(<T>(visitor: (obj: unknown) => T): OptionalTypeCast<ObjectDict<T>> => {
+export const asOptRecordRecursive = memoize(<T>(visitor: (obj: unknown) => T): OptionalTypeCast<Dictionary<T>> => {
   const convert = asRecordRecursive(visitor);
   return (obj) => {
     if (isNullish(obj)) {

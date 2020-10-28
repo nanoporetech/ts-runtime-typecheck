@@ -1,1 +1,3 @@
-export type Optional<T> = T | undefined;
+import type { Nullish } from './Nullish.type';
+
+export type Optional<T> = T | Nullish;

@@ -5,7 +5,7 @@ import type { OptionalTypeCast, TypeCast } from '../TypeCast.type';
 import { isNullish } from '../type-check/is-primitive';
 
 export function optTypeCast<Input, Output> (test: TypeCast<Output, Input>): OptionalTypeCast<Output, Optional<Input>> {
-  return (obj: Input | undefined) => {
+  return (obj: Optional<Input>) => {
     if (isNullish(obj)) {
       return undefined;
     }
