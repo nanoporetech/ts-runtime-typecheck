@@ -8,4 +8,5 @@ export { Index, Indexable } from './Index.type';
 export { JSONValue, JSONArray, JSONObject } from './JSONValue.type';
 export { Dictionary } from './Dictionary.type';
 export { Optional } from './Optional.type';
+export { Nullish } from './Nullish.type';
 export { UnknownFunction, UnknownAsyncFunction } from './UnknownFunction.type';
