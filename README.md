@@ -21,6 +21,7 @@ A collection of TypeScript functions for converting unknown values into strictly
 - [Changelog](#changelog)
   - [v1.0.0](#v100)
   - [v1.1.0](#v110)
+  - [v1.1.1](#v111)
 
 ## Installation
 
@@ -32,7 +33,7 @@ npm install ts-runtime-typecheck
 
 ## Type Casts
 
-Type casts take an unknown object as an argument, and return a typed object as the result. These functions take the form `as{TYPE}`, for example `asNumber`. If the input object does not match the required type the function will throw. This does not perform any coercion on the value, passing a string of a number to asNumber will cause it to throw.
+**Type Casts** take an `unknown` object as an argument, and return a typed object as the result. These functions take the form [`as{TYPE}`](#reference-type-casts), for example [`asNumber`](#asNumber). If the input object does not match the required type the function will throw. This does not perform any coercion on the value, passing a `string` of a number to [`asNumber`](#asNumber) will cause it to throw.
 
 ```typescript
 import { asNumber } from 'ts-runtime-typecheck';
@@ -50,11 +51,11 @@ square('10')
 // Error: Unable to cast string to number
 ```
 
-These functions are meant to primarily validate questionable values that are expected to be in a well defined structure. Such as network responses, interfacing with untyped javascript or reading data back from a file. If you are looking to validate a type, without throwing an error then take a look at Type Checks.
+**Type Casts** are meant to primarily validate questionable values that are expected to be in a well defined structure. Such as network responses, interfacing with untyped JavaScript or reading data back from a file. If you are looking to validate a type, without throwing an error then take a look at [Type Checks](#type-checks).
 
 ### Fallback values
 
-The standard type cast functions take a second optional parameter, which is a _fallback_ value. In the situation that the input is *nullish* ( `undefined | null` ) and the fallback parameter has been defined the function will return the fallback parameter instead of throwing. This is very helpful for validating the input of an optional value, and providing a default value.
+The standard type cast functions take a second optional parameter, which is a _fallback_ value. In the situation that the input is [`Nullish`](#nullish) and the fallback parameter has been defined the function will return the fallback parameter instead of throwing. This is very helpful for validating the input of an optional value, and providing a default value.
 
 ```typescript
 import { asString } from 'ts-runtime-typecheck';
@@ -72,11 +73,11 @@ printName(42)
 // Error: Unable to cast number to string
 ```
 
-In the situation you want to preserve the optionally of a value, but still validate the type there exists an alternate function for each type cast. These take the form `asOpt{TYPE}`. Unlike the standard methods they do not take an optional fallback value, but when a nullish value is passed in they will always emit `undefined`. If the input is not nullish, then it behaves the same as the standard type casts. If the type condition is met then it emit the value, otherwise it will throw.
+In the situation you want to preserve the optionally of a value, but still validate the type there exists an alternate function for each type cast. These take the form [`asOpt{TYPE}`](#reference-optional-type-casts). Unlike the standard methods they do not take an optional fallback value, but when a [`Nullish`](#nullish) value is passed in they will always emit `undefined`. If the input is not [`Nullish`](#nullish), then it behaves the same as the standard type casts. If the type condition is met then it emits the value, otherwise it will throw.
 
 ### Special case: asDefined
 
-Another common situation is that you have an optional value, with a well defined type, but it *shouldn't* be optional at that time. TypeScript will allow you to cast the value to a non-optional type using `!`, but this is often discouraged in style guides as it can hide real errors. This is solved by the `asDefined` function, which removes the optionality from a type union. As with the other type casts this can take a fallback value, and will throw if the condition is not met. However, the output type matches the input type with nullish subtracted.
+Another common situation is that you have an [`Optional`](#optional) value, with a well defined type, but it *shouldn't* be [`Optional`](#optional) at that time. TypeScript will allow you to cast the value to a non-optional type using `!`, but this is often discouraged in style guides as it can hide real errors. This is solved by the [`asDefined`](#asdefined) function, which removes the optionality from a type union. As with the other type casts this can take a fallback value, and will throw if the condition is not met. However, the output type matches the input type with [`Nullish`](#nullish) subtracted.
 
 ```typescript
 import { asDefined } from 'ts-runtime-typecheck';
@@ -94,7 +95,7 @@ function setup (useComplexType: boolean = false, complexInst?: ComplexType) {
 
 ### Recursive Array/Object Casts
 
-Validating that a value is an array or object is easy enough, but how about the contents? `asArrayRecursive` and `asObjectRecursive` allow for deep type casting through a user specified element cast. For example, to cast to an array of strings:
+Validating that a value is an array or object is easy enough, but how about the contents? [`asArrayRecursive`](#asarrayrecursive) and [`asObjectRecursive`](#asobjectrecursive) allow for deep type casting through a user specified element cast. For example, to cast to `Array<string>`:
 
 ```typescript
 import { asString, asArrayRecursive } from 'ts-runtime-typecheck';
@@ -106,7 +107,7 @@ function main (obj: unknown) {
 }
 ```
 
-Or an array of numeric dictionaries:
+Or `Array<Dictionary<number>>`:
 
 ```typescript
 import { asNumber, asRecordRecursive, asArrayRecursive } from 'ts-runtime-typecheck';
@@ -115,7 +116,7 @@ function main (obj: unknown) {
   const asNumericRecord = asRecordRecursive(asNumber);
   const asArrayOfNumericRecords = asArrayRecursive(asNumericRecord);
 
-  const arr: string[] = asArrayOfNumericRecords([
+  const arr = asArrayOfNumericRecords([
     {
       a: 12,
       b: 42
@@ -132,7 +133,7 @@ function main (obj: unknown) {
 
 ## Type Checks
 
-Type checks take an unknown object as an argument, and return a boolean indicating if the given value matches the required type. These functions take the form `is{TYPE}` In the correct situation TypeScript is capable of refining the type of a value through the use of these functions and flow analysis.
+Type checks take an unknown object as an argument, and return a boolean indicating if the given value matches the required type. These functions take the form [`is{TYPE}`](#reference-type-checks) In the correct situation TypeScript is capable of refining the type of a value through the use of these functions and flow analysis.
 
 ```typescript
 import { isNumber } from 'ts-runtime-typecheck';
@@ -153,9 +154,9 @@ export function printSq (input: unknown) {
 
 ## Type Coerce
 
-Type coercion functions take an unknown object as an argument, and convert it into a specific type. These functions take the format `make{TYPE}`. Unlike the other functions this only works for small subset of types: number, string and boolean. They make a best effort to convert the type, but if the input is not suitable then they will throw. For instance passing a non-numeric string to `makeNumber` will cause it to throw, as will passing a string that is not `"true" | "false"` to `makeBoolean`. While these functions will take any input value, this is to allow the input of values that have not been validated, actually the only valid input types for all 3 functions are `number | string | boolean`. The intention here is to allow useful conversion, but prevent accidentally passing complex types.
+Type coercion functions take an unknown object as an argument, and convert it into a specific type. These functions take the format [`make{TYPE}`](#reference-type-coerce). Unlike the other functions this only works for small subset of types: number, string and boolean. They make a best effort to convert the type, but if the input is not suitable then they will throw. For instance passing a non-numeric string to [`makeNumber`](#make-number) will cause it to throw, as will passing a string that is not `"true" | "false"` to [`makeBoolean`](#make-boolean). While these functions will take any input value, this is to allow the input of values that have not been validated, actually the only valid input types for all 3 functions are `number | string | boolean`. The intention here is to allow useful conversion, but prevent accidentally passing complex types.
 
-There is an argument that `makeString` could support using the `toString` method of an `object`, but the default `toString` method returns the useless `[object Object]` string. It is possible to detect if an object has implemented it's own `toString` method, but is it correct to use it in this situation? That depends on the intention of the programmer. In the absence of a clear answer the line has been drawn at only accepting primitives.
+There is an argument that [`makeString`](#makestring) could support using the `toString` method of an `object`, but the default `toString` method returns the useless `[object Object]` string. It is possible to detect if an object has implemented it's own `toString` method, but is it correct to use it in this situation? That depends on the intention of the programmer. In the absence of a clear answer the line has been drawn at only accepting primitives.
 
 ```typescript
 import { makeNumber } from 'ts-runtime-typecheck';
@@ -175,7 +176,7 @@ makeNumber({
 
 ## JSON Types
 
-Dealing with validating JSON objects can often be frustrating, so to make it a little easier JSON specific types and checks are provided. Using the `JSONValue` type in your code will ensure that TS statically analyses any literal values as serializable to JSON.
+Dealing with validating JSON objects can often be frustrating, so to make it a little easier JSON specific types and checks are provided. Using the [`JSONValue`](#jsonvalue) type in your code will ensure that TS statically analyses any literal values as serializable to JSON.
 
 ```typescript
 import type { JSONArray, JSONObject, JSONValue } from 'ts-runtime-typecheck';
@@ -193,9 +194,9 @@ const c: JSONValue = 12;
 const d: JSONValue = new Error('hi'); // Type 'Error' is not assignable to type 'JSONValue'
 ```
 
-For dynamic data `isJSONValue` and `asJSONValue` provide recursive type validation on a value.
+For dynamic data [`isJSONValue`](#isjsonvalue) and [`asJSONValue`](#asjsonvalue) provide recursive type validation on a value.
 
-Type checks and casts are provided for `JSONArray`s and `JSONObject`s, with the caveat that they only accept `JSONValue`s. This is to avoid needing to recursively validate the object.
+Type checks and casts are provided for [`JSONArray`](#jsonarray)s and [`JSONObject`](#jsonobject)s, with the caveat that they only accept [`JSONValue`](#jsonvalue)s. This is to avoid needing to recursively validate the object.
 
 ```typescript
 import { asJSONValue, isJSONObject, isJSONArray } from 'ts-runtime-typecheck';
@@ -216,7 +217,7 @@ function main (a: unknown) {
 }
 ```
 
-One other caveat of `JSONValue` is that it does not guarantee that the value is not cyclic. It is not possible to serialize cyclic object with JSON, but they are otherwise valid. Using `isJSONValue` or `asJSONValue` on a cyclic object *will fail*.
+One other caveat of [`JSONValue`](#jsonvalue) is that it does not guarantee that the value is not cyclic. It is not possible to serialize cyclic object with JSON, but they are otherwise valid. Using [`isJSONValue`](#isjsonvalue) or [`asJSONValue`](#asjsonvalue) on a cyclic object *will fail*.
 
 ```typescript
 import { asJSONValue } from 'ts-runtime-typecheck';
@@ -269,7 +270,7 @@ const obj = asJSONValue(almost_right);
 
 - ### asDefined
 
-  Cast [`Type | Nullish`](#nullish) to `Type`, where `Type` is a generic parameter. Does *not* accept a fallback value.
+  Cast [`Type | Nullish`](#nullish) to `Type`, where `Type` is a generic parameter. Accepts an optional fallback value that is emitted if the value is nullish and fallback is defined.
 
 - ### asJSONValue
 
@@ -469,3 +470,8 @@ const obj = asJSONValue(almost_right);
 - Add: Nullish type ( `null | undefined` ).
 - Change: Dictionary no longer contains `T | undefined` union.
 - Change: Optional type now also includes `null` in the type union.
+
+### v1.1.1
+
+- Change: return type of `asOpt{TYPE}` is now `TYPE | undefined` instead of `Optional<TYPE>` ( removes null from union )
+- Documentation corrections.
