@@ -1,5 +1,5 @@
 import type { TypeAssert } from '../TypeAssert.type';
-import { isArray, isBoolean, isDefined, isFunction, isIndex, isNullish, isNumber, isRecord, isString, isUndefined } from './is-primitive';
+import { isArray, isBoolean, isDefined, isFunction, isIndex, isNullish, isNumber, isOptArray, isOptBoolean, isOptFunction, isOptIndex, isOptNumber, isOptRecord, isOptString, isRecord, isString, isUndefined } from './is-primitive';
 
 describe('is primitive', () => {
   class Dummy {}
@@ -38,6 +38,21 @@ describe('is primitive', () => {
     ]);
   });
 
+  it('isOptRecord', () => {
+    tryExamples(isOptRecord, [
+      false,
+      false,
+      false,
+      true,
+      true,
+      false,
+      false,
+      true,
+      false,
+      true
+    ]);
+  });
+
   it('isFunction', () => {
     tryExamples(isFunction, [
       false,
@@ -45,6 +60,21 @@ describe('is primitive', () => {
       false,
       false,
       false,
+      true,
+      false,
+      false,
+      false,
+      false
+    ]);
+  });
+
+  it('isOptFunction', () => {
+    tryExamples(isOptFunction, [
+      false,
+      false,
+      false,
+      true,
+      true,
       true,
       false,
       false,
@@ -68,6 +98,21 @@ describe('is primitive', () => {
     ]);
   });
 
+  it('isOptBoolean', () => {
+    tryExamples(isOptBoolean, [
+      false,
+      false,
+      true,
+      true,
+      true,
+      false,
+      false,
+      false,
+      false,
+      false
+    ]);
+  });
+
   it('isString', () => {
     tryExamples(isString, [
       false,
@@ -75,6 +120,21 @@ describe('is primitive', () => {
       false,
       false,
       false,
+      false,
+      false,
+      false,
+      false,
+      false
+    ]);
+  });
+
+  it('isOptString', () => {
+    tryExamples(isOptString, [
+      false,
+      true,
+      false,
+      true,
+      true,
       false,
       false,
       false,
@@ -98,6 +158,21 @@ describe('is primitive', () => {
     ]);
   });
 
+  it('isOptNumber', () => {
+    tryExamples(isOptNumber, [
+      true,
+      false,
+      false,
+      true,
+      true,
+      false,
+      false,
+      false,
+      false,
+      false
+    ]);
+  });
+
   it('isIndex', () => {
     tryExamples(isIndex, [
       true,
@@ -113,6 +188,21 @@ describe('is primitive', () => {
     ]);
   });
 
+  it('isOptIndex', () => {
+    tryExamples(isOptIndex, [
+      true,
+      true,
+      false,
+      true,
+      true,
+      false,
+      false,
+      false,
+      false,
+      false
+    ]);
+  });
+
   it('isArray', () => {
     tryExamples(isArray, [
       false,
@@ -120,6 +210,21 @@ describe('is primitive', () => {
       false,
       false,
       false,
+      false,
+      true,
+      false,
+      false,
+      false
+    ]);
+  });
+
+  it('isOptArray', () => {
+    tryExamples(isOptArray, [
+      false,
+      false,
+      false,
+      true,
+      true,
       false,
       true,
       false,
