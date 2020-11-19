@@ -1,4 +1,4 @@
-import { asArray, asArrayRecursive, asBoolean, asDefined, asFunction, asIndex, asIndexable, asNumber, asOptArrayRecursive, asOptRecordRecursive, asOptString, asRecord, asRecordRecursive, asString } from './as-primitive';
+import { asArray, asArrayRecursive, asBoolean, asDefined, asFunction, asIndex, asIndexable, asNumber, asOptArray, asOptArrayRecursive, asOptBoolean, asOptFunction, asOptIndex, asOptIndexable, asOptNumber, asOptRecord, asOptRecordRecursive, asOptString, asRecord, asRecordRecursive, asString } from './as-primitive';
 
 describe('primative casts', () => {
   const fn = () => false;
@@ -143,6 +143,104 @@ describe('primative casts', () => {
     expect(() => asFunction(undefined)).toThrow('Unable to cast undefined to Function');
     expect(() => asFunction([])).toThrow('Unable to cast object to Function');
     expect(() => asFunction({})).toThrow('Unable to cast object to Function');
+  });
+
+  it('asOptString', () => {
+    // intended
+    expect(asOptString('test')).toBe('test');
+    expect(asOptString(null)).toBeUndefined();
+    expect(asOptString(undefined)).toBeUndefined();
+    // should fail
+    expect(() => asOptString(0)).toThrow('Unable to cast number to String');
+    expect(() => asOptString(false)).toThrow('Unable to cast boolean to String');
+    expect(() => asOptString([])).toThrow('Unable to cast object to String');
+    expect(() => asOptString({})).toThrow('Unable to cast object to String');
+    expect(() => asOptString(fn)).toThrow('Unable to cast function to String');
+  });
+  it('asOptNumber', () => {
+    // intended
+    expect(asOptNumber(12)).toBe(12);
+    expect(asOptNumber(null)).toBeUndefined();
+    expect(asOptNumber(undefined)).toBeUndefined();
+    // should fail
+    expect(() => asOptNumber('hi')).toThrow('Unable to cast string to Number');
+    expect(() => asOptNumber(false)).toThrow('Unable to cast boolean to Number');
+    expect(() => asOptNumber([])).toThrow('Unable to cast object to Number');
+    expect(() => asOptNumber({})).toThrow('Unable to cast object to Number');
+    expect(() => asOptNumber(fn)).toThrow('Unable to cast function to Number');
+
+  });
+  it('asOptIndex', () => {
+    // intended
+    expect(asOptIndex(12)).toBe(12);
+    expect(asOptIndex('a')).toBe('a');
+    expect(asOptIndex(null)).toBeUndefined();
+    expect(asOptIndex(undefined)).toBeUndefined();
+    // should fail
+    expect(() => asOptIndex(false)).toThrow('Unable to cast boolean to Index');
+    expect(() => asOptIndex([])).toThrow('Unable to cast object to Index');
+    expect(() => asOptIndex({})).toThrow('Unable to cast object to Index');
+    expect(() => asOptIndex(fn)).toThrow('Unable to cast function to Index');
+  });
+  it('asOptIndexable', () => {
+    // intended
+    expect(asOptIndexable({})).toEqual({});
+    expect(asOptIndexable(null)).toBeUndefined();
+    expect(asOptIndexable(undefined)).toBeUndefined();
+    // should fail
+    expect(() => asOptIndexable(12)).toThrow('Unable to cast number to Indexable');
+    expect(() => asOptIndexable('hi')).toThrow('Unable to cast string to Indexable');
+    expect(() => asOptIndexable(false)).toThrow('Unable to cast boolean to Indexable');
+    expect(() => asOptIndexable([])).toThrow('Unable to cast object to Indexable');
+    expect(() => asOptIndexable(fn)).toThrow('Unable to cast function to Indexable');
+  });
+  it('asOptBoolean', () => {
+    // intended
+    expect(asOptBoolean(false)).toBe(false);
+    expect(asOptBoolean(null)).toBeUndefined();
+    expect(asOptBoolean(undefined)).toBeUndefined();
+    // should fail
+    expect(() => asOptBoolean(12)).toThrow('Unable to cast number to Boolean');
+    expect(() => asOptBoolean('hi')).toThrow('Unable to cast string to Boolean');
+    expect(() => asOptBoolean([])).toThrow('Unable to cast object to Boolean');
+    expect(() => asOptBoolean({})).toThrow('Unable to cast object to Boolean');
+    expect(() => asOptBoolean(fn)).toThrow('Unable to cast function to Boolean');
+  });
+  it('asOptArray', () => {
+    // intended
+    expect(asOptArray([])).toEqual([]);
+    expect(asOptArray(null)).toBeUndefined();
+    expect(asOptArray(undefined)).toBeUndefined();
+    // should fail
+    expect(() => asOptArray(12)).toThrow('Unable to cast number to Array');
+    expect(() => asOptArray('hi')).toThrow('Unable to cast string to Array');
+    expect(() => asOptArray(false)).toThrow('Unable to cast boolean to Array');
+    expect(() => asOptArray({})).toThrow('Unable to cast object to Array');
+    expect(() => asOptArray(fn)).toThrow('Unable to cast function to Array');
+  });
+  it('asOptRecord', () => {
+    // intended
+    expect(asOptRecord({})).toEqual({});
+    expect(asOptRecord(null)).toBeUndefined();
+    expect(asOptRecord(undefined)).toBeUndefined();
+    // should fail
+    expect(() => asOptRecord(12)).toThrow('Unable to cast number to Record');
+    expect(() => asOptRecord('hi')).toThrow('Unable to cast string to Record');
+    expect(() => asOptRecord(false)).toThrow('Unable to cast boolean to Record');
+    expect(() => asOptRecord([])).toThrow('Unable to cast object to Record');
+    expect(() => asOptRecord(fn)).toThrow('Unable to cast function to Record');
+  });
+  it('asOptFunction', () => {
+    // intended
+    expect(asOptFunction(fn)).toBe(fn);
+    expect(asOptFunction(null)).toBeUndefined();
+    expect(asOptFunction(undefined)).toBeUndefined();
+    // should fail
+    expect(() => asOptFunction(12)).toThrow('Unable to cast number to Function');
+    expect(() => asOptFunction('hi')).toThrow('Unable to cast string to Function');
+    expect(() => asOptFunction(false)).toThrow('Unable to cast boolean to Function');
+    expect(() => asOptFunction([])).toThrow('Unable to cast object to Function');
+    expect(() => asOptFunction({})).toThrow('Unable to cast object to Function');
   });
 });
 
