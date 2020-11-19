@@ -1,5 +1,4 @@
-import './is-json';
-import { isJSONArray, isJSONObject, isJSONValue } from './is-json';
+import { isJSONArray, isJSONObject, isJSONValue, isOptJSONValue } from './is-json';
 
 describe('isJSONValue', () => {
   it('accepts numbers', () => {
@@ -34,6 +33,42 @@ describe('isJSONValue', () => {
   });
   it('does not accept object values that aren\'t JSONValue', () => {
     expect(isJSONValue({ val: Symbol('bad') })).toBeFalsy();
+  });
+});
+
+describe('isOptJSONValue', () => {
+  it('accepts numbers', () => {
+    expect(isOptJSONValue(12)).toBeTruthy();
+  });
+  it('accepts strings', () => {
+    expect(isOptJSONValue('Don\'t panic')).toBeTruthy();
+  });
+  it('accepts boolean', () => {
+    expect(isOptJSONValue(true)).toBeTruthy();
+  });
+  it('accepts null', () => {
+    expect(isOptJSONValue(null)).toBeTruthy();
+  });
+  it('accepts arrays', () => {
+    expect(isOptJSONValue([12, 'help', [], {}])).toBeTruthy();
+  });
+  it('accepts records', () => {
+    expect(isOptJSONValue({
+      first: [],
+      42: false,
+      nested: {
+        val: 1
+      }
+    })).toBeTruthy();
+  });
+  it('does accept undefined', () => {
+    expect(isOptJSONValue(undefined)).toBeTruthy();
+  });
+  it('does not accept array elements that aren\'t JSONValue', () => {
+    expect(isOptJSONValue([ Symbol('bad') ])).toBeFalsy();
+  });
+  it('does not accept object values that aren\'t JSONValue', () => {
+    expect(isOptJSONValue({ val: Symbol('bad') })).toBeFalsy();
   });
 });
 
