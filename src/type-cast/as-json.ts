@@ -1,7 +1,9 @@
 import type { JSONValue, JSONArray, JSONObject } from '../JSONValue.type';
+import type { TypeAssert } from '../TypeAssert.type';
 
 import { isJSONValue, isJSONArray, isJSONObject } from '../type-check/is-json';
 import { optTypeCast, typeCast } from './type-cast';
+import { OptionalTypeCast, TypeCast } from '../TypeCast.type';
 
 export const asJSONValue = typeCast('JSONValue', isJSONValue);
 /* NOTE: These 2 require some type gymnastics, but that is better than introducing additional runtime complexity.
@@ -10,9 +12,12 @@ export const asJSONValue = typeCast('JSONValue', isJSONValue);
  * `Input` must be `JSONValue`, this is because validating if unknown is JSONValue is a complex recursive test, 
  * which we want to avoid if possible.
  */
-export const asJSONArray: (obj: JSONValue, fallback?: JSONArray) => JSONArray = typeCast('JSONArray', isJSONArray as (obj: unknown) => obj is JSONArray);
-export const asJSONObject: (obj: JSONValue, fallback?: JSONObject) => JSONObject = typeCast('JSONObject', isJSONObject as (obj: unknown) => obj is JSONObject);
+const __isJSONArray = isJSONArray as TypeAssert<JSONArray>;
+const __isJSONObject = isJSONObject as TypeAssert<JSONObject>;
 
-export const asOptJSONValue = optTypeCast(asJSONValue);
-export const asOptJSONArray = optTypeCast(asJSONArray);
-export const asOptJSONObject = optTypeCast(asJSONObject);
+export const asJSONArray = typeCast('JSONArray', __isJSONArray) as TypeCast<JSONArray, JSONValue>;
+export const asJSONObject = typeCast('JSONObject', __isJSONObject) as TypeCast<JSONObject, JSONValue>;
+
+export const asOptJSONValue = optTypeCast('JSONValue', isJSONValue);
+export const asOptJSONArray = optTypeCast('JSONArray', __isJSONArray) as OptionalTypeCast<JSONArray, JSONValue>;
+export const asOptJSONObject = optTypeCast('JSONObject', __isJSONObject) as OptionalTypeCast<JSONObject, JSONValue>;

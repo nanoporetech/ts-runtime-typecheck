@@ -7,36 +7,36 @@ import { isString, isNullish, isNumber, isDefined, isArray, isBoolean, isFunctio
 import { optTypeCast, typeCast } from './type-cast';
 import { memoize } from '../memoize';
 
-export const asString = typeCast('String', isString);
-export const asNumber = typeCast('Number', isNumber);
+export const asString = typeCast('string', isString);
+export const asNumber = typeCast('number', isNumber);
 export const asIndex = typeCast('Index', isIndex);
 export const asIndexable = typeCast<Indexable>('Indexable', isRecord);
-export const asBoolean = typeCast('Boolean', isBoolean);
-export const asArray = typeCast('Array', isArray);
-export const asRecord = typeCast('Record', isRecord);
-export const asFunction = typeCast('Function', isFunction);
+export const asBoolean = typeCast('boolean', isBoolean);
+export const asArray = typeCast('unknown[]', isArray);
+export const asRecord = typeCast('Dictionary', isRecord);
+export const asFunction = typeCast('UnknownFunction', isFunction);
 
 // NOTE this *could* work with the typeCast helper
 // but unfortunately generic parameters cannot be preserved
 // when a function is placed into a value
-export function asDefined<T> (obj: Optional<T>, fallback?: T): T {
+export function asDefined<T> (obj: Optional<T>, fallback?: NonNullable<T>): NonNullable<T> {
   if (isDefined(obj)) {
-    return obj as T;
+    return obj as NonNullable<T>;
   }
   if (typeof fallback !== 'undefined') {
     return fallback;
   }
-  throw new Error(`Unable to cast ${typeof obj} to Defined`);
+  throw new Error(`Unable to cast ${typeof obj} to NonNullable<unknown>`);
 }
 
-export const asOptString = optTypeCast(asString);
-export const asOptNumber = optTypeCast(asNumber);
-export const asOptIndex = optTypeCast(asIndex);
-export const asOptIndexable = optTypeCast(asIndexable);
-export const asOptBoolean = optTypeCast(asBoolean);
-export const asOptArray = optTypeCast(asArray);
-export const asOptRecord = optTypeCast(asRecord);
-export const asOptFunction = optTypeCast(asFunction);
+export const asOptString = optTypeCast('string', isString);
+export const asOptNumber = optTypeCast('number', isNumber);
+export const asOptIndex = optTypeCast('Index', isIndex);
+export const asOptIndexable = optTypeCast<unknown, Indexable>('Indexable', isRecord);
+export const asOptBoolean = optTypeCast('boolean', isBoolean);
+export const asOptArray = optTypeCast('unknown[]', isArray);
+export const asOptRecord = optTypeCast('Dictionary', isRecord);
+export const asOptFunction = optTypeCast('UnknownFunction', isFunction);
 
 export const asArrayRecursive = memoize(<T> (visitor: (obj: unknown) => T): TypeCast<T[]> => {
   return (obj: unknown, fallback?: T[]) => {
