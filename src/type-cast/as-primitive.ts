@@ -1,11 +1,11 @@
 import type { Indexable } from '../Index.type';
 import type { Dictionary } from '../Dictionary.type';
 import type { OptionalTypeCast, TypeCast } from '../TypeCast.type';
-import type { UnknownFunction } from '../UnknownFunction.type';
 import type { Optional } from '../Optional.type';
 
 import { isString, isNullish, isNumber, isDefined, isArray, isBoolean, isFunction, isIndex, isRecord } from '../type-check/is-primitive';
 import { optTypeCast, typeCast } from './type-cast';
+import { memoize } from '../memoize';
 
 export const asString = typeCast('String', isString);
 export const asNumber = typeCast('Number', isNumber);
@@ -37,18 +37,6 @@ export const asOptBoolean = optTypeCast(asBoolean);
 export const asOptArray = optTypeCast(asArray);
 export const asOptRecord = optTypeCast(asRecord);
 export const asOptFunction = optTypeCast(asFunction);
-
-function memoize<P extends UnknownFunction, R> (fn: (par: P) => R): (par: P) => R {
-  const map: WeakMap<P, R> = new WeakMap();
-  return (par: P) => {
-    let result = map.get(par);
-    if (!result) {
-      result = fn(par);
-      map.set(par, result);
-    }
-    return result;
-  };
-}
 
 export const asArrayRecursive = memoize(<T> (visitor: (obj: unknown) => T): TypeCast<T[]> => {
   return (obj: unknown, fallback?: T[]) => {
