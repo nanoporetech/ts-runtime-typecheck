@@ -8,6 +8,7 @@ A collection of TypeScript functions for converting unknown values into strictly
 - [Type Casts](#type-casts)
   - [Fallback values](#fallback-values)
   - [Special case: asDefined](#special-case-asdefined)
+  - [Special case: asStruct](#special-case-asstruct)
   - [Recursive Array/Object casts](#recursive-arrayobject-casts)
 - [Type Checks](#type-checks)
 - [Type Coerce](#type-coerce)
@@ -16,12 +17,14 @@ A collection of TypeScript functions for converting unknown values into strictly
   - [Reference: Type Casts](#reference-type-casts)
   - [Reference: Optional Type Casts](#reference-optional-type-casts)
   - [Reference: Type Checks](#reference-type-checks)
+  - [Reference: Optional Type Checks](#reference-optional-type-checks)
   - [Reference: Type Coerce](#reference-type-coerce)
   - [Reference: Types](#reference-types)
 - [Changelog](#changelog)
   - [v1.0.0](#v100)
   - [v1.1.0](#v110)
   - [v1.1.1](#v111)
+  - [v1.2.0](#v120)
 
 ## Installation
 
@@ -93,6 +96,46 @@ function setup (useComplexType: boolean = false, complexInst?: ComplexType) {
 }
 ```
 
+### Special case: asStruct
+
+Validating the shape of an object using a combination of [`asRecord`](#asrecord) and other [Type Casts](#reference-type-casts) specific to property types can be a bit verbose. To simplify this scenario you can use [`asStruct`](#asstruct). This function takes an [`InterfacePattern`](#interfacepattern) that specifies a specific structure and returns a new function that will cast an unknown value to that structure. An [`InterfacePattern`](#interfacepattern is a fancy name for a [`Dictionary`](#dictionary) of [Type Check](#reference-type-checks) functions.
+
+```typescript
+import { asStruct, isString, isOptString, isNumber } from 'ts-runtime-typecheck';
+
+interface Item {
+  name: string;
+  value: number;
+}
+
+const asItem = asStruct({ name: isString, value: isNumber })
+
+function main (obj: unknown) {
+  const item: Item = asItem(obj);
+  console.log(`${item.name} = ${item.value}`);
+}
+```
+
+There is also a [Type Check](#reference-type-checks) variant of the this function called [`isStruct`](#isstruct) which works in a very similar way. As an [`InterfacePattern`](#interfacepattern) is composed of [Type Check](#reference-type-checks) functions it's possible to compose nested structure checks.
+
+```typescript
+import { asStruct, isString, isOptString, isNumber } from 'ts-runtime-typecheck';
+
+interface Declaration {
+  item: Item;
+  description: Optional<string>
+}
+
+const isItem = isStruct({ name: isString, value: isNumber });
+const asDeclaration = asStruct({ item: isItem, description: isOptString });
+
+function main (obj: unknown) {
+  const { item, description } = asDeclaration(obj);
+  const comment: string = description ? `// ${description}` : '';
+  console.log(`${item.name} = ${item.value} ${comment}`);
+}
+```
+
 ### Recursive Array/Object Casts
 
 Validating that a value is an array or object is easy enough, but how about the contents? [`asArrayRecursive`](#asarrayrecursive) and [`asObjectRecursive`](#asobjectrecursive) allow for deep type casting through a user specified element cast. For example, to cast to `Array<string>`:
@@ -112,7 +155,7 @@ Or `Array<Dictionary<number>>`:
 ```typescript
 import { asNumber, asRecordRecursive, asArrayRecursive } from 'ts-runtime-typecheck';
 
-function main (obj: unknown) {
+function main () {
   const asNumericRecord = asRecordRecursive(asNumber);
   const asArrayOfNumericRecords = asArrayRecursive(asNumericRecord);
 
@@ -133,14 +176,32 @@ function main (obj: unknown) {
 
 ## Type Checks
 
-Type checks take an unknown object as an argument, and return a boolean indicating if the given value matches the required type. These functions take the form [`is{TYPE}`](#reference-type-checks) In the correct situation TypeScript is capable of refining the type of a value through the use of these functions and flow analysis.
+[Type Checks](#reference-type-checks) take an `unknown` object as an argument, and return a `boolean` indicating if the given value matches the required type. These functions take the form [`is{TYPE}`](#reference-type-checks) In the correct situation TypeScript is capable of refining the type of a value through the use of these functions and flow analysis, like the below example.
 
 ```typescript
 import { isNumber } from 'ts-runtime-typecheck';
 
+export function printSq (value: unknown) {
+  if (isNumber(value)) {
+    // inside this block `value` is a `number`
+    console.log(`${value} * ${value} = ${value * value}`);
+  }
+  else {
+    // inside this block `value` is `unknown`
+    console.log('Invalid input', value);
+  }
+}
+```
+
+In addition all relevant [Type Checks](#reference-type-checks) have an alternate variant that take the form [`isOpt{TYPE}`](#reference-optional-type-checks). These variants return true if the value meets the given type or [`Nullish`](#nullish).
+
+```typescript
+import { isOptNumber } from 'ts-runtime-typecheck';
+
 export function printSq (input: unknown) {
-  if (isNumber(input)) {
-    // inside this block `input` is a `number`
+  if (isOptNumber(input)) {
+    // inside this block `input` is `number | undefined | null`
+    const value = input ?? 1; // use nullish coalescing operator to ensure value is number
     console.log(`${value} * ${value} = ${value * value}`);
   }
   else {
@@ -292,6 +353,10 @@ const obj = asJSONValue(almost_right);
   
   Takes a Type Cast function for `Type` and returns a new Type Cast function for [`Dictionary<Type>`](#dictionary) where type is a generic parameter. The emitted Type Cast function accepts an optional fallback value that is emitted if the value is nullish and fallback is defined. Refer to [Recursive Array/Object casts](#recursive-arrayobject-casts) for examples.
 
+- ### asStruct
+  
+  Takes an [`InterfacePattern`](#interfacepattern) which is equivalent to `Type` and returns a new Type Cast function for `Type`, where `Type` is an interface defined by the [`TypeAsserts`](#typeassert) specified in the pattern. Refer to [Special Case: asStruct](#special-case-asstruct) for examples.
+
 ### Reference: Optional Type Casts
 
 - ### asOptString
@@ -346,6 +411,10 @@ const obj = asJSONValue(almost_right);
 
   Takes a Type Cast function for `Type` and returns a new Type Cast function for [`Dictionary<Type> | undefined`](#dictionary) where type is a generic parameter. Refer to [Recursive Array/Object casts](#recursive-arrayobject-casts) for examples.
 
+- ### asOptStruct
+  
+  Takes an [`InterfacePattern`](#interfacepattern) which is equivalent to `Type` and returns a new Type Cast function for `Type | undefined`, where `Type` is an interface defined by the [`TypeAsserts`](#typeassert) specified in the pattern. Refer to [Special Case: asStruct](#special-case-asstruct) for examples.
+
 ### Reference: Type Checks
 
 - ### isRecord
@@ -371,6 +440,10 @@ const obj = asJSONValue(almost_right);
 - ### isIndex
 
   Takes an `unknown` value and returns a boolean indicating if the value is of the type [`Index`](#index).
+
+- ### isIndexable
+
+  Takes an `unknown` value and returns a boolean indicating if the value is of the type [`Indexable`](#indexable).
 
 - ### isArray
 
@@ -399,6 +472,60 @@ const obj = asJSONValue(almost_right);
 - ### isJSONObject
 
   Takes an [`JSONValue`](#jsonvalue) value and returns a boolean indicating if the value is of the type [`JSONObject`](#jsonobject).
+
+### Reference: Optional Type Checks
+
+- ### isStruct
+
+  Takes an [`InterfacePattern`](#interfacepattern) which is equivalent to `Type` and returns a new [`TypeAssert`](#typeassert) function for `Type`, where `Type` is an interface defined by the [`TypeAsserts`](#typeassert) specified in the pattern. Refer to [Special Case: asStruct](#special-case-asstruct) for examples.
+
+- ### isOptRecord
+
+  Takes an `unknown` value and returns a boolean indicating if the value is of the type [`Optional<Dictionary<unknown>>`](#dictionary).
+
+- ### isOptFunction
+
+  Takes an `unknown` value and returns a boolean indicating if the value is of the type [`Optional<UnknownFunction>`](#unknownfunction).
+
+- ### isOptBoolean
+
+  Takes an `unknown` value and returns a boolean indicating if the value is of the type `Optional<boolean>`.
+
+- ### isOptString
+
+  Takes an `unknown` value and returns a boolean indicating if the value is of the type `Optional<string>`.
+
+- ### isOptNumber
+
+  Takes an `unknown` value and returns a boolean indicating if the value is of the type `Optional<number>`.
+
+- ### isOptIndex
+
+  Takes an `unknown` value and returns a boolean indicating if the value is of the type [`Optional<Index>`](#index).
+
+- ### isOptIndexable
+
+  Takes an `unknown` value and returns a boolean indicating if the value is of the type [`Optional<Indexable>`](#indexable).
+
+- ### isOptArray
+
+  Takes an `unknown` value and returns a boolean indicating if the value is of the type `Optional<Array<unknown>>`.
+
+- ### isOptJSONValue
+
+  Takes an `unknown` value and returns a boolean indicating if the value is of the type [`Optional<JSONValue>`](#jsonvalue).
+
+- ### isOptJSONArray
+
+  Takes an [`Optional<JSONValue>`](#jsonvalue) value and returns a boolean indicating if the value is of the type [`Optional<JSONArray>`](#jsonarray).
+
+- ### isOptJSONObject
+
+  Takes an [`Optional<JSONValue>`](#jsonvalue) value and returns a boolean indicating if the value is of the type [`Optional<JSONObject>`](#jsonobject).
+
+- ### isOptStruct
+
+  Takes an [`InterfacePattern`](#interfacepattern) which is equivalent to `Type` and returns a new [`TypeAssert`](#typeassert) function for `Optional<Type>`, where `Type` is an interface defined by the [`TypeAsserts`](#typeassert) specified in the pattern. Refer to [Special Case: asStruct](#special-case-asstruct) for examples.
 
 ### Reference: Type Coerce
 
@@ -456,6 +583,14 @@ const obj = asJSONValue(almost_right);
 
   Identical to [`UnknownFunction`](#unknownfunction) in all ways but 1, it returns `Promise<unknown>` instead.
 
+- ### TypeAssert
+
+  An alias for a function that meets the requirements of TypeScript [Type Guards](https://www.typescriptlang.org/docs/handbook/advanced-types.html#user-defined-type-guards). They take the format `(value: unknown) => value is TYPE`. With the except of specialist JSON checks all [Type Checks](#reference-type-checks) conform to this type.
+
+- ### InterfacePattern
+
+  An alias for a [`Dictionary`](#dictionary) of [`TypeAssert`](#typeassert) functions. When used in conjunction with [`isStruct`](#isstruct) or [`asStruct`](#asstruct) they can  validate an `object` again the equivalent interface to the pattern.
+
 ## Changelog
 
 ### v1.0.0
@@ -475,3 +610,14 @@ const obj = asJSONValue(almost_right);
 
 - Change: return type of `asOpt{TYPE}` is now `TYPE | undefined` instead of `Optional<TYPE>` ( removes null from union )
 - Documentation corrections.
+
+### v1.2.0
+
+- Add: Introduce `isStruct` and `asStruct` that allow the inspection of a object to see if it meets a specific interface.
+- Add: Optional variants of Type Checks with form `isOpt{TYPE}`.
+- Change: `asDefined` can longer accept `null` as a fallback parameter.
+- Change: `asIndexable` now accepts arrays.
+- Add: `isIndexable` type check.
+- Change: Expose the `TypeAssert` type publicly.
+- Add: `InterfacePattern` type.
+- Change: modify the type names in errors to be closer to the TypeScript names.
