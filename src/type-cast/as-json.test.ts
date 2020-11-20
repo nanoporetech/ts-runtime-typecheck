@@ -108,16 +108,16 @@ describe('asOptJSONValue', () => {
     });
   });
   it('does not accept symbol', () => {
-    expect(() => asOptJSONValue(Symbol('fail'))).toThrow('Unable to cast symbol to JSONValue');
+    expect(() => asOptJSONValue(Symbol('fail'))).toThrow('Unable to cast symbol to Optional<JSONValue>');
   });
   it('accepts undefined', () => {
     expect(asOptJSONValue(undefined)).toBe(undefined);
   });
   it('does not accept array elements that aren\'t JSONValue', () => {
-    expect(() => asOptJSONValue([ Symbol('bad') ])).toThrow('Unable to cast object to JSONValue');
+    expect(() => asOptJSONValue([ Symbol('bad') ])).toThrow('Unable to cast object to Optional<JSONValue>');
   });
   it('does not accept object values that aren\'t JSONValue', () => {
-    expect(() => asOptJSONValue({ val: Symbol('bad') })).toThrow('Unable to cast object to JSONValue');
+    expect(() => asOptJSONValue({ val: Symbol('bad') })).toThrow('Unable to cast object to Optional<JSONValue>');
   });
 });
 
@@ -126,16 +126,16 @@ describe('asOptJSONArray', () => {
     expect(asOptJSONArray([ 12 ])).toEqual([ 12 ]);
   });
   it('doesn\'t accept object', () => {
-    expect(() => asOptJSONArray({ val: 12 })).toThrow('Unable to cast object to JSONArray');
+    expect(() => asOptJSONArray({ val: 12 })).toThrow('Unable to cast object to Optional<JSONArray>');
   });
   it('accepts nullish', () => {
     expect(asOptJSONArray(null)).toBe(undefined);
     expect(asOptJSONArray(undefined)).toBe(undefined);
   });
   it('doesn\'t accept primitives', () => {
-    expect(() => asOptJSONArray(12)).toThrow('Unable to cast number to JSONArray');
-    expect(() => asOptJSONArray('fail')).toThrow('Unable to cast string to JSONArray');
-    expect(() => asOptJSONArray(false)).toThrow('Unable to cast boolean to JSONArray');
+    expect(() => asOptJSONArray(12)).toThrow('Unable to cast number to Optional<JSONArray>');
+    expect(() => asOptJSONArray('fail')).toThrow('Unable to cast string to Optional<JSONArray>');
+    expect(() => asOptJSONArray(false)).toThrow('Unable to cast boolean to Optional<JSONArray>');
   });
 });
 
@@ -144,7 +144,7 @@ describe('asOptJSONObject', () => {
     expect(asOptJSONObject({ val: 12, 42: 'Life' })).toEqual({ val: 12, 42: 'Life' });
   });
   it('doesn\'t accept array', () => {
-    expect(() => asOptJSONObject([ 12 ])).toThrow('Unable to cast object to JSONObject');
+    expect(() => asOptJSONObject([ 12 ])).toThrow('Unable to cast object to Optional<JSONObject>');
   });
   it('accepts nullish', () => {
     expect(asOptJSONObject(null)).toBe(undefined);
@@ -152,8 +152,8 @@ describe('asOptJSONObject', () => {
 
   });
   it('doesn\'t accept primitives', () => {
-    expect(() => asOptJSONObject(12)).toThrow('Unable to cast number to JSONObject');
-    expect(() => asOptJSONObject('fail')).toThrow('Unable to cast string to JSONObject');
-    expect(() => asOptJSONObject(false)).toThrow('Unable to cast boolean to JSONObject');
+    expect(() => asOptJSONObject(12)).toThrow('Unable to cast number to Optional<JSONObject>');
+    expect(() => asOptJSONObject('fail')).toThrow('Unable to cast string to Optional<JSONObject>');
+    expect(() => asOptJSONObject(false)).toThrow('Unable to cast boolean to Optional<JSONObject>');
   });
 });
