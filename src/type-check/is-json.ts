@@ -34,7 +34,17 @@ export function isJSONArray(val: JSONValue): val is JSONArray {
 }
 isJSONArray.TYPE_NAME = 'JSONArray';
 
+export function isOptJSONArray(val: Optional<JSONValue>): val is Optional<JSONArray> {
+  return isNullish(val) || Array.isArray(val);
+}
+isOptJSONArray.TYPE_NAME = 'Optional<JSONArray>';
+
 export function isJSONObject(val: JSONValue): val is JSONObject {
   return val !== null && typeof val === 'object' && !Array.isArray(val);
 }
 isJSONObject.TYPE_NAME = 'JSONObject';
+
+export function isOptJSONObject(val: Optional<JSONValue>): val is Optional<JSONObject> {
+  return isNullish(val) || typeof val === 'object' && !Array.isArray(val);
+}
+isOptJSONObject.TYPE_NAME = 'Optional<JSONObject>';
