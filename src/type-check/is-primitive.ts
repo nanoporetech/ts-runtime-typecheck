@@ -1,4 +1,4 @@
-import type { Index } from '../Index.type';
+import type { Index, Indexable } from '../Index.type';
 import type { Nullish } from '../Nullish.type';
 import type { Dictionary } from '../Dictionary.type';
 import type { Optional } from '../Optional.type';
@@ -63,6 +63,16 @@ export function isOptIndex(obj: unknown): obj is Optional<Index> {
   return isIndex(obj) || isNullish(obj);
 }
 isOptIndex.TYPE_NAME = 'Optional<Index>';
+
+export function isIndexable(obj: unknown): obj is Indexable {
+  return obj !== null && typeof obj === 'object';
+}
+isIndexable.TYPE_NAME = 'Indexable';
+
+export function isOptIndexable(obj: unknown): obj is Optional<Indexable> {
+  return isIndexable(obj) || isNullish(obj);
+}
+isOptIndexable.TYPE_NAME = 'Optional<Indexable>';
 
 export function isArray(obj: unknown): obj is unknown[] {
   return Array.isArray(obj);

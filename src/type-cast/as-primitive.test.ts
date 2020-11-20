@@ -69,6 +69,7 @@ describe('primative casts', () => {
   it('asIndexable', () => {
     // intended
     expect(asIndexable({})).toEqual({});
+    expect(asIndexable([])).toEqual([]);
     // fallback
     expect(asIndexable(null, {})).toEqual({});
     expect(asIndexable(undefined, {})).toEqual({});
@@ -78,7 +79,6 @@ describe('primative casts', () => {
     expect(() => asIndexable(false)).toThrow('Unable to cast boolean to Indexable');
     expect(() => asIndexable(null)).toThrow('Unable to cast object to Indexable');
     expect(() => asIndexable(undefined)).toThrow('Unable to cast undefined to Indexable');
-    expect(() => asIndexable([])).toThrow('Unable to cast object to Indexable');
     expect(() => asIndexable(fn)).toThrow('Unable to cast function to Indexable');
   });
   it('asBoolean', () => {
@@ -182,13 +182,13 @@ describe('primative casts', () => {
   it('asOptIndexable', () => {
     // intended
     expect(asOptIndexable({})).toEqual({});
+    expect(asOptIndexable([])).toEqual([]);
     expect(asOptIndexable(null)).toBeUndefined();
     expect(asOptIndexable(undefined)).toBeUndefined();
     // should fail
     expect(() => asOptIndexable(12)).toThrow('Unable to cast number to Optional<Indexable>');
     expect(() => asOptIndexable('hi')).toThrow('Unable to cast string to Optional<Indexable>');
     expect(() => asOptIndexable(false)).toThrow('Unable to cast boolean to Optional<Indexable>');
-    expect(() => asOptIndexable([])).toThrow('Unable to cast object to Optional<Indexable>');
     expect(() => asOptIndexable(fn)).toThrow('Unable to cast function to Optional<Indexable>');
   });
   it('asOptBoolean', () => {
