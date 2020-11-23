@@ -1,6 +1,6 @@
 {
   "name": "ts-runtime-typecheck",
-  "version": "1.1.1",
+  "version": "1.2.0",
   "description": "A collection of common types for TypeScript along with dynamic type cast methods.",
   "main": "cjs/index.js",
   "module": "mjs/index.mjs",
@@ -23,8 +23,8 @@
     "eslint": "^7.10.0",
     "jest": "^26.5.0",
     "rollup": "^2.32.0",
+    "rollup-plugin-typescript2": "^0.28.0",
     "ts-jest": "^26.4.1",
-    "typescript": "^4.0.3",
-    "rollup-plugin-typescript2": "^0.28.0"
+    "typescript": "^4.1.2"
   }
 }
