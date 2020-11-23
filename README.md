@@ -473,11 +473,11 @@ const obj = asJSONValue(almost_right);
 
   Takes an [`JSONValue`](#jsonvalue) value and returns a boolean indicating if the value is of the type [`JSONObject`](#jsonobject).
 
-### Reference: Optional Type Checks
-
 - ### isStruct
 
   Takes an [`InterfacePattern`](#interfacepattern) which is equivalent to `Type` and returns a new [`TypeAssert`](#typeassert) function for `Type`, where `Type` is an interface defined by the [`TypeAsserts`](#typeassert) specified in the pattern. Refer to [Special Case: asStruct](#special-case-asstruct) for examples.
+  
+### Reference: Optional Type Checks
 
 - ### isOptRecord
 
