@@ -15,7 +15,7 @@
     "url": "git@github.com:nanoporetech/ts-extended-types.git"
   },
   "author": "Iain Shorter",
-  "license": "MIT",
+  "license": "MPL-2.0",
   "devDependencies": {
     "@types/jest": "^26.0.14",
     "@typescript-eslint/eslint-plugin": "^4.3.0",
