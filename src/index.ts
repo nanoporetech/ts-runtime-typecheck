@@ -6,6 +6,7 @@ export * from './type-check/is-json';
 export * from './type-check/is-primitive';
 export * from './type-check/is-struct';
 export * from './type-check/is-union';
+export * from './type-check/is-recursive';
 export * from './type-coerce/make-primative';
 
 export { Index, Indexable } from './Index.type';
