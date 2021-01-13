@@ -98,7 +98,7 @@ function setup (useComplexType: boolean = false, complexInst?: ComplexType) {
 
 ### Special case: asStruct
 
-Validating the shape of an object using a combination of [`asRecord`](#asrecord) and other [Type Casts](#reference-type-casts) specific to property types can be a bit verbose. To simplify this scenario you can use [`asStruct`](#asstruct). This function takes an [`InterfacePattern`](#interfacepattern) that specifies a specific structure and returns a new function that will cast an unknown value to that structure. An [`InterfacePattern`](#interfacepattern is a fancy name for a [`Dictionary`](#dictionary) of [Type Check](#reference-type-checks) functions.
+Validating the shape of an object using a combination of [`asDictionary`](#asdictionary) and other [Type Casts](#reference-type-casts) specific to property types can be a bit verbose. To simplify this scenario you can use [`asStruct`](#asstruct). This function takes an [`InterfacePattern`](#interfacepattern) that specifies a specific structure and returns a new function that will cast an unknown value to that structure. An [`InterfacePattern`](#interfacepattern is a fancy name for a [`Dictionary`](#dictionary) of [Type Check](#reference-type-checks) functions.
 
 ```typescript
 import { asStruct, isString, isOptString, isNumber } from 'ts-runtime-typecheck';
@@ -138,13 +138,13 @@ function main (obj: unknown) {
 
 ### Recursive Array/Object Casts
 
-Validating that a value is an array or object is easy enough, but how about the contents? [`asArrayRecursive`](#asarrayrecursive) and [`asObjectRecursive`](#asobjectrecursive) allow for deep type casting through a user specified element cast. For example, to cast to `Array<string>`:
+Validating that a value is an array or object is easy enough, but how about the contents? [`asArrayOf`](#asarrayof) and [`asDictionaryOf`](#asdictionaryof) allow for deep type casting through a user specified element cast. For example, to cast to `Array<string>`:
 
 ```typescript
-import { asString, asArrayRecursive } from 'ts-runtime-typecheck';
+import { asString, asArrayOf } from 'ts-runtime-typecheck';
 
 function main (obj: unknown) {
-  const asStringArray = asArrayRecursive(asString);
+  const asStringArray = asArrayOf(asString);
 
   const arr: string[] = asStringArray(obj);
 }
@@ -153,13 +153,13 @@ function main (obj: unknown) {
 Or `Array<Dictionary<number>>`:
 
 ```typescript
-import { asNumber, asRecordRecursive, asArrayRecursive } from 'ts-runtime-typecheck';
+import { asNumber, asDictionaryOf, asArrayOf } from 'ts-runtime-typecheck';
 
 function main () {
-  const asNumericRecord = asRecordRecursive(asNumber);
-  const asArrayOfNumericRecords = asArrayRecursive(asNumericRecord);
+  const asNumericDictionary = asDictionaryOf(asNumber);
+  const asArrayOfNumericDictionaries = asArrayOf(asNumericDictionary);
 
-  const arr = asArrayOfNumericRecords([
+  const arr = asArrayOfNumericDictionaries([
     {
       a: 12,
       b: 42
@@ -321,7 +321,7 @@ const obj = asJSONValue(almost_right);
 
   Cast `unknown` to `Array<unknown>`. Accepts an optional fallback value that is emitted if the value is nullish and fallback is defined.
 
-- ### asRecord
+- ### asDictionary
 
   Cast `unknown` to [`Dictionary<unknown>`](#dictionary). Accepts an optional fallback value that is emitted if the value is nullish and fallback is defined.
 
@@ -345,11 +345,11 @@ const obj = asJSONValue(almost_right);
   
   Cast [`JSONValue`](#jsonvalue) to [`JSONArray`](#jsonarray). Unlike [`asJSONValue`](#asjsonvalue) this does not perform recursive validation, hence it only accepts a [`JSONValue`](#jsonvalue) so that the sub-elements are of a known type. Accepts an optional fallback value that is emitted if the value is nullish and fallback is defined.
 
-- ### asArrayRecursive
+- ### asArrayOf
   
   Takes a Type Cast function for `Type` and returns a new Type Cast function for `Array<Type>` where type is a generic parameter. The emitted Type Cast function accepts an optional fallback value that is emitted if the value is nullish and fallback is defined. Refer to [Recursive Array/Object casts](#recursive-arrayobject-casts) for examples.
 
-- ### asObjectRecursive
+- ### asDictionaryOf
   
   Takes a Type Cast function for `Type` and returns a new Type Cast function for [`Dictionary<Type>`](#dictionary) where type is a generic parameter. The emitted Type Cast function accepts an optional fallback value that is emitted if the value is nullish and fallback is defined. Refer to [Recursive Array/Object casts](#recursive-arrayobject-casts) for examples.
 
@@ -383,7 +383,7 @@ const obj = asJSONValue(almost_right);
 
   Cast `unknown` value to `Array<unknown> | undefined`. If value is [`Nullish`](#nullish) then return `undefined`.
 
-- ### asOptRecord
+- ### asOptDictionary
 
   Cast `unknown` value to [`Dictionary<unknown> | undefined`](#dictionary). If value is [`Nullish`](#nullish) then return `undefined`.
 
@@ -403,11 +403,11 @@ const obj = asJSONValue(almost_right);
 
   Cast [`JSONValue | undefined`](#jsonvalue) value to [`JSONArray | undefined`](#jsonarray). If value is [`Nullish`](#nullish) then return `undefined`.
 
-- ### asOptArrayRecursive
+- ### asOptArrayOf
 
   Takes a Type Cast function for `Type` and returns a new Type Cast function for `Array<Type> | undefined` where type is a generic parameter. Refer to [Recursive Array/Object casts](#recursive-arrayobject-casts) for examples.
 
-- ### asOptRecordRecursive
+- ### asOptDictionaryOf
 
   Takes a Type Cast function for `Type` and returns a new Type Cast function for [`Dictionary<Type> | undefined`](#dictionary) where type is a generic parameter. Refer to [Recursive Array/Object casts](#recursive-arrayobject-casts) for examples.
 
@@ -417,7 +417,7 @@ const obj = asJSONValue(almost_right);
 
 ### Reference: Type Checks
 
-- ### isRecord
+- ### isDictionary
 
   Takes an `unknown` value and returns a boolean indicating if the value is of the type [`Dictionary<unknown>`](#dictionary).
 
@@ -479,7 +479,7 @@ const obj = asJSONValue(almost_right);
   
 ### Reference: Optional Type Checks
 
-- ### isOptRecord
+- ### isOptDictionary
 
   Takes an `unknown` value and returns a boolean indicating if the value is of the type [`Optional<Dictionary<unknown>>`](#dictionary).
 
@@ -621,3 +621,14 @@ const obj = asJSONValue(almost_right);
 - Change: Expose the `TypeAssert` type publicly.
 - Add: `InterfacePattern` type.
 - Change: modify the type names in errors to be closer to the TypeScript names.
+
+### v1.3.0
+
+- Rename: `asRecord` to `asDictionary`.
+- Rename: `asOptRecord` to `asOptDictionary`.
+- Rename: `isRecord` to `isDictionary`.
+- Rename: `asArrayRecursive` to `asArrayOf`.
+- Rename: `asRecordRecursive` to `asDictionaryOf`.
+- Rename: `asOptArrayRecursive` to `asOptArrayOf`.
+- Rename: `asOptRecordRecursive` to `asOptDictionaryOf`.
+- Note: an alias has been created to for each renamed method for the original name. These aliases have been marked as depreciated to indicate they have been renamed.
