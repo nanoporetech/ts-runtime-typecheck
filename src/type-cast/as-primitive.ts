@@ -2,7 +2,7 @@ import type { Dictionary } from '../Dictionary.type';
 import type { OptionalTypeCast, TypeCast } from '../TypeCast.type';
 import type { Optional } from '../Optional.type';
 
-import { isString, isNullish, isNumber, isDefined, isArray, isBoolean, isFunction, isIndex, isRecord, isIndexable } from '../type-check/is-primitive';
+import { isString, isNullish, isNumber, isDefined, isArray, isBoolean, isFunction, isIndex, isDictionary, isIndexable } from '../type-check/is-primitive';
 import { optTypeCast, typeCast } from './type-cast';
 import { memoize } from '../memoize';
 
@@ -12,7 +12,7 @@ export const asIndex = typeCast(isIndex);
 export const asIndexable = typeCast(isIndexable);
 export const asBoolean = typeCast(isBoolean);
 export const asArray = typeCast(isArray);
-export const asRecord = typeCast(isRecord);
+export const asDictionary = typeCast(isDictionary);
 export const asFunction = typeCast(isFunction);
 
 // NOTE this *could* work with the typeCast helper
@@ -34,10 +34,10 @@ export const asOptIndex = optTypeCast(isIndex);
 export const asOptIndexable = optTypeCast(isIndexable);
 export const asOptBoolean = optTypeCast(isBoolean);
 export const asOptArray = optTypeCast(isArray);
-export const asOptRecord = optTypeCast(isRecord);
+export const asOptDictionary = optTypeCast(isDictionary);
 export const asOptFunction = optTypeCast(isFunction);
 
-export const asArrayRecursive = memoize(<T> (visitor: (obj: unknown) => T): TypeCast<T[]> => {
+export const asArrayOf = memoize(<T> (visitor: (obj: unknown) => T): TypeCast<T[]> => {
   return (obj: unknown, fallback?: T[]) => {
     if (isNullish(obj) && typeof fallback !== 'undefined') {
       return fallback;
@@ -46,12 +46,12 @@ export const asArrayRecursive = memoize(<T> (visitor: (obj: unknown) => T): Type
   };
 });
 
-export const asRecordRecursive = memoize(<T> (visitor: (obj: unknown) => T): TypeCast<Dictionary<T>> => {
+export const asDictionaryOf = memoize(<T> (visitor: (obj: unknown) => T): TypeCast<Dictionary<T>> => {
   return (obj: unknown, fallback?: Dictionary<T>) => {
     if (isNullish(obj) && typeof fallback !== 'undefined') {
       return fallback;
     }
-    const source = asRecord(obj);
+    const source = asDictionary(obj);
     const record: Dictionary<T> = {};
     for (const key in source) {
       record[key] = visitor(source[key]);
@@ -60,8 +60,8 @@ export const asRecordRecursive = memoize(<T> (visitor: (obj: unknown) => T): Typ
   };
 });
 
-export const asOptArrayRecursive = memoize(<T>(visitor: (obj: unknown) => T): OptionalTypeCast<T[]> => {
-  const convert = asArrayRecursive(visitor);
+export const asOptArrayOf = memoize(<T>(visitor: (obj: unknown) => T): OptionalTypeCast<T[]> => {
+  const convert = asArrayOf(visitor);
   return (obj) => {
     if (isNullish(obj)) {
       return undefined;
@@ -70,8 +70,8 @@ export const asOptArrayRecursive = memoize(<T>(visitor: (obj: unknown) => T): Op
   };
 });
 
-export const asOptRecordRecursive = memoize(<T>(visitor: (obj: unknown) => T): OptionalTypeCast<Dictionary<T>> => {
-  const convert = asRecordRecursive(visitor);
+export const asOptDictionaryOf = memoize(<T>(visitor: (obj: unknown) => T): OptionalTypeCast<Dictionary<T>> => {
+  const convert = asDictionaryOf(visitor);
   return (obj) => {
     if (isNullish(obj)) {
       return undefined;
@@ -79,3 +79,28 @@ export const asOptRecordRecursive = memoize(<T>(visitor: (obj: unknown) => T): O
     return convert(obj);
   };
 });
+
+/** 
+ * @deprecated `asRecord` will be removed at a future date, it has been renamed to `asDictionary`.
+*/
+export const asRecord = asDictionary;
+/** 
+ * @deprecated `asOptRecord` will be removed at a future date, it has been renamed to `asOptDictionary`.
+*/
+export const asOptRecord = asOptDictionary;
+/** 
+ * @deprecated `asArrayRecursive` will be removed at a future date, it has been renamed to `asArrayOf`.
+*/
+export const asArrayRecursive = asArrayOf;
+/** 
+ * @deprecated `asRecordRecursive` will be removed at a future date, it has been renamed to `asDictionaryOf`.
+*/
+export const asRecordRecursive = asDictionaryOf;
+/** 
+ * @deprecated `asOptArrayRecursive` will be removed at a future date, it has been renamed to `asOptArrayOf`.
+*/
+export const asOptArrayRecursive = asOptArrayOf;
+/** 
+ * @deprecated `asOptRecordRecursive` will be removed at a future date, it has been renamed to `asOptDictionaryOf`.
+*/
+export const asOptRecordRecursive = asOptDictionaryOf;

@@ -4,16 +4,24 @@ import type { Dictionary } from '../Dictionary.type';
 import type { Optional } from '../Optional.type';
 import type { UnknownFunction } from '../UnknownFunction.type';
 
-export function isRecord(obj: unknown): obj is Dictionary {
+export function isDictionary(obj: unknown): obj is Dictionary {
   return obj !== null && typeof obj === 'object' && Array.isArray(obj) === false;
 }
-isRecord.TYPE_NAME = 'Dictionary';
-
-export function isOptRecord(obj: unknown): obj is Optional<Dictionary> {
-  return isRecord(obj) || isNullish(obj);
+isDictionary.TYPE_NAME = 'Dictionary';
+export function isOptDictionary(obj: unknown): obj is Optional<Dictionary> {
+  return isDictionary(obj) || isNullish(obj);
 }
-isOptRecord.TYPE_NAME = 'Optional<Dictionary>';
+isOptDictionary.TYPE_NAME = 'Optional<Dictionary>';
 
+/** 
+ * @deprecated `isRecord` will be removed at a future date, it has been renamed to `isDictionary`.
+*/
+export const isRecord = isDictionary;
+
+/** 
+ * @deprecated `isOptRecord` will be removed at a future date, it has been renamed to `isOptDictionary`.
+*/
+export const isOptRecord = isOptDictionary;
 export function isFunction(obj: unknown): obj is UnknownFunction {
   return typeof obj === 'function';
 }

@@ -1,4 +1,4 @@
-import { asArray, asArrayRecursive, asBoolean, asDefined, asFunction, asIndex, asIndexable, asNumber, asOptArray, asOptArrayRecursive, asOptBoolean, asOptFunction, asOptIndex, asOptIndexable, asOptNumber, asOptRecord, asOptRecordRecursive, asOptString, asRecord, asRecordRecursive, asString } from './as-primitive';
+import { asArray, asArrayOf, asArrayRecursive, asBoolean, asDefined, asDictionary, asDictionaryOf, asFunction, asIndex, asIndexable, asNumber, asOptArray, asOptArrayOf, asOptArrayRecursive, asOptBoolean, asOptDictionary, asOptDictionaryOf, asOptFunction, asOptIndex, asOptIndexable, asOptNumber, asOptRecord, asOptRecordRecursive, asOptString, asRecord, asRecordRecursive, asString } from './as-primitive';
 
 describe('primative casts', () => {
   const fn = () => false;
@@ -111,20 +111,20 @@ describe('primative casts', () => {
     expect(() => asArray({})).toThrow('Unable to cast object to unknown[]');
     expect(() => asArray(fn)).toThrow('Unable to cast function to unknown[]');
   });
-  it('asRecord', () => {
+  it('asDictionary', () => {
     // intended
-    expect(asRecord({})).toEqual({});
+    expect(asDictionary({})).toEqual({});
     // fallback
-    expect(asRecord(null, {})).toEqual({});
-    expect(asRecord(undefined, {})).toEqual({});
+    expect(asDictionary(null, {})).toEqual({});
+    expect(asDictionary(undefined, {})).toEqual({});
     // should fail
-    expect(() => asRecord(12)).toThrow('Unable to cast number to Dictionary');
-    expect(() => asRecord('hi')).toThrow('Unable to cast string to Dictionary');
-    expect(() => asRecord(false)).toThrow('Unable to cast boolean to Dictionary');
-    expect(() => asRecord(null)).toThrow('Unable to cast object to Dictionary');
-    expect(() => asRecord(undefined)).toThrow('Unable to cast undefined to Dictionary');
-    expect(() => asRecord([])).toThrow('Unable to cast object to Dictionary');
-    expect(() => asRecord(fn)).toThrow('Unable to cast function to Dictionary');
+    expect(() => asDictionary(12)).toThrow('Unable to cast number to Dictionary');
+    expect(() => asDictionary('hi')).toThrow('Unable to cast string to Dictionary');
+    expect(() => asDictionary(false)).toThrow('Unable to cast boolean to Dictionary');
+    expect(() => asDictionary(null)).toThrow('Unable to cast object to Dictionary');
+    expect(() => asDictionary(undefined)).toThrow('Unable to cast undefined to Dictionary');
+    expect(() => asDictionary([])).toThrow('Unable to cast object to Dictionary');
+    expect(() => asDictionary(fn)).toThrow('Unable to cast function to Dictionary');
   });
   it('asFunction', () => {
     // intended
@@ -215,17 +215,17 @@ describe('primative casts', () => {
     expect(() => asOptArray({})).toThrow('Unable to cast object to Optional<unknown[]>');
     expect(() => asOptArray(fn)).toThrow('Unable to cast function to Optional<unknown[]>');
   });
-  it('asOptRecord', () => {
+  it('asOptDictionary', () => {
     // intended
-    expect(asOptRecord({})).toEqual({});
-    expect(asOptRecord(null)).toBeUndefined();
-    expect(asOptRecord(undefined)).toBeUndefined();
+    expect(asOptDictionary({})).toEqual({});
+    expect(asOptDictionary(null)).toBeUndefined();
+    expect(asOptDictionary(undefined)).toBeUndefined();
     // should fail
-    expect(() => asOptRecord(12)).toThrow('Unable to cast number to Optional<Dictionary>');
-    expect(() => asOptRecord('hi')).toThrow('Unable to cast string to Optional<Dictionary>');
-    expect(() => asOptRecord(false)).toThrow('Unable to cast boolean to Optional<Dictionary>');
-    expect(() => asOptRecord([])).toThrow('Unable to cast object to Optional<Dictionary>');
-    expect(() => asOptRecord(fn)).toThrow('Unable to cast function to Optional<Dictionary>');
+    expect(() => asOptDictionary(12)).toThrow('Unable to cast number to Optional<Dictionary>');
+    expect(() => asOptDictionary('hi')).toThrow('Unable to cast string to Optional<Dictionary>');
+    expect(() => asOptDictionary(false)).toThrow('Unable to cast boolean to Optional<Dictionary>');
+    expect(() => asOptDictionary([])).toThrow('Unable to cast object to Optional<Dictionary>');
+    expect(() => asOptDictionary(fn)).toThrow('Unable to cast function to Optional<Dictionary>');
   });
   it('asOptFunction', () => {
     // intended
@@ -244,9 +244,9 @@ describe('primative casts', () => {
 describe('recursive casts', () => {
   const fn = () => false;
 
-  it('asArrayRecursive', () => {
-    const asStringArray = asArrayRecursive(asString);
-    const asOptStringArray = asArrayRecursive(asOptString);
+  it('asArrayOf', () => {
+    const asStringArray = asArrayOf(asString);
+    const asOptStringArray = asArrayOf(asOptString);
     // intended
     expect(asStringArray([])).toEqual([]);
     expect(asStringArray(['test', 'test'])).toEqual(['test', 'test']);
@@ -265,46 +265,46 @@ describe('recursive casts', () => {
     expect(() => asStringArray(fn)).toThrow('Unable to cast function to unknown[]');
   });
 
-  it('asArrayRecursive memoization', () => {
-    const asStringArray = asArrayRecursive(asString);
-    expect(asStringArray).toBe(asArrayRecursive(asString));
-    expect(asStringArray).not.toBe(asArrayRecursive(asNumber));
+  it('asArrayOf memoization', () => {
+    const asStringArray = asArrayOf(asString);
+    expect(asStringArray).toBe(asArrayOf(asString));
+    expect(asStringArray).not.toBe(asArrayOf(asNumber));
   });
 
-  it('asRecordRecursive', () => {
-    const asStringRecord = asRecordRecursive(asString);
-    const asOptStringRecord = asRecordRecursive(asOptString);
+  it('asDictionaryOf', () => {
+    const asStringDictionary = asDictionaryOf(asString);
+    const asOptStringDictionary = asDictionaryOf(asOptString);
 
-    expect(asStringRecord({})).toEqual({});
-    expect(asStringRecord({ a: 'test', b: 'test' })).toEqual({ a: 'test', b: 'test' });
-    expect(asOptStringRecord({ a: 'test', b: null })).toEqual({ a: 'test', b: undefined });
+    expect(asStringDictionary({})).toEqual({});
+    expect(asStringDictionary({ a: 'test', b: 'test' })).toEqual({ a: 'test', b: 'test' });
+    expect(asOptStringDictionary({ a: 'test', b: null })).toEqual({ a: 'test', b: undefined });
     // fallback
-    expect(asStringRecord(null, {})).toEqual({});
-    expect(asStringRecord(undefined, {})).toEqual({});
+    expect(asStringDictionary(null, {})).toEqual({});
+    expect(asStringDictionary(undefined, {})).toEqual({});
     // should fail
-    expect(() => asStringRecord({ a: 'test', b: null })).toThrow('Unable to cast object to string');
-    expect(() => asStringRecord(12)).toThrow('Unable to cast number to Dictionary');
-    expect(() => asStringRecord('hi')).toThrow('Unable to cast string to Dictionary');
-    expect(() => asStringRecord(false)).toThrow('Unable to cast boolean to Dictionary');
-    expect(() => asStringRecord(null)).toThrow('Unable to cast object to Dictionary');
-    expect(() => asStringRecord(undefined)).toThrow('Unable to cast undefined to Dictionary');
-    expect(() => asStringRecord([])).toThrow('Unable to cast object to Dictionary');
-    expect(() => asStringRecord(fn)).toThrow('Unable to cast function to Dictionary');
+    expect(() => asStringDictionary({ a: 'test', b: null })).toThrow('Unable to cast object to string');
+    expect(() => asStringDictionary(12)).toThrow('Unable to cast number to Dictionary');
+    expect(() => asStringDictionary('hi')).toThrow('Unable to cast string to Dictionary');
+    expect(() => asStringDictionary(false)).toThrow('Unable to cast boolean to Dictionary');
+    expect(() => asStringDictionary(null)).toThrow('Unable to cast object to Dictionary');
+    expect(() => asStringDictionary(undefined)).toThrow('Unable to cast undefined to Dictionary');
+    expect(() => asStringDictionary([])).toThrow('Unable to cast object to Dictionary');
+    expect(() => asStringDictionary(fn)).toThrow('Unable to cast function to Dictionary');
   });
 
-  it('asRecordRecursive memoization', () => {
-    const asStringRecord = asRecordRecursive(asString);
-    expect(asStringRecord).toBe(asRecordRecursive(asString));
-    expect(asStringRecord).not.toBe(asRecordRecursive(asNumber));
+  it('asDictionaryOf memoization', () => {
+    const asStringDictionary = asDictionaryOf(asString);
+    expect(asStringDictionary).toBe(asDictionaryOf(asString));
+    expect(asStringDictionary).not.toBe(asDictionaryOf(asNumber));
   });
 });
 
 describe('optional recursive casts', () => {
   const fn = () => false;
 
-  it('asOptArrayRecursive', () => {
-    const asOptStringArray = asOptArrayRecursive(asString);
-    const asOptOptStringArray = asOptArrayRecursive(asOptString);
+  it('asOptArrayOf', () => {
+    const asOptStringArray = asOptArrayOf(asString);
+    const asOptOptStringArray = asOptArrayOf(asOptString);
     // intended
     expect(asOptStringArray([])).toEqual([]);
     expect(asOptStringArray(['test', 'test'])).toEqual(['test', 'test']);
@@ -321,34 +321,44 @@ describe('optional recursive casts', () => {
     expect(() => asOptStringArray(fn)).toThrow('Unable to cast function to unknown[]');
   });
 
-  it('asOptArrayRecursive memoization', () => {
-    const asOptStringArray = asOptArrayRecursive(asString);
-    expect(asOptStringArray).toBe(asOptArrayRecursive(asString));
-    expect(asOptStringArray).not.toBe(asOptArrayRecursive(asNumber));
+  it('asOptArrayOf memoization', () => {
+    const asOptStringArray = asOptArrayOf(asString);
+    expect(asOptStringArray).toBe(asOptArrayOf(asString));
+    expect(asOptStringArray).not.toBe(asOptArrayOf(asNumber));
   });
 
-  it('asOptRecordRecursive', () => {
-    const asOptStringRecord = asOptRecordRecursive(asString);
-    const asOptOptStringRecord = asOptRecordRecursive(asOptString);
+  it('asOptDictionaryOf', () => {
+    const asOptStringDictionary = asOptDictionaryOf(asString);
+    const asOptOptStringDictionary = asOptDictionaryOf(asOptString);
     // intended
-    expect(asOptStringRecord({})).toEqual({});
-    expect(asOptStringRecord({ a: 'test', b: 'test' })).toEqual({ a: 'test', b: 'test' });
-    expect(asOptOptStringRecord({ a: 'test', b: null })).toEqual({ a: 'test', b: undefined });
+    expect(asOptStringDictionary({})).toEqual({});
+    expect(asOptStringDictionary({ a: 'test', b: 'test' })).toEqual({ a: 'test', b: 'test' });
+    expect(asOptOptStringDictionary({ a: 'test', b: null })).toEqual({ a: 'test', b: undefined });
     // optionality
-    expect(asOptStringRecord(null)).toEqual(undefined);
-    expect(asOptStringRecord(undefined)).toEqual(undefined);
+    expect(asOptStringDictionary(null)).toEqual(undefined);
+    expect(asOptStringDictionary(undefined)).toEqual(undefined);
     // should fail
-    expect(() => asOptStringRecord({ a: 'test', b: null })).toThrow('Unable to cast object to string');
-    expect(() => asOptStringRecord(12)).toThrow('Unable to cast number to Dictionary');
-    expect(() => asOptStringRecord('hi')).toThrow('Unable to cast string to Dictionary');
-    expect(() => asOptStringRecord(false)).toThrow('Unable to cast boolean to Dictionary');
-    expect(() => asOptStringRecord([])).toThrow('Unable to cast object to Dictionary');
-    expect(() => asOptStringRecord(fn)).toThrow('Unable to cast function to Dictionary');
+    expect(() => asOptStringDictionary({ a: 'test', b: null })).toThrow('Unable to cast object to string');
+    expect(() => asOptStringDictionary(12)).toThrow('Unable to cast number to Dictionary');
+    expect(() => asOptStringDictionary('hi')).toThrow('Unable to cast string to Dictionary');
+    expect(() => asOptStringDictionary(false)).toThrow('Unable to cast boolean to Dictionary');
+    expect(() => asOptStringDictionary([])).toThrow('Unable to cast object to Dictionary');
+    expect(() => asOptStringDictionary(fn)).toThrow('Unable to cast function to Dictionary');
   });
 
-  it('asOptRecordRecursive memoization', () => {
-    const asOptStringRecord = asOptRecordRecursive(asString);
-    expect(asOptStringRecord).toBe(asOptRecordRecursive(asString));
-    expect(asOptStringRecord).not.toBe(asOptRecordRecursive(asNumber));
+  it('asOptDictionaryOf memoization', () => {
+    const asOptStringDictionary = asOptDictionaryOf(asString);
+    expect(asOptStringDictionary).toBe(asOptDictionaryOf(asString));
+    expect(asOptStringDictionary).not.toBe(asOptDictionaryOf(asNumber));
   });
+});
+
+describe('depreciated functions are aliases', () => {
+  expect(asRecord).toBe(asDictionary);
+  expect(asOptRecord).toBe(asOptDictionary);
+
+  expect(asArrayRecursive).toBe(asArrayOf);
+  expect(asRecordRecursive).toBe(asDictionaryOf);
+  expect(asOptArrayRecursive).toBe(asOptArrayOf);
+  expect(asOptRecordRecursive).toBe(asOptDictionaryOf);
 });

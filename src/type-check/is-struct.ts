@@ -3,7 +3,7 @@ import type { TypeAssert, UnwrapTypeAssert } from '../TypeAssert.type';
 import type { Optional } from '../Optional.type';
 
 import { memoize } from '../memoize';
-import { isNullish, isRecord } from './is-primitive';
+import { isDictionary, isNullish } from './is-primitive';
 
 function structLabel (pattern: InterfacePattern): string {
   const entries = Object.entries(pattern);
@@ -12,7 +12,7 @@ function structLabel (pattern: InterfacePattern): string {
 
 export const isStruct = memoize(<Pattern extends InterfacePattern> (pattern: Pattern): TypeAssert<{[K in keyof Pattern]: UnwrapTypeAssert<Pattern[K]>}> & { TYPE_NAME: string } => {
   const fn = (val: unknown): val is UnwrapInterfacePattern<Pattern> => {
-    if (!isRecord(val)) {
+    if (!isDictionary(val)) {
       return false;
     }
 
@@ -36,7 +36,7 @@ export const isOptStruct = memoize(<Pattern extends InterfacePattern> (pattern: 
       return true;
     }
 
-    if (!isRecord(val)) {
+    if (!isDictionary(val)) {
       return false;
     }
 
