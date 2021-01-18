@@ -391,6 +391,14 @@ const obj = asJSONValue(almost_right);
 
   Cast `unknown` value to [`UnknownFunction | undefined`](#unknownfunction). If value is [`Nullish`](#nullish) then return `undefined`.
 
+- ### asUnion
+
+  Takes a variable number of type checks as parameters `<A>(...checks: TypeCheck<A>[])` and returns a new type cast that composes them into type cast for the union `A`. This allows creating a cast for a type union by composing any existing type checks.
+
+- ### asOptUnion
+
+  Identical to [`asUnion`](#asunion) but it the resulting cast returns `A | null | undefined`.
+
 - ### asOptJSONValue
 
   Cast `unknown` value to [`JSONValue | undefined`](#jsonvalue). If value is [`Nullish`](#nullish) then return `undefined`.
@@ -511,6 +519,14 @@ const obj = asJSONValue(almost_right);
 
   Takes an `unknown` value and returns a boolean indicating if the value is of the type `Optional<Array<unknown>>`.
 
+- ### isUnion
+
+  Takes a variable number of type checks as parameters `<A>(...checks: TypeCheck<A>[])` and returns a new type check that composes them into union type check `TypeCheck<A>`. This allows creating a test for a type union by composing any existing type checks. For inline code it will generally make sense to use logical OR operators instead of this, for example `if ( isNumber(n) || isArray(n) ) {}`. This particular function is intended for when you wish to compose a type check or cast that contains a union, or create a library type check for a common union type.
+
+- ### isOptUnion
+
+  Identical to [`isUnion`](#isunion) but it the resulting typecheck is `TypeCheck<A | null | undefined>`.
+
 - ### isOptJSONValue
 
   Takes an `unknown` value and returns a boolean indicating if the value is of the type [`Optional<JSONValue>`](#jsonvalue).
@@ -621,3 +637,8 @@ const obj = asJSONValue(almost_right);
 - Change: Expose the `TypeAssert` type publicly.
 - Add: `InterfacePattern` type.
 - Change: modify the type names in errors to be closer to the TypeScript names.
+
+### v1.3.0
+
+- Add: Introduce `isUnion` and `isOptUnion` to allow checking if a value matches any type of a type union.
+- Add: Introduce `asUnion` and `asOptUnion` to allow casting a value to a type union.
