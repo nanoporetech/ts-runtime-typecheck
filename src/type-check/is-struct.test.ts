@@ -1,4 +1,5 @@
-import { TypeAssert } from '../TypeAssert.type';
+import type { TypeAssert } from '../TypeAssert.type';
+
 import { isNumber, isString } from './is-primitive';
 import { isStruct, isOptStruct } from './is-struct';
 

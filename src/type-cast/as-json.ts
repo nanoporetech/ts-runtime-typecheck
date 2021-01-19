@@ -1,9 +1,9 @@
 import type { JSONValue, JSONArray, JSONObject } from '../JSONValue.type';
 import type { TypeAssert } from '../TypeAssert.type';
+import type { OptionalTypeCast, TypeCast } from '../TypeCast.type';
 
 import { isJSONValue, isJSONArray, isJSONObject } from '../type-check/is-json';
 import { optTypeCast, typeCast } from './type-cast';
-import { OptionalTypeCast, TypeCast } from '../TypeCast.type';
 
 export const asJSONValue = typeCast(isJSONValue);
 /* NOTE: These 2 require some type gymnastics, but that is better than introducing additional runtime complexity.
