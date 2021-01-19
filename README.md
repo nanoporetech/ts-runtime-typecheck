@@ -1,18 +1,35 @@
 # ts-runtime-typecheck
 
-A collection of TypeScript functions for converting unknown values into strictly typed values.
+![100% coverage](https://img.shields.io/badge/coverage-100%25-success)
+![100% coverage](https://img.shields.io/badge/dependencies-0-success)
+![npm](https://img.shields.io/npm/dm/ts-runtime-typecheck)
+
+Simple functions for validating complex data.
+
+JavaScript is a very flexible language. Meaning it's easy to get tripped up by a value with an unexpected type. Even in TypeScript you occasionally have to deal with values which cannot be safely typed at compile time. This library provides a comprehensive selection of functions to simplify type checking code with clear and concise function calls. Ensuring strict type safety throughout your program, no matter the input.
+
+## Installation
+
+Releases are available on the npm repository and our GitHub releases page. ESM and CJS formats are both included, as well as TypeScript type definition files. Both formats work without TypeScript if you prefer plain JS.
+
+```bash
+npm install ts-runtime-typecheck
+```
+
+---
 
 ## Contents
 
 - [Installation](#installation)
 - [Type Casts](#type-casts)
   - [Fallback values](#fallback-values)
-  - [Special case: asDefined](#special-case-asdefined)
-  - [Special case: asStruct](#special-case-asstruct)
-  - [Recursive Array/Object casts](#recursive-arrayobject-casts)
 - [Type Checks](#type-checks)
 - [Type Coerce](#type-coerce)
 - [JSON Types](#json-types)
+- [Ensuring an optional value is defined](#ensuring-an-optional-value-is-defined)
+- [Recursive Array/Object casts](#recursive-arrayobject-casts)
+- [Validating interfaces](#validating-interfaces)
+- [Union types](#union-types)
 - [Reference](#reference)
   - [Reference: Type Casts](#reference-type-casts)
   - [Reference: Optional Type Casts](#reference-optional-type-casts)
@@ -25,15 +42,7 @@ A collection of TypeScript functions for converting unknown values into strictly
   - [v1.1.0](#v110)
   - [v1.1.1](#v111)
   - [v1.2.0](#v120)
-  - [v1.3.0](#v130)
-
-## Installation
-
-```bash
-npm install ts-runtime-typecheck
-```
-
----
+  - [v2.0.0](#v200)
 
 ## Type Casts
 
@@ -78,100 +87,6 @@ printName(42)
 ```
 
 In the situation you want to preserve the optionally of a value, but still validate the type there exists an alternate function for each type cast. These take the form [`asOpt{TYPE}`](#reference-optional-type-casts). Unlike the standard methods they do not take an optional fallback value, but when a [`Nullish`](#nullish) value is passed in they will always emit `undefined`. If the input is not [`Nullish`](#nullish), then it behaves the same as the standard type casts. If the type condition is met then it emits the value, otherwise it will throw.
-
-### Special case: asDefined
-
-Another common situation is that you have an [`Optional`](#optional) value, with a well defined type, but it *shouldn't* be [`Optional`](#optional) at that time. TypeScript will allow you to cast the value to a non-optional type using `!`, but this is often discouraged in style guides as it can hide real errors. This is solved by the [`asDefined`](#asdefined) function, which removes the optionality from a type union. As with the other type casts this can take a fallback value, and will throw if the condition is not met. However, the output type matches the input type with [`Nullish`](#nullish) subtracted.
-
-```typescript
-import { asDefined } from 'ts-runtime-typecheck';
-
-function setup (useComplexType: boolean = false, complexInst?: ComplexType) {
-  if (useComplexType) {
-    const inst: ComplexType = asDefined(complexInst);
-    inst.doComplexThing();
-  }
-  else {
-    doSimpleThing();
-  }
-}
-```
-
-### Special case: asStruct
-
-Validating the shape of an object using a combination of [`asRecord`](#asrecord) and other [Type Casts](#reference-type-casts) specific to property types can be a bit verbose. To simplify this scenario you can use [`asStruct`](#asstruct). This function takes an [`InterfacePattern`](#interfacepattern) that specifies a specific structure and returns a new function that will cast an unknown value to that structure. An [`InterfacePattern`](#interfacepattern is a fancy name for a [`Dictionary`](#dictionary) of [Type Check](#reference-type-checks) functions.
-
-```typescript
-import { asStruct, isString, isOptString, isNumber } from 'ts-runtime-typecheck';
-
-interface Item {
-  name: string;
-  value: number;
-}
-
-const asItem = asStruct({ name: isString, value: isNumber })
-
-function main (obj: unknown) {
-  const item: Item = asItem(obj);
-  console.log(`${item.name} = ${item.value}`);
-}
-```
-
-There is also a [Type Check](#reference-type-checks) variant of the this function called [`isStruct`](#isstruct) which works in a very similar way. As an [`InterfacePattern`](#interfacepattern) is composed of [Type Check](#reference-type-checks) functions it's possible to compose nested structure checks.
-
-```typescript
-import { asStruct, isString, isOptString, isNumber } from 'ts-runtime-typecheck';
-
-interface Declaration {
-  item: Item;
-  description: Optional<string>
-}
-
-const isItem = isStruct({ name: isString, value: isNumber });
-const asDeclaration = asStruct({ item: isItem, description: isOptString });
-
-function main (obj: unknown) {
-  const { item, description } = asDeclaration(obj);
-  const comment: string = description ? `// ${description}` : '';
-  console.log(`${item.name} = ${item.value} ${comment}`);
-}
-```
-
-### Recursive Array/Object Casts
-
-Validating that a value is an array or object is easy enough, but how about the contents? [`asArrayRecursive`](#asarrayrecursive) and [`asObjectRecursive`](#asobjectrecursive) allow for deep type casting through a user specified element cast. For example, to cast to `Array<string>`:
-
-```typescript
-import { asString, asArrayRecursive } from 'ts-runtime-typecheck';
-
-function main (obj: unknown) {
-  const asStringArray = asArrayRecursive(asString);
-
-  const arr: string[] = asStringArray(obj);
-}
-```
-
-Or `Array<Dictionary<number>>`:
-
-```typescript
-import { asNumber, asRecordRecursive, asArrayRecursive } from 'ts-runtime-typecheck';
-
-function main () {
-  const asNumericRecord = asRecordRecursive(asNumber);
-  const asArrayOfNumericRecords = asArrayRecursive(asNumericRecord);
-
-  const arr = asArrayOfNumericRecords([
-    {
-      a: 12,
-      b: 42
-    },
-    {
-      n: 90
-    }
-  ]);
-}
-
-```
 
 ---
 
@@ -290,6 +205,130 @@ almost_right.self = almost_right;
 
 // BANG! this will fail, it recurses endlessly
 const obj = asJSONValue(almost_right);
+```
+
+---
+
+## Ensuring an optional value is defined
+
+Another common situation is that you have an [`Optional`](#optional) value, with a well defined type, but it *shouldn't* be [`Optional`](#optional) at that time. TypeScript will allow you to cast the value to a non-optional type using `!`, but this is often discouraged in style guides. This is solved by the [`asDefined`](#asdefined) function, which removes the optionality from a type union. As with the other type casts this can take a fallback value, and will throw if the condition is not met. However, the output type matches the input type with [`Nullish`](#nullish) subtracted.
+
+```typescript
+import { asDefined } from 'ts-runtime-typecheck';
+
+function setup (useComplexType: boolean = false, complexInst?: ComplexType) {
+  if (useComplexType) {
+    const inst: ComplexType = asDefined(complexInst);
+    inst.doComplexThing();
+  }
+  else {
+    doSimpleThing();
+  }
+}
+```
+
+## Recursive Array/Object Casts
+
+Validating that a value is an array or object is easy enough, but how about the contents? [`asArrayRecursive`](#asarrayrecursive) and [`asObjectRecursive`](#asobjectrecursive) allow for deep type casting through a user specified element cast. For example, to cast to `Array<string>`:
+
+```typescript
+import { asString, asArrayRecursive } from 'ts-runtime-typecheck';
+
+function main (obj: unknown) {
+  const asStringArray = asArrayRecursive(asString);
+
+  const arr: string[] = asStringArray(obj);
+}
+```
+
+Or `Array<Dictionary<number>>`:
+
+```typescript
+import { asNumber, asRecordRecursive, asArrayRecursive } from 'ts-runtime-typecheck';
+
+function main () {
+  const asNumericRecord = asRecordRecursive(asNumber);
+  const asArrayOfNumericRecords = asArrayRecursive(asNumericRecord);
+
+  const arr = asArrayOfNumericRecords([
+    {
+      a: 12,
+      b: 42
+    },
+    {
+      n: 90
+    }
+  ]);
+}
+
+```
+
+## Validating interfaces
+
+Validating the shape of an object using a combination of [`asRecord`](#asrecord) and other [Type Casts](#reference-type-casts) specific to property types can be a bit verbose. To simplify this scenario you can use [`asStruct`](#asstruct). This function takes an [`InterfacePattern`](#interfacepattern) that specifies a specific structure and returns a new function that will cast an unknown value to that structure. An [`InterfacePattern`](#interfacepattern is a fancy name for a [`Dictionary`](#dictionary) of [Type Check](#reference-type-checks) functions.
+
+```typescript
+import { asStruct, isString, isOptString, isNumber } from 'ts-runtime-typecheck';
+
+interface Item {
+  name: string;
+  value: number;
+}
+
+const asItem = asStruct({ name: isString, value: isNumber })
+
+function main (obj: unknown) {
+  const item: Item = asItem(obj);
+  console.log(`${item.name} = ${item.value}`);
+}
+```
+
+There is also a [Type Check](#reference-type-checks) variant of the this function called [`isStruct`](#isstruct) which works in a very similar way. As an [`InterfacePattern`](#interfacepattern) is composed of [Type Check](#reference-type-checks) functions it's possible to compose nested structure checks.
+
+```typescript
+import { asStruct, isString, isOptString, isNumber } from 'ts-runtime-typecheck';
+
+interface Declaration {
+  item: Item;
+  description: Optional<string>
+}
+
+const isItem = isStruct({ name: isString, value: isNumber });
+const asDeclaration = asStruct({ item: isItem, description: isOptString });
+
+function main (obj: unknown) {
+  const { item, description } = asDeclaration(obj);
+  const comment: string = description ? `// ${description}` : '';
+  console.log(`${item.name} = ${item.value} ${comment}`);
+}
+```
+
+---
+
+## Union types
+
+When a value can be 2 or more types it is relatively easy to do type check.
+
+```typescript
+import { isString, isArray } from 'ts-runtime-typecheck';
+
+if (isString(a) || isArray(a)) {
+  // a: string | unknown[]
+}
+```
+
+But you can't assert on that, or pass it into a function like `asArrayRecursive` or `isStruct` which require a Type Check for their input. To do this you can use `isUnion` or `asUnion`. These functions take a variable number of Type Checks and produce a union of them
+
+```typescript
+import {
+  isString,
+  isArray,
+  isUnion,
+  asArrayRecursive
+} from 'ts-runtime-typecheck';
+
+const check = asArrayRecursive(isUnion(isString, isArray));
+const b = check(['hello', [0, 1, 2], 'world']);
 ```
 
 ---
@@ -648,16 +687,17 @@ const obj = asJSONValue(almost_right);
 
 - Add: Introduce `isStruct` and `asStruct` that allow the inspection of a object to see if it meets a specific interface.
 - Add: Optional variants of Type Checks with form `isOpt{TYPE}`.
-- Change: `asDefined` can longer accept `null` as a fallback parameter.
+- Breaking Change: `asDefined` can longer accept `null` as a fallback parameter.
 - Change: `asIndexable` now accepts arrays.
 - Add: `isIndexable` type check.
 - Change: Expose the `TypeAssert` type publicly.
 - Add: `InterfacePattern` type.
 - Change: modify the type names in errors to be closer to the TypeScript names.
 
-### v1.3.0
+### v2.0.0
 
 - Add: Introduce `isUnion` and `isOptUnion` to allow checking if a value matches any type of a type union.
 - Add: Introduce `asUnion` and `asOptUnion` to allow casting a value to a type union.
 - Add: Introduce `isArrayRecursive` and `isOptArrayRecursive` to allow checking if a value is an array of a given type.
 - Add: Introduce `isObjectRecursive` and `isOptObjectRecursive` to allow checking if a value is a Dictionary of a given type.
+- Breaking Change: Recursive Type Casts now take a Type Check as an argument instead of a Type Cast, and no longer emit a copy of the input. As a side effect if you are upgrading from `asArrayRecursive(asOptString)` to `asArrayRecursive(isOptString)` or (similar) the output array may contain `null` as the elements are no longer transformed by an inner cast ( optional cast methods normalize output to `undefined` ).

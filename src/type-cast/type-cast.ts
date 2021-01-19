@@ -10,7 +10,7 @@ export function optTypeCast<Input, Output> (isType: TypeAssert<Output>): Optiona
       return undefined;
     }
     if (isType(obj)) {
-      return obj as Output;
+      return obj;
     }
     throw new Error(`Unable to cast ${typeof obj} to Optional<${isType.TYPE_NAME ?? 'unknown'}>`);
   };
@@ -19,7 +19,7 @@ export function optTypeCast<Input, Output> (isType: TypeAssert<Output>): Optiona
 export function typeCast<Output> (isType: TypeAssert<Output>): (obj: unknown, fallback?: Output) => Output {
   return (obj: unknown, fallback?: Output) => {
     if (isType(obj)) {
-      return obj as Output;
+      return obj;
     }
     if (isNullish(obj) && typeof fallback !== 'undefined') {
       return fallback;
