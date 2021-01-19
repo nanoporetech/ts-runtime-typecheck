@@ -659,3 +659,5 @@ const obj = asJSONValue(almost_right);
 
 - Add: Introduce `isUnion` and `isOptUnion` to allow checking if a value matches any type of a type union.
 - Add: Introduce `asUnion` and `asOptUnion` to allow casting a value to a type union.
+- Add: Introduce `isArrayRecursive` and `isOptArrayRecursive` to allow checking if a value is an array of a given type.
+- Add: Introduce `isObjectRecursive` and `isOptObjectRecursive` to allow checking if a value is a Dictionary of a given type.
