@@ -25,6 +25,7 @@ A collection of TypeScript functions for converting unknown values into strictly
   - [v1.1.0](#v110)
   - [v1.1.1](#v111)
   - [v1.2.0](#v120)
+  - [v1.3.0](#v130)
 
 ## Installation
 
@@ -485,6 +486,14 @@ const obj = asJSONValue(almost_right);
 
   Takes an [`JSONValue`](#jsonvalue) value and returns a boolean indicating if the value is of the type [`JSONObject`](#jsonobject).
 
+- ### isArrayRecursive
+  
+  Takes a Type Check function for `Type` and returns a new Type Check function for `Array<Type>` where Type is a generic parameter.
+
+- ### isObjectRecursive
+  
+  Takes a Type Check function for `Type` and returns a new Type Check function for [`Dictionary<Type>`](#dictionary) where Type is a generic parameter.
+
 - ### isStruct
 
   Takes an [`InterfacePattern`](#interfacepattern) which is equivalent to `Type` and returns a new [`TypeAssert`](#typeassert) function for `Type`, where `Type` is an interface defined by the [`TypeAsserts`](#typeassert) specified in the pattern. Refer to [Special Case: asStruct](#special-case-asstruct) for examples.
@@ -542,6 +551,14 @@ const obj = asJSONValue(almost_right);
 - ### isOptStruct
 
   Takes an [`InterfacePattern`](#interfacepattern) which is equivalent to `Type` and returns a new [`TypeAssert`](#typeassert) function for `Optional<Type>`, where `Type` is an interface defined by the [`TypeAsserts`](#typeassert) specified in the pattern. Refer to [Special Case: asStruct](#special-case-asstruct) for examples.
+
+- ### isOptArrayRecursive
+  
+  Takes a Type Check function for `Type` and returns a new Type Check function for `Optional<Array<Type>>` where Type is a generic parameter.
+
+- ### isOptObjectRecursive
+  
+  Takes a Type Check function for `Type` and returns a new Type Check function for [`Optional<Dictionary<Type>>`](#dictionary) where Type is a generic parameter.
 
 ### Reference: Type Coerce
 
