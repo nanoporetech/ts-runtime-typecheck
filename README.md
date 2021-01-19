@@ -469,6 +469,10 @@ const obj = asJSONValue(almost_right);
 
   Takes an `unknown` value and returns a boolean indicating if the value is **not** of the type [`Nullish`](#nullish).
 
+- ### isUnion
+
+  Takes a variable number of type checks as parameters `<A>(...checks: TypeCheck<A>[])` and returns a new type check that composes them into union type check `TypeCheck<A>`. This allows creating a test for a type union by composing any existing type checks. For inline code it will generally make sense to use logical OR operators instead of this, for example `if ( isNumber(n) || isArray(n) ) {}`. This particular function is intended for when you wish to compose a type check or cast that contains a union, or create a library type check for a common union type.
+
 - ### isJSONValue
 
   Takes an `unknown` value and returns a boolean indicating if the value is of the type [`JSONValue`](#jsonvalue).
@@ -518,10 +522,6 @@ const obj = asJSONValue(almost_right);
 - ### isOptArray
 
   Takes an `unknown` value and returns a boolean indicating if the value is of the type `Optional<Array<unknown>>`.
-
-- ### isUnion
-
-  Takes a variable number of type checks as parameters `<A>(...checks: TypeCheck<A>[])` and returns a new type check that composes them into union type check `TypeCheck<A>`. This allows creating a test for a type union by composing any existing type checks. For inline code it will generally make sense to use logical OR operators instead of this, for example `if ( isNumber(n) || isArray(n) ) {}`. This particular function is intended for when you wish to compose a type check or cast that contains a union, or create a library type check for a common union type.
 
 - ### isOptUnion
 
