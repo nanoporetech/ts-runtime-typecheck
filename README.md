@@ -30,6 +30,7 @@ npm install ts-runtime-typecheck
 - [Recursive Array/Object casts](#recursive-arrayobject-casts)
 - [Validating interfaces](#validating-interfaces)
 - [Union types](#union-types)
+- [Class instances](#class-instances)
 - [Reference](#reference)
   - [Reference: Type Casts](#reference-type-casts)
   - [Reference: Optional Type Casts](#reference-optional-type-casts)
@@ -333,6 +334,26 @@ const b = check(['hello', [0, 1, 2], 'world']);
 
 ---
 
+## Class instances
+
+Under most scenarios you will know if a value is an instance of a given class. However, there are scenarios where this is not the case. For these situations you can use `isInstance` or `asInstance` to ensure you have the correct type.
+
+```typescript
+import { isInstance } from 'ts-runtime-typecheck';
+
+function print_error (err) {
+  if (isInstance(Error)(err)) {
+    print_string(err.message);
+  } else {
+    print_unknown(err)
+  }
+}
+```
+
+In addition to when checking to see if a value matches an interface it may be desirable to instead use an instance check. While it doesn't provide the same guarantees it will often be significantly faster, as it does not perform a type check on each member to see that they exist and contain the right type of value.
+
+---
+
 ## Reference
 
 ### Reference: Type Casts
@@ -396,6 +417,10 @@ const b = check(['hello', [0, 1, 2], 'world']);
 - ### asStruct
   
   Takes an [`InterfacePattern`](#interfacepattern) which is equivalent to `Type` and returns a new Type Cast function for `Type`, where `Type` is an interface defined by the [`TypeAsserts`](#typeassert) specified in the pattern. Refer to [Special Case: asStruct](#special-case-asstruct) for examples.
+
+- ### asInstance
+
+  Takes a class (not a instance of a class) and returns a new Type Cast for an instance of that class.
 
 ### Reference: Optional Type Casts
 
@@ -462,6 +487,10 @@ const b = check(['hello', [0, 1, 2], 'world']);
 - ### asOptStruct
   
   Takes an [`InterfacePattern`](#interfacepattern) which is equivalent to `Type` and returns a new Type Cast function for `Type | undefined`, where `Type` is an interface defined by the [`TypeAsserts`](#typeassert) specified in the pattern. Refer to [Special Case: asStruct](#special-case-asstruct) for examples.
+
+- ### asOptInstance
+
+  Takes a class (not a instance of a class) and returns a new Type Cast for a Optional instance of that class.
 
 ### Reference: Type Checks
 
@@ -536,7 +565,11 @@ const b = check(['hello', [0, 1, 2], 'world']);
 - ### isStruct
 
   Takes an [`InterfacePattern`](#interfacepattern) which is equivalent to `Type` and returns a new [`TypeAssert`](#typeassert) function for `Type`, where `Type` is an interface defined by the [`TypeAsserts`](#typeassert) specified in the pattern. Refer to [Special Case: asStruct](#special-case-asstruct) for examples.
-  
+
+- ### isInstance
+
+  Takes a class (not a instance of a class) and returns a new Type Check for an instance of that class.
+
 ### Reference: Optional Type Checks
 
 - ### isOptRecord
@@ -598,6 +631,10 @@ const b = check(['hello', [0, 1, 2], 'world']);
 - ### isOptObjectRecursive
   
   Takes a Type Check function for `Type` and returns a new Type Check function for [`Optional<Dictionary<Type>>`](#dictionary) where Type is a generic parameter.
+
+- ### isOptInstance
+
+  Takes a class (not a instance of a class) and returns a new Type Check for a Optional instance of that class.
 
 ### Reference: Type Coerce
 
@@ -696,8 +733,10 @@ const b = check(['hello', [0, 1, 2], 'world']);
 
 ### v2.0.0
 
-- Add: Introduce `isUnion` and `isOptUnion` to allow checking if a value matches any type of a type union.
-- Add: Introduce `asUnion` and `asOptUnion` to allow casting a value to a type union.
-- Add: Introduce `isArrayRecursive` and `isOptArrayRecursive` to allow checking if a value is an array of a given type.
-- Add: Introduce `isObjectRecursive` and `isOptObjectRecursive` to allow checking if a value is a Dictionary of a given type.
+- Add: `isUnion` and `isOptUnion` to allow checking if a value matches any type of a type union.
+- Add: `asUnion` and `asOptUnion` to allow casting a value to a type union.
+- Add: `isArrayRecursive` and `isOptArrayRecursive` to allow checking if a value is an array of a given type.
+- Add: `isObjectRecursive` and `isOptObjectRecursive` to allow checking if a value is a Dictionary of a given type.
 - Breaking Change: Recursive Type Casts now take a Type Check as an argument instead of a Type Cast, and no longer emit a copy of the input. As a side effect if you are upgrading from `asArrayRecursive(asOptString)` to `asArrayRecursive(isOptString)` or (similar) the output array may contain `null` as the elements are no longer transformed by an inner cast ( optional cast methods normalize output to `undefined` ).
+- Add: `isInstance` and `isOptInstance` to allow checking if a value is an instance of a given class.
+- Add: `asInstance` and `asOptInstance` to allow casting a value to an instance of a given class.
