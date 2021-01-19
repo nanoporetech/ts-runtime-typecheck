@@ -25,6 +25,7 @@ A collection of TypeScript functions for converting unknown values into strictly
   - [v1.1.0](#v110)
   - [v1.1.1](#v111)
   - [v1.2.0](#v120)
+  - [v1.3.0](#v130)
 
 ## Installation
 
@@ -469,6 +470,10 @@ const obj = asJSONValue(almost_right);
 
   Takes an `unknown` value and returns a boolean indicating if the value is **not** of the type [`Nullish`](#nullish).
 
+- ### isUnion
+
+  Takes a variable number of type checks as parameters `<A>(...checks: TypeCheck<A>[])` and returns a new type check that composes them into union type check `TypeCheck<A>`. This allows creating a test for a type union by composing any existing type checks. For inline code it will generally make sense to use logical OR operators instead of this, for example `if ( isNumber(n) || isArray(n) ) {}`. This particular function is intended for when you wish to compose a type check or cast that contains a union, or create a library type check for a common union type.
+
 - ### isJSONValue
 
   Takes an `unknown` value and returns a boolean indicating if the value is of the type [`JSONValue`](#jsonvalue).
@@ -480,6 +485,14 @@ const obj = asJSONValue(almost_right);
 - ### isJSONObject
 
   Takes an [`JSONValue`](#jsonvalue) value and returns a boolean indicating if the value is of the type [`JSONObject`](#jsonobject).
+
+- ### isArrayRecursive
+  
+  Takes a Type Check function for `Type` and returns a new Type Check function for `Array<Type>` where Type is a generic parameter.
+
+- ### isObjectRecursive
+  
+  Takes a Type Check function for `Type` and returns a new Type Check function for [`Dictionary<Type>`](#dictionary) where Type is a generic parameter.
 
 - ### isStruct
 
@@ -519,10 +532,6 @@ const obj = asJSONValue(almost_right);
 
   Takes an `unknown` value and returns a boolean indicating if the value is of the type `Optional<Array<unknown>>`.
 
-- ### isUnion
-
-  Takes a variable number of type checks as parameters `<A>(...checks: TypeCheck<A>[])` and returns a new type check that composes them into union type check `TypeCheck<A>`. This allows creating a test for a type union by composing any existing type checks. For inline code it will generally make sense to use logical OR operators instead of this, for example `if ( isNumber(n) || isArray(n) ) {}`. This particular function is intended for when you wish to compose a type check or cast that contains a union, or create a library type check for a common union type.
-
 - ### isOptUnion
 
   Identical to [`isUnion`](#isunion) but it the resulting typecheck is `TypeCheck<A | null | undefined>`.
@@ -542,6 +551,14 @@ const obj = asJSONValue(almost_right);
 - ### isOptStruct
 
   Takes an [`InterfacePattern`](#interfacepattern) which is equivalent to `Type` and returns a new [`TypeAssert`](#typeassert) function for `Optional<Type>`, where `Type` is an interface defined by the [`TypeAsserts`](#typeassert) specified in the pattern. Refer to [Special Case: asStruct](#special-case-asstruct) for examples.
+
+- ### isOptArrayRecursive
+  
+  Takes a Type Check function for `Type` and returns a new Type Check function for `Optional<Array<Type>>` where Type is a generic parameter.
+
+- ### isOptObjectRecursive
+  
+  Takes a Type Check function for `Type` and returns a new Type Check function for [`Optional<Dictionary<Type>>`](#dictionary) where Type is a generic parameter.
 
 ### Reference: Type Coerce
 
@@ -642,3 +659,5 @@ const obj = asJSONValue(almost_right);
 
 - Add: Introduce `isUnion` and `isOptUnion` to allow checking if a value matches any type of a type union.
 - Add: Introduce `asUnion` and `asOptUnion` to allow casting a value to a type union.
+- Add: Introduce `isArrayRecursive` and `isOptArrayRecursive` to allow checking if a value is an array of a given type.
+- Add: Introduce `isObjectRecursive` and `isOptObjectRecursive` to allow checking if a value is a Dictionary of a given type.
