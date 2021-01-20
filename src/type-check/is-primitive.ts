@@ -4,15 +4,15 @@ import type { Dictionary } from '../Dictionary.type';
 import type { Optional } from '../Optional.type';
 import type { UnknownFunction } from '../UnknownFunction.type';
 
-export function isRecord(obj: unknown): obj is Dictionary {
+export function isDictionary(obj: unknown): obj is Dictionary {
   return obj !== null && typeof obj === 'object' && Array.isArray(obj) === false;
 }
-isRecord.TYPE_NAME = 'Dictionary';
+isDictionary.TYPE_NAME = 'Dictionary';
 
-export function isOptRecord(obj: unknown): obj is Optional<Dictionary> {
-  return isRecord(obj) || isNullish(obj);
+export function isOptDictionary(obj: unknown): obj is Optional<Dictionary> {
+  return isDictionary(obj) || isNullish(obj);
 }
-isOptRecord.TYPE_NAME = 'Optional<Dictionary>';
+isOptDictionary.TYPE_NAME = 'Optional<Dictionary>';
 
 export function isFunction(obj: unknown): obj is UnknownFunction {
   return typeof obj === 'function';

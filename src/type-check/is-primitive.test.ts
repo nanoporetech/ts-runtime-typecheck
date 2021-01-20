@@ -1,5 +1,5 @@
 import type { TypeAssert } from '../TypeAssert.type';
-import { isArray, isBoolean, isDefined, isFunction, isIndex, isIndexable, isNullish, isNumber, isOptArray, isOptBoolean, isOptFunction, isOptIndex, isOptIndexable, isOptNumber, isOptRecord, isOptString, isRecord, isString, isUndefined } from './is-primitive';
+import { isArray, isBoolean, isDefined, isDictionary, isFunction, isIndex, isIndexable, isNullish, isNumber, isOptArray, isOptBoolean, isOptDictionary, isOptFunction, isOptIndex, isOptIndexable, isOptNumber, isOptString, isString, isUndefined } from './is-primitive';
 
 describe('is primitive', () => {
   class Dummy {}
@@ -23,8 +23,8 @@ describe('is primitive', () => {
     }
   }
 
-  it('isRecord', () => {
-    tryExamples(isRecord, [
+  it('isDictionary', () => {
+    tryExamples(isDictionary, [
       false,
       false,
       false,
@@ -38,8 +38,8 @@ describe('is primitive', () => {
     ]);
   });
 
-  it('isOptRecord', () => {
-    tryExamples(isOptRecord, [
+  it('isOptDictionary', () => {
+    tryExamples(isOptDictionary, [
       false,
       false,
       false,

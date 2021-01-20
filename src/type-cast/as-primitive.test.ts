@@ -1,4 +1,4 @@
-import { asArray, asBoolean, asDefined, asFunction, asIndex, asIndexable, asNumber, asOptArray, asOptBoolean, asOptFunction, asOptIndex, asOptIndexable, asOptNumber, asOptRecord, asOptString, asRecord, asString } from './as-primitive';
+import { asArray, asBoolean, asDefined, asFunction, asIndex, asIndexable, asNumber, asOptArray, asOptBoolean, asOptFunction, asOptIndex, asOptIndexable, asOptNumber, asOptDictionary, asOptString, asDictionary, asString } from './as-primitive';
 
 describe('primative casts', () => {
   const fn = () => false;
@@ -111,20 +111,20 @@ describe('primative casts', () => {
     expect(() => asArray({})).toThrow('Unable to cast object to unknown[]');
     expect(() => asArray(fn)).toThrow('Unable to cast function to unknown[]');
   });
-  it('asRecord', () => {
+  it('asDictionary', () => {
     // intended
-    expect(asRecord({})).toEqual({});
+    expect(asDictionary({})).toEqual({});
     // fallback
-    expect(asRecord(null, {})).toEqual({});
-    expect(asRecord(undefined, {})).toEqual({});
+    expect(asDictionary(null, {})).toEqual({});
+    expect(asDictionary(undefined, {})).toEqual({});
     // should fail
-    expect(() => asRecord(12)).toThrow('Unable to cast number to Dictionary');
-    expect(() => asRecord('hi')).toThrow('Unable to cast string to Dictionary');
-    expect(() => asRecord(false)).toThrow('Unable to cast boolean to Dictionary');
-    expect(() => asRecord(null)).toThrow('Unable to cast object to Dictionary');
-    expect(() => asRecord(undefined)).toThrow('Unable to cast undefined to Dictionary');
-    expect(() => asRecord([])).toThrow('Unable to cast object to Dictionary');
-    expect(() => asRecord(fn)).toThrow('Unable to cast function to Dictionary');
+    expect(() => asDictionary(12)).toThrow('Unable to cast number to Dictionary');
+    expect(() => asDictionary('hi')).toThrow('Unable to cast string to Dictionary');
+    expect(() => asDictionary(false)).toThrow('Unable to cast boolean to Dictionary');
+    expect(() => asDictionary(null)).toThrow('Unable to cast object to Dictionary');
+    expect(() => asDictionary(undefined)).toThrow('Unable to cast undefined to Dictionary');
+    expect(() => asDictionary([])).toThrow('Unable to cast object to Dictionary');
+    expect(() => asDictionary(fn)).toThrow('Unable to cast function to Dictionary');
   });
   it('asFunction', () => {
     // intended
@@ -215,17 +215,17 @@ describe('primative casts', () => {
     expect(() => asOptArray({})).toThrow('Unable to cast object to Optional<unknown[]>');
     expect(() => asOptArray(fn)).toThrow('Unable to cast function to Optional<unknown[]>');
   });
-  it('asOptRecord', () => {
+  it('asOptDictionary', () => {
     // intended
-    expect(asOptRecord({})).toEqual({});
-    expect(asOptRecord(null)).toBeUndefined();
-    expect(asOptRecord(undefined)).toBeUndefined();
+    expect(asOptDictionary({})).toEqual({});
+    expect(asOptDictionary(null)).toBeUndefined();
+    expect(asOptDictionary(undefined)).toBeUndefined();
     // should fail
-    expect(() => asOptRecord(12)).toThrow('Unable to cast number to Optional<Dictionary>');
-    expect(() => asOptRecord('hi')).toThrow('Unable to cast string to Optional<Dictionary>');
-    expect(() => asOptRecord(false)).toThrow('Unable to cast boolean to Optional<Dictionary>');
-    expect(() => asOptRecord([])).toThrow('Unable to cast object to Optional<Dictionary>');
-    expect(() => asOptRecord(fn)).toThrow('Unable to cast function to Optional<Dictionary>');
+    expect(() => asOptDictionary(12)).toThrow('Unable to cast number to Optional<Dictionary>');
+    expect(() => asOptDictionary('hi')).toThrow('Unable to cast string to Optional<Dictionary>');
+    expect(() => asOptDictionary(false)).toThrow('Unable to cast boolean to Optional<Dictionary>');
+    expect(() => asOptDictionary([])).toThrow('Unable to cast object to Optional<Dictionary>');
+    expect(() => asOptDictionary(fn)).toThrow('Unable to cast function to Optional<Dictionary>');
   });
   it('asOptFunction', () => {
     // intended
