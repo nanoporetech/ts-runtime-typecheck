@@ -47,7 +47,7 @@ npm install ts-runtime-typecheck
 
 ## Type Casts
 
-**Type Casts** take an `unknown` object as an argument, and return a typed object as the result. These functions take the form [`as{TYPE}`](#reference-type-casts), for example [`asNumber`](#asNumber). If the input object does not match the required type the function will throw. This does not perform any coercion on the value, passing a `string` of a number to [`asNumber`](#asNumber) will cause it to throw.
+**Type Casts** take an `unknown` value as an argument, and return a typed value as the result. These functions take the form [`as{TYPE}`](#reference-type-casts), for example [`asNumber`](#asNumber). If the input value does not match the required type the function will throw. This does not perform any coercion on the value, passing a `string` of a number to [`asNumber`](#asNumber) will cause it to throw.
 
 ```typescript
 import { asNumber } from 'ts-runtime-typecheck';
@@ -87,13 +87,13 @@ printName(42)
 // Error: Unable to cast number to string
 ```
 
-In the situation you want to preserve the optionally of a value, but still validate the type there exists an alternate function for each type cast. These take the form [`asOpt{TYPE}`](#reference-optional-type-casts). Unlike the standard methods they do not take an optional fallback value, but when a [`Nullish`](#nullish) value is passed in they will always emit `undefined`. If the input is not [`Nullish`](#nullish), then it behaves the same as the standard type casts. If the type condition is met then it emits the value, otherwise it will throw.
+In the situation you want to preserve the optionally of a value, but still validate the type there exists an alternate function for each type cast. These take the form [`asOpt{TYPE}`](#reference-optional-type-casts). Unlike the standard functions they do not take an optional fallback value, but when a [`Nullish`](#nullish) value is passed in they will always emit `undefined`. If the input is not [`Nullish`](#nullish), then it behaves the same as the standard type casts. If the type condition is met then it emits the value, otherwise it will throw.
 
 ---
 
 ## Type Checks
 
-[Type Checks](#reference-type-checks) take an `unknown` object as an argument, and return a `boolean` indicating if the given value matches the required type. These functions take the form [`is{TYPE}`](#reference-type-checks) In the correct situation TypeScript is capable of refining the type of a value through the use of these functions and flow analysis, like the below example.
+[Type Checks](#reference-type-checks) take an `unknown` value as an argument, and return a `boolean` indicating if the given value matches the required type. These functions take the form [`is{TYPE}`](#reference-type-checks). In the correct situation TypeScript is capable of refining the type of a value through the use of these functions and flow analysis, like the below example.
 
 ```typescript
 import { isNumber } from 'ts-runtime-typecheck';
@@ -132,7 +132,7 @@ export function printSq (input: unknown) {
 
 ## Type Coerce
 
-Type coercion functions take an unknown object as an argument, and convert it into a specific type. These functions take the format [`make{TYPE}`](#reference-type-coerce). Unlike the other functions this only works for small subset of types: number, string and boolean. They make a best effort to convert the type, but if the input is not suitable then they will throw. For instance passing a non-numeric string to [`makeNumber`](#make-number) will cause it to throw, as will passing a string that is not `"true" | "false"` to [`makeBoolean`](#make-boolean). While these functions will take any input value, this is to allow the input of values that have not been validated, actually the only valid input types for all 3 functions are `number | string | boolean`. The intention here is to allow useful conversion, but prevent accidentally passing complex types.
+Type coercion functions take an unknown value as an argument, and convert it into a specific type. These functions take the format [`make{TYPE}`](#reference-type-coerce). Unlike the other functions this only works for small subset of types: number, string and boolean. They make a best effort to convert the type, but if the input is not suitable then they will throw an error. For instance passing a non-numeric string to [`makeNumber`](#make-number) will cause it to throw, as will passing a string that is not `"true" | "false"` to [`makeBoolean`](#make-boolean). While these functions will take any input value, this is to allow the input of values that have not been validated. The only valid input types for all 3 functions are `number | string | boolean`. The intention here is to allow useful conversion, but prevent accidentally passing complex types.
 
 There is an argument that [`makeString`](#makestring) could support using the `toString` method of an `object`, but the default `toString` method returns the useless `[object Object]` string. It is possible to detect if an object has implemented it's own `toString` method, but is it correct to use it in this situation? That depends on the intention of the programmer. In the absence of a clear answer the line has been drawn at only accepting primitives.
 
@@ -154,7 +154,7 @@ makeNumber({
 
 ## JSON Types
 
-Dealing with validating JSON objects can often be frustrating, so to make it a little easier JSON specific types and checks are provided. Using the [`JSONValue`](#jsonvalue) type in your code will ensure that TS statically analyses any literal values as serializable to JSON.
+Dealing with validating JSON values can often be frustrating, so to make it a little easier JSON specific types and checks are provided. Using the [`JSONValue`](#jsonvalue) type in your code will ensure that TS statically analyses any literal values as serializable to JSON.
 
 ```typescript
 import type { JSONArray, JSONObject, JSONValue } from 'ts-runtime-typecheck';
@@ -174,7 +174,7 @@ const d: JSONValue = new Error('hi'); // Type 'Error' is not assignable to type 
 
 For dynamic data [`isJSONValue`](#isjsonvalue) and [`asJSONValue`](#asjsonvalue) provide recursive type validation on a value.
 
-Type checks and casts are provided for [`JSONArray`](#jsonarray)s and [`JSONObject`](#jsonobject)s, with the caveat that they only accept [`JSONValue`](#jsonvalue)s. This is to avoid needing to recursively validate the object.
+[Type Check](#reference-type-checks) and [Type Casts](#reference-type-casts) are provided for [`JSONArray`](#jsonarray)s and [`JSONObject`](#jsonobject)s, with the caveat that they only accept [`JSONValue`](#jsonvalue)s. This is to avoid needing to recursively validate values which have already been validated.
 
 ```typescript
 import { asJSONValue, isJSONObject, isJSONArray } from 'ts-runtime-typecheck';
@@ -195,7 +195,7 @@ function main (a: unknown) {
 }
 ```
 
-One other caveat of [`JSONValue`](#jsonvalue) is that it does not guarantee that the value is not cyclic. It is not possible to serialize cyclic object with JSON, but they are otherwise valid. Using [`isJSONValue`](#isjsonvalue) or [`asJSONValue`](#asjsonvalue) on a cyclic object *will fail*.
+One other caveat of [`JSONValue`](#jsonvalue) is that it does not guarantee that the value is not cyclic. It is not possible to serialize cyclic object with `JSON.stringify`, but they are otherwise valid. Using [`isJSONValue`](#isjsonvalue) or [`asJSONValue`](#asjsonvalue) on a cyclic object *will fail*.
 
 ```typescript
 import { asJSONValue } from 'ts-runtime-typecheck';
@@ -212,7 +212,7 @@ const obj = asJSONValue(almost_right);
 
 ## Ensuring an optional value is defined
 
-Another common situation is that you have an [`Optional`](#optional) value, with a well defined type, but it *shouldn't* be [`Optional`](#optional) at that time. TypeScript will allow you to cast the value to a non-optional type using `!`, but this is often discouraged in style guides. This is solved by the [`asDefined`](#asdefined) function, which removes the optionality from a type union. As with the other type casts this can take a fallback value, and will throw if the condition is not met. However, the output type matches the input type with [`Nullish`](#nullish) subtracted.
+A common situation is that you have an [`Optional`](#optional) value, with a well defined type. At a specific time it should be defined, but the type system is not aware of this. TypeScript will allow you to cast the value to a non-optional type using `!`, but this is often discouraged in style guides. As an alternative solution you can use the [`asDefined`](#asdefined) function, which removes the optionality from a type union. As with the other type casts this can take a fallback value, and will throw if the condition is not met. However, the output type matches the input type with [`Nullish`](#nullish) subtracted.
 
 ```typescript
 import { asDefined } from 'ts-runtime-typecheck';
@@ -228,30 +228,30 @@ function setup (useComplexType: boolean = false, complexInst?: ComplexType) {
 }
 ```
 
-## Recursive Array/Object Casts
+## Array/Object of Type Casts
 
-Validating that a value is an array or object is easy enough, but how about the contents? [`asArrayRecursive`](#asarrayrecursive) and [`asObjectRecursive`](#asobjectrecursive) allow for deep type casting through a user specified element cast. For example, to cast to `Array<string>`:
+Validating that a value is an array or dictionary is easy enough, but how about the type of the contents? [`asArrayOf`](#asarrayof) and [`asDictionaryOf`](#asdictionaryof) allow you to cast the elements of a collection using a user defined [Type Check](#reference-type-checks). For example, to cast to `Array<string>`:
 
 ```typescript
-import { asString, asArrayRecursive } from 'ts-runtime-typecheck';
+import { isString, asArrayOf } from 'ts-runtime-typecheck';
 
 function main (obj: unknown) {
-  const asStringArray = asArrayRecursive(asString);
+  const asStringArray = asArrayOf(isString);
 
-  const arr: string[] = asStringArray(obj);
+  const arr: string[] = asArrayOfString(obj);
 }
 ```
 
 Or `Array<Dictionary<number>>`:
 
 ```typescript
-import { asNumber, asRecordRecursive, asArrayRecursive } from 'ts-runtime-typecheck';
+import { isNumber, isDictionaryOf, asArrayOf } from 'ts-runtime-typecheck';
 
 function main () {
-  const asNumericRecord = asRecordRecursive(asNumber);
-  const asArrayOfNumericRecords = asArrayRecursive(asNumericRecord);
+  const isDictionaryOfNumber = isDictionaryOf(isNumber);
+  const asArrayOfDictionaryOfNumber = asArrayOf(isDictionaryOfNumber);
 
-  const arr = asArrayOfNumericRecords([
+  const arr = asArrayOfDictionaryOfNumber([
     {
       a: 12,
       b: 42
@@ -266,7 +266,7 @@ function main () {
 
 ## Validating interfaces
 
-Validating the shape of an object using a combination of [`asRecord`](#asrecord) and other [Type Casts](#reference-type-casts) specific to property types can be a bit verbose. To simplify this scenario you can use [`asStruct`](#asstruct). This function takes an [`InterfacePattern`](#interfacepattern) that specifies a specific structure and returns a new function that will cast an unknown value to that structure. An [`InterfacePattern`](#interfacepattern is a fancy name for a [`Dictionary`](#dictionary) of [Type Check](#reference-type-checks) functions.
+Validating the shape of an object using a combination of [`asDictionary`](#asdictionary) and other [Type Casts](#reference-type-casts) specific to property types can be a bit verbose. To simplify this scenario you can use [`asStruct`](#asstruct). This function takes an [`InterfacePattern`](#interfacepattern) that defines a specific structure and returns a new function that will cast an unknown value to that structure. An [`InterfacePattern`](#interfacepattern) is a fancy name for a [`Dictionary`](#dictionary) of [Type Checks](#reference-type-checks).
 
 ```typescript
 import { asStruct, isString, isOptString, isNumber } from 'ts-runtime-typecheck';
@@ -284,7 +284,7 @@ function main (obj: unknown) {
 }
 ```
 
-There is also a [Type Check](#reference-type-checks) variant of the this function called [`isStruct`](#isstruct) which works in a very similar way. As an [`InterfacePattern`](#interfacepattern) is composed of [Type Check](#reference-type-checks) functions it's possible to compose nested structure checks.
+There is also a [Type Check](#reference-type-checks) variant of the this function called [`isStruct`](#isstruct) which works in a very similar way. As an [`InterfacePattern`](#interfacepattern) is composed of [Type Check](#reference-type-checks) functions it's possible to compose nested interface [Type Checks](#reference-type-checks).
 
 ```typescript
 import { asStruct, isString, isOptString, isNumber } from 'ts-runtime-typecheck';
@@ -308,7 +308,7 @@ function main (obj: unknown) {
 
 ## Union types
 
-When a value can be 2 or more types it is relatively easy to do type check.
+When a value can be 2 or more types it is relatively easy to do [Type Check](#reference-type-checks).
 
 ```typescript
 import { isString, isArray } from 'ts-runtime-typecheck';
@@ -318,17 +318,17 @@ if (isString(a) || isArray(a)) {
 }
 ```
 
-But you can't assert on that, or pass it into a function like `asArrayRecursive` or `isStruct` which require a Type Check for their input. To do this you can use `isUnion` or `asUnion`. These functions take a variable number of Type Checks and produce a union of them
+But you can't cast to that type, or pass it into a function like `asArrayOf` or `isStruct` which require a [Type Check](#reference-type-checks) for their input. To do this you can use `isUnion` or `asUnion`. These functions take a variable number of [Type Checks](#reference-type-checks) and produce a union of them.
 
 ```typescript
 import {
   isString,
   isArray,
   isUnion,
-  asArrayRecursive
+  asArrayOf
 } from 'ts-runtime-typecheck';
 
-const check = asArrayRecursive(isUnion(isString, isArray));
+const check = asArrayOf(isUnion(isString, isArray));
 const b = check(['hello', [0, 1, 2], 'world']);
 ```
 
@@ -350,7 +350,7 @@ function print_error (err) {
 }
 ```
 
-In addition to when checking to see if a value matches an interface it may be desirable to instead use an instance check. While it doesn't provide the same guarantees it will often be significantly faster, as it does not perform a type check on each member to see that they exist and contain the right type of value.
+When validating a value matches an interface it may be desirable to instead use [`isInstance`](#reference-isinstance) instead of [`isStruct`](#reference-isstruct). While it doesn't provide the same guarantees it will often be significantly faster, as it does not perform a [Type Check](#reference-type-checks) on each member to see that they exist and contain the right type of value.
 
 ---
 
@@ -382,7 +382,7 @@ In addition to when checking to see if a value matches an interface it may be de
 
   Cast `unknown` to `Array<unknown>`. Accepts an optional fallback value that is emitted if the value is nullish and fallback is defined.
 
-- ### asRecord
+- ### asDictionary
 
   Cast `unknown` to [`Dictionary<unknown>`](#dictionary). Accepts an optional fallback value that is emitted if the value is nullish and fallback is defined.
 
@@ -406,11 +406,11 @@ In addition to when checking to see if a value matches an interface it may be de
   
   Cast [`JSONValue`](#jsonvalue) to [`JSONArray`](#jsonarray). Unlike [`asJSONValue`](#asjsonvalue) this does not perform recursive validation, hence it only accepts a [`JSONValue`](#jsonvalue) so that the sub-elements are of a known type. Accepts an optional fallback value that is emitted if the value is nullish and fallback is defined.
 
-- ### asArrayRecursive
+- ### asArrayOf
   
   Takes a Type Cast function for `Type` and returns a new Type Cast function for `Array<Type>` where type is a generic parameter. The emitted Type Cast function accepts an optional fallback value that is emitted if the value is nullish and fallback is defined. Refer to [Recursive Array/Object casts](#recursive-arrayobject-casts) for examples.
 
-- ### asObjectRecursive
+- ### asDictionaryOf
   
   Takes a Type Cast function for `Type` and returns a new Type Cast function for [`Dictionary<Type>`](#dictionary) where type is a generic parameter. The emitted Type Cast function accepts an optional fallback value that is emitted if the value is nullish and fallback is defined. Refer to [Recursive Array/Object casts](#recursive-arrayobject-casts) for examples.
 
@@ -448,7 +448,7 @@ In addition to when checking to see if a value matches an interface it may be de
 
   Cast `unknown` value to `Array<unknown> | undefined`. If value is [`Nullish`](#nullish) then return `undefined`.
 
-- ### asOptRecord
+- ### asOptDictionary
 
   Cast `unknown` value to [`Dictionary<unknown> | undefined`](#dictionary). If value is [`Nullish`](#nullish) then return `undefined`.
 
@@ -476,11 +476,11 @@ In addition to when checking to see if a value matches an interface it may be de
 
   Cast [`JSONValue | undefined`](#jsonvalue) value to [`JSONArray | undefined`](#jsonarray). If value is [`Nullish`](#nullish) then return `undefined`.
 
-- ### asOptArrayRecursive
+- ### asOptArrayOf
 
   Takes a Type Cast function for `Type` and returns a new Type Cast function for `Array<Type> | undefined` where type is a generic parameter. Refer to [Recursive Array/Object casts](#recursive-arrayobject-casts) for examples.
 
-- ### asOptRecordRecursive
+- ### asOptDictionaryOf
 
   Takes a Type Cast function for `Type` and returns a new Type Cast function for [`Dictionary<Type> | undefined`](#dictionary) where type is a generic parameter. Refer to [Recursive Array/Object casts](#recursive-arrayobject-casts) for examples.
 
@@ -494,7 +494,7 @@ In addition to when checking to see if a value matches an interface it may be de
 
 ### Reference: Type Checks
 
-- ### isRecord
+- ### isDictionary
 
   Takes an `unknown` value and returns a boolean indicating if the value is of the type [`Dictionary<unknown>`](#dictionary).
 
@@ -554,11 +554,11 @@ In addition to when checking to see if a value matches an interface it may be de
 
   Takes an [`JSONValue`](#jsonvalue) value and returns a boolean indicating if the value is of the type [`JSONObject`](#jsonobject).
 
-- ### isArrayRecursive
+- ### isArrayOf
   
   Takes a Type Check function for `Type` and returns a new Type Check function for `Array<Type>` where Type is a generic parameter.
 
-- ### isObjectRecursive
+- ### isDictionaryOf
   
   Takes a Type Check function for `Type` and returns a new Type Check function for [`Dictionary<Type>`](#dictionary) where Type is a generic parameter.
 
@@ -572,7 +572,7 @@ In addition to when checking to see if a value matches an interface it may be de
 
 ### Reference: Optional Type Checks
 
-- ### isOptRecord
+- ### isOptDictionary
 
   Takes an `unknown` value and returns a boolean indicating if the value is of the type [`Optional<Dictionary<unknown>>`](#dictionary).
 
@@ -624,11 +624,11 @@ In addition to when checking to see if a value matches an interface it may be de
 
   Takes an [`InterfacePattern`](#interfacepattern) which is equivalent to `Type` and returns a new [`TypeAssert`](#typeassert) function for `Optional<Type>`, where `Type` is an interface defined by the [`TypeAsserts`](#typeassert) specified in the pattern. Refer to [Special Case: asStruct](#special-case-asstruct) for examples.
 
-- ### isOptArrayRecursive
+- ### isOptArrayOf
   
   Takes a Type Check function for `Type` and returns a new Type Check function for `Optional<Array<Type>>` where Type is a generic parameter.
 
-- ### isOptObjectRecursive
+- ### isOptDictionaryOf
   
   Takes a Type Check function for `Type` and returns a new Type Check function for [`Optional<Dictionary<Type>>`](#dictionary) where Type is a generic parameter.
 
@@ -692,9 +692,9 @@ In addition to when checking to see if a value matches an interface it may be de
 
   Identical to [`UnknownFunction`](#unknownfunction) in all ways but 1, it returns `Promise<unknown>` instead.
 
-- ### TypeAssert
+- ### TypeCheck
 
-  An alias for a function that meets the requirements of TypeScript [Type Guards](https://www.typescriptlang.org/docs/handbook/advanced-types.html#user-defined-type-guards). They take the format `(value: unknown) => value is TYPE`. With the except of specialist JSON checks all [Type Checks](#reference-type-checks) conform to this type.
+  An alias for a function that meets the requirements of TypeScript [Type Guards](https://www.typescriptlang.org/docs/handbook/advanced-types.html#user-defined-type-guards). They take the format `(value: unknown) => value is TYPE`. With the exception of specialist JSON checks all [Type Checks](#reference-type-checks) conform to this type.
 
 - ### InterfacePattern
 
@@ -723,10 +723,10 @@ In addition to when checking to see if a value matches an interface it may be de
 ### v1.2.0
 
 - Add: Introduce `isStruct` and `asStruct` that allow the inspection of a object to see if it meets a specific interface.
-- Add: Optional variants of Type Checks with form `isOpt{TYPE}`.
+- Add: Optional variants of [Type Checks](#reference-type-checks) with form `isOpt{TYPE}`.
 - Breaking Change: `asDefined` can longer accept `null` as a fallback parameter.
 - Change: `asIndexable` now accepts arrays.
-- Add: `isIndexable` type check.
+- Add: `isIndexable` [type check](#reference-type-checks).
 - Change: Expose the `TypeAssert` type publicly.
 - Add: `InterfacePattern` type.
 - Change: modify the type names in errors to be closer to the TypeScript names.
@@ -735,8 +735,11 @@ In addition to when checking to see if a value matches an interface it may be de
 
 - Add: `isUnion` and `isOptUnion` to allow checking if a value matches any type of a type union.
 - Add: `asUnion` and `asOptUnion` to allow casting a value to a type union.
-- Add: `isArrayRecursive` and `isOptArrayRecursive` to allow checking if a value is an array of a given type.
-- Add: `isObjectRecursive` and `isOptObjectRecursive` to allow checking if a value is a Dictionary of a given type.
-- Breaking Change: Recursive Type Casts now take a Type Check as an argument instead of a Type Cast, and no longer emit a copy of the input. As a side effect if you are upgrading from `asArrayRecursive(asOptString)` to `asArrayRecursive(isOptString)` or (similar) the output array may contain `null` as the elements are no longer transformed by an inner cast ( optional cast methods normalize output to `undefined` ).
+- Add: `isArrayOf` and `isOptArrayOf` to allow checking if a value is an array of a given type.
+- Add: `isDictionaryOf` and `isOptDictionaryOf` to allow checking if a value is a Dictionary of a given type.
+- Breaking Change: Recursive [Type Casts](#reference-type-casts) now take a [Type Check](#reference-type-checks) as an argument instead of a [Type Cast](#reference-type-casts), and no longer emit a copy of the input. As a side effect if you are upgrading from `asArrayRecursive(asOptString)` to `asArraryOf(isOptString)` or (similar) the output array may contain `null` as the elements are no longer transformed by an inner cast ( optional cast methods normalize output to `undefined` ).
 - Add: `isInstance` and `isOptInstance` to allow checking if a value is an instance of a given class.
 - Add: `asInstance` and `asOptInstance` to allow casting a value to an instance of a given class.
+- Breaking Change: `asRecord`, `asOptRecord`, `asRecordRecursive` and `asOptRecordRecursive` have been renamed to `asDictionary`, `asOptDictionary`, `asDictionaryOf` and `asOptDictionaryOf` respectively.
+- Breaking Change: `asArrayRecursive` and `asOptArrayRecursive` have been renamed to `asArrayOf` and `asOptArrayOf` respectively.
+- Breaking Change: rename `TypeAssert` to `TypeCheck`
