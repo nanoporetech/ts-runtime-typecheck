@@ -1,4 +1,4 @@
-import type { TypeAssert } from '../TypeAssert.type';
+import type { TypeCheck } from '../TypeCheck.type';
 import { isString } from './is-primitive';
 import { isArrayOf, isDictionaryOf, isOptArrayOf, isOptDictionaryOf } from './is-recursive';
 
@@ -33,7 +33,7 @@ describe('is primitive', () => {
     },
   ];
 
-  function tryExamples<T>(test: TypeAssert<T>, expected: boolean[]) {
+  function tryExamples<T>(test: TypeCheck<T>, expected: boolean[]) {
     for (let i = 0; i < examples.length; i++) {
       const example = examples[i];
       const passes = expected[i];

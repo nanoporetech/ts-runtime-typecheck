@@ -1,5 +1,5 @@
 import type { InterfacePattern, UnwrapInterfacePattern } from '../InterfacePattern.type';
-import type { TypeAssert, UnwrapTypeAssert } from '../TypeAssert.type';
+import type { TypeCheck, UnwrapTypeCheck } from '../TypeCheck.type';
 import type { Optional } from '../Optional.type';
 
 import { memoize } from '../memoize';
@@ -10,7 +10,7 @@ function structLabel (pattern: InterfacePattern): string {
   return entries.length === 0 ? '{}' : `{ ${entries.map(([name, check]) => check.TYPE_NAME ? `${name}: ${check.TYPE_NAME}` : name).join('; ')} }`;
 }
 
-export const isStruct = memoize(<Pattern extends InterfacePattern> (pattern: Pattern): TypeAssert<{[K in keyof Pattern]: UnwrapTypeAssert<Pattern[K]>}> & { TYPE_NAME: string } => {
+export const isStruct = memoize(<Pattern extends InterfacePattern> (pattern: Pattern): TypeCheck<{[K in keyof Pattern]: UnwrapTypeCheck<Pattern[K]>}> & { TYPE_NAME: string } => {
   const fn = (val: unknown): val is UnwrapInterfacePattern<Pattern> => {
     if (!isDictionary(val)) {
       return false;
@@ -30,7 +30,7 @@ export const isStruct = memoize(<Pattern extends InterfacePattern> (pattern: Pat
   return fn;
 });
 
-export const isOptStruct = memoize(<Pattern extends InterfacePattern> (pattern: Pattern): TypeAssert<Optional<{[K in keyof Pattern]: UnwrapTypeAssert<Pattern[K]>}>> & { TYPE_NAME: string } => {
+export const isOptStruct = memoize(<Pattern extends InterfacePattern> (pattern: Pattern): TypeCheck<Optional<{[K in keyof Pattern]: UnwrapTypeCheck<Pattern[K]>}>> & { TYPE_NAME: string } => {
   const fn = (val: unknown): val is Optional<UnwrapInterfacePattern<Pattern>> => {
     if (isNullish(val)) {
       return true;
