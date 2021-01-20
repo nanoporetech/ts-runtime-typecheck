@@ -27,7 +27,7 @@ npm install ts-runtime-typecheck
 - [Type Coerce](#type-coerce)
 - [JSON Types](#json-types)
 - [Ensuring an optional value is defined](#ensuring-an-optional-value-is-defined)
-- [Recursive Array/Object casts](#recursive-arrayobject-casts)
+- [Array/Object of Type Casts](#arrayobject-of-type-casts)
 - [Validating interfaces](#validating-interfaces)
 - [Union types](#union-types)
 - [Class instances](#class-instances)
@@ -174,7 +174,7 @@ const d: JSONValue = new Error('hi'); // Type 'Error' is not assignable to type 
 
 For dynamic data [`isJSONValue`](#isjsonvalue) and [`asJSONValue`](#asjsonvalue) provide recursive type validation on a value.
 
-[Type Check](#reference-type-checks) and [Type Casts](#reference-type-casts) are provided for [`JSONArray`](#jsonarray)s and [`JSONObject`](#jsonobject)s, with the caveat that they only accept [`JSONValue`](#jsonvalue)s. This is to avoid needing to recursively validate values which have already been validated.
+[Type Check](#reference-type-checks) and [Type Casts](#reference-type-casts) are provided for [`JSONArrays`](#jsonarray) and [`JSONObjects`](#jsonobject), with the caveat that they only accept [`JSONValue`](#jsonvalue)s. This is to avoid needing to recursively validate values which have already been validated.
 
 ```typescript
 import { asJSONValue, isJSONObject, isJSONArray } from 'ts-runtime-typecheck';
@@ -318,7 +318,7 @@ if (isString(a) || isArray(a)) {
 }
 ```
 
-But you can't cast to that type, or pass it into a function like `asArrayOf` or `isStruct` which require a [Type Check](#reference-type-checks) for their input. To do this you can use `isUnion` or `asUnion`. These functions take a variable number of [Type Checks](#reference-type-checks) and produce a union of them.
+But you can't cast to that type, or pass it into a function like [`asArrayOf`](#asarrayof) or [`isStruct`](isstruct) which require a [Type Check](#reference-type-checks) for their input. To do this you can use [`isUnion`](#isunion) or [`asUnion`](#asunion). These functions take a variable number of [Type Checks](#reference-type-checks) and produce a union of them.
 
 ```typescript
 import {
@@ -336,7 +336,7 @@ const b = check(['hello', [0, 1, 2], 'world']);
 
 ## Class instances
 
-Under most scenarios you will know if a value is an instance of a given class. However, there are scenarios where this is not the case. For these situations you can use `isInstance` or `asInstance` to ensure you have the correct type.
+Under most scenarios you will know if a value is an instance of a given class. However, there are scenarios where this is not the case. For these situations you can use [`isInstance`](#isinstance) or [`asInstance`](#asinstance) to ensure you have the correct type.
 
 ```typescript
 import { isInstance } from 'ts-runtime-typecheck';
@@ -350,7 +350,7 @@ function print_error (err) {
 }
 ```
 
-When validating a value matches an interface it may be desirable to instead use [`isInstance`](#reference-isinstance) instead of [`isStruct`](#reference-isstruct). While it doesn't provide the same guarantees it will often be significantly faster, as it does not perform a [Type Check](#reference-type-checks) on each member to see that they exist and contain the right type of value.
+When validating a value matches an interface it may be desirable to instead use [`isInstance`](#isinstance) instead of [`isStruct`](#isstruct). While it doesn't provide the same guarantees it will often be significantly faster, as it does not perform a [Type Check](#reference-type-checks) on each member to see that they exist and contain the right type of value.
 
 ---
 
@@ -408,15 +408,15 @@ When validating a value matches an interface it may be desirable to instead use 
 
 - ### asArrayOf
   
-  Takes a Type Cast function for `Type` and returns a new Type Cast function for `Array<Type>` where type is a generic parameter. The emitted Type Cast function accepts an optional fallback value that is emitted if the value is nullish and fallback is defined. Refer to [Recursive Array/Object casts](#recursive-arrayobject-casts) for examples.
+  Takes a Type Cast function for `Type` and returns a new Type Cast function for `Array<Type>` where type is a generic parameter. The emitted Type Cast function accepts an optional fallback value that is emitted if the value is nullish and fallback is defined. Refer to [Array/Object of Type Casts](#arrayobject-of-type-casts) for examples.
 
 - ### asDictionaryOf
   
-  Takes a Type Cast function for `Type` and returns a new Type Cast function for [`Dictionary<Type>`](#dictionary) where type is a generic parameter. The emitted Type Cast function accepts an optional fallback value that is emitted if the value is nullish and fallback is defined. Refer to [Recursive Array/Object casts](#recursive-arrayobject-casts) for examples.
+  Takes a Type Cast function for `Type` and returns a new Type Cast function for [`Dictionary<Type>`](#dictionary) where type is a generic parameter. The emitted Type Cast function accepts an optional fallback value that is emitted if the value is nullish and fallback is defined. Refer to [Array/Object of Type Casts](#arrayobject-of-type-casts) for examples.
 
 - ### asStruct
   
-  Takes an [`InterfacePattern`](#interfacepattern) which is equivalent to `Type` and returns a new Type Cast function for `Type`, where `Type` is an interface defined by the [`TypeAsserts`](#typeassert) specified in the pattern. Refer to [Special Case: asStruct](#special-case-asstruct) for examples.
+  Takes an [`InterfacePattern`](#interfacepattern) which is equivalent to `Type` and returns a new Type Cast function for `Type`, where `Type` is an interface defined by the [`TypeAsserts`](#typeassert) specified in the pattern. Refer to [Validating interfaces](#validating-interfaces) for examples.
 
 - ### asInstance
 
@@ -478,15 +478,15 @@ When validating a value matches an interface it may be desirable to instead use 
 
 - ### asOptArrayOf
 
-  Takes a Type Cast function for `Type` and returns a new Type Cast function for `Array<Type> | undefined` where type is a generic parameter. Refer to [Recursive Array/Object casts](#recursive-arrayobject-casts) for examples.
+  Takes a Type Cast function for `Type` and returns a new Type Cast function for `Array<Type> | undefined` where type is a generic parameter. Refer to [Array/Object of Type Casts](#arrayobject-of-type-casts) for examples.
 
 - ### asOptDictionaryOf
 
-  Takes a Type Cast function for `Type` and returns a new Type Cast function for [`Dictionary<Type> | undefined`](#dictionary) where type is a generic parameter. Refer to [Recursive Array/Object casts](#recursive-arrayobject-casts) for examples.
+  Takes a Type Cast function for `Type` and returns a new Type Cast function for [`Dictionary<Type> | undefined`](#dictionary) where type is a generic parameter. Refer to [Array/Object of Type Casts](#arrayobject-of-type-casts) for examples.
 
 - ### asOptStruct
   
-  Takes an [`InterfacePattern`](#interfacepattern) which is equivalent to `Type` and returns a new Type Cast function for `Type | undefined`, where `Type` is an interface defined by the [`TypeAsserts`](#typeassert) specified in the pattern. Refer to [Special Case: asStruct](#special-case-asstruct) for examples.
+  Takes an [`InterfacePattern`](#interfacepattern) which is equivalent to `Type` and returns a new Type Cast function for `Type | undefined`, where `Type` is an interface defined by the [`TypeAsserts`](#typeassert) specified in the pattern. Refer to [Validating interfaces](#validating-interfaces) for examples.
 
 - ### asOptInstance
 
@@ -564,7 +564,7 @@ When validating a value matches an interface it may be desirable to instead use 
 
 - ### isStruct
 
-  Takes an [`InterfacePattern`](#interfacepattern) which is equivalent to `Type` and returns a new [`TypeAssert`](#typeassert) function for `Type`, where `Type` is an interface defined by the [`TypeAsserts`](#typeassert) specified in the pattern. Refer to [Special Case: asStruct](#special-case-asstruct) for examples.
+  Takes an [`InterfacePattern`](#interfacepattern) which is equivalent to `Type` and returns a new [`TypeAssert`](#typeassert) function for `Type`, where `Type` is an interface defined by the [`TypeAsserts`](#typeassert) specified in the pattern. Refer to [Validating interfaces](#validating-interfaces) for examples.
 
 - ### isInstance
 
@@ -622,7 +622,7 @@ When validating a value matches an interface it may be desirable to instead use 
 
 - ### isOptStruct
 
-  Takes an [`InterfacePattern`](#interfacepattern) which is equivalent to `Type` and returns a new [`TypeAssert`](#typeassert) function for `Optional<Type>`, where `Type` is an interface defined by the [`TypeAsserts`](#typeassert) specified in the pattern. Refer to [Special Case: asStruct](#special-case-asstruct) for examples.
+  Takes an [`InterfacePattern`](#interfacepattern) which is equivalent to `Type` and returns a new [`TypeAssert`](#typeassert) function for `Optional<Type>`, where `Type` is an interface defined by the [`TypeAsserts`](#typeassert) specified in the pattern. Refer to [Validating interfaces](#validating-interfaces) for examples.
 
 - ### isOptArrayOf
   
