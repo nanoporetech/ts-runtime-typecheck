@@ -87,13 +87,13 @@ printName(42)
 // Error: Unable to cast number to string
 ```
 
-In the situation you want to preserve the optionally of a value, but still validate the type there exists an alternate function for each type cast. These take the form [`asOpt{TYPE}`](#reference-optional-type-casts). Unlike the standard functions they do not take an optional fallback value, but when a [`Nullish`](#nullish) value is passed in they will always emit `undefined`. If the input is not [`Nullish`](#nullish), then it behaves the same as the standard type casts. If the type condition is met then it emits the value, otherwise it will throw.
+In the situation you want to check a value meets an [`Optional`](#optional) type there exists an alternate function for each type cast. These take the form [`asOpt{TYPE}`](#reference-optional-type-casts). Unlike the standard functions they do not allow for a fallback value, but when a [`Nullish`](#nullish) value is passed in they will always emit `undefined`. If the input is not [`Nullish`](#nullish), then it behaves the same as the standard type casts. If the type condition is met then it emits the value, otherwise it will throw.
 
 ---
 
 ## Type Checks
 
-[Type Checks](#reference-type-checks) take an `unknown` value as an argument, and return a `boolean` indicating if the given value matches the required type. These functions take the form [`is{TYPE}`](#reference-type-checks). In the correct situation TypeScript is capable of refining the type of a value through the use of these functions and flow analysis, like the below example.
+**Type Checks** take an `unknown` value as an argument, and return a `boolean` indicating if the given value matches the required type. These functions take the form [`is{TYPE}`](#reference-type-checks). In the correct situation TypeScript is capable of refining the type of a value through the use of these functions and flow analysis, like the below example.
 
 ```typescript
 import { isNumber } from 'ts-runtime-typecheck';
@@ -132,7 +132,7 @@ export function printSq (input: unknown) {
 
 ## Type Coerce
 
-Type coercion functions take an unknown value as an argument, and convert it into a specific type. These functions take the format [`make{TYPE}`](#reference-type-coerce). Unlike the other functions this only works for small subset of types: number, string and boolean. They make a best effort to convert the type, but if the input is not suitable then they will throw an error. For instance passing a non-numeric string to [`makeNumber`](#make-number) will cause it to throw, as will passing a string that is not `"true" | "false"` to [`makeBoolean`](#make-boolean). While these functions will take any input value, this is to allow the input of values that have not been validated. The only valid input types for all 3 functions are `number | string | boolean`. The intention here is to allow useful conversion, but prevent accidentally passing complex types.
+**Type Coercion** functions take an `unknown` value as an argument, and convert it into a specific type. These functions take the format [`make{TYPE}`](#reference-type-coerce). Unlike the other functions this only works for small subset of types: number, string and boolean. They make a best effort to convert the type, but if the input is not suitable then they will throw an error. For instance passing a non-numeric string to [`makeNumber`](#make-number) will cause it to throw, as will passing a string that is not `"true" | "false"` to [`makeBoolean`](#make-boolean). While these functions will take any input value, this is to allow the input of values that have not been validated. The only valid input types for all 3 functions are `number | string | boolean`. The intention here is to allow useful conversion, but prevent accidentally passing complex types.
 
 There is an argument that [`makeString`](#makestring) could support using the `toString` method of an `object`, but the default `toString` method returns the useless `[object Object]` string. It is possible to detect if an object has implemented it's own `toString` method, but is it correct to use it in this situation? That depends on the intention of the programmer. In the absence of a clear answer the line has been drawn at only accepting primitives.
 
@@ -174,7 +174,7 @@ const d: JSONValue = new Error('hi'); // Type 'Error' is not assignable to type 
 
 For dynamic data [`isJSONValue`](#isjsonvalue) and [`asJSONValue`](#asjsonvalue) provide recursive type validation on a value.
 
-[Type Check](#reference-type-checks) and [Type Casts](#reference-type-casts) are provided for [`JSONArrays`](#jsonarray) and [`JSONObjects`](#jsonobject), with the caveat that they only accept [`JSONValue`](#jsonvalue)s. This is to avoid needing to recursively validate values which have already been validated.
+[Type Check](#reference-type-checks) and [Type Casts](#reference-type-casts) are provided for [`JSONArrays`](#jsonarray) and [`JSONObjects`](#jsonobject), with the caveat that they only accept [`JSONValues`](#jsonvalue). This is to avoid needing to recursively validate values which have already been validated.
 
 ```typescript
 import { asJSONValue, isJSONObject, isJSONArray } from 'ts-runtime-typecheck';
@@ -640,15 +640,15 @@ When validating a value matches an interface it may be desirable to instead use 
 
 - ### makeString
 
-  Takes an `unknown` value and converts it to it's *textual* representation. A value that cannot be cleaning converted will trigger an error.
+  Takes an `unknown` value and converts it to it's *textual* representation. A value that cannot be cleanly converted will trigger an error.
 
 - ### makeNumber
 
-  Takes an `unknown` value and converts it to it's *numerical* representation. A value that cannot be cleaning converted will trigger an error.
+  Takes an `unknown` value and converts it to it's *numerical* representation. A value that cannot be cleanly converted will trigger an error.
 
 - ### makeBoolean
 
-  Takes an `unknown` value and converts it to it's *boolean* representation. A value that cannot be cleaning converted will trigger an error.
+  Takes an `unknown` value and converts it to it's *boolean* representation. A value that cannot be cleanly converted will trigger an error.
 
 ### Reference: Types
 
@@ -686,7 +686,7 @@ When validating a value matches an interface it may be desirable to instead use 
 
 - ### UnknownFunction
 
-  A stricter alternative to the type `Function`. It accepts any number of unknown parameters, and returns an unknown valid. Allowing you to reference an untyped function in a slightly safer manner. This does not provide any arity or type checks for the parameters.
+  A stricter alternative to the type `Function`. It accepts any number of unknown parameters, and returns an unknown value. Allowing you to reference an untyped function in a slightly safer manner. This does not provide any arity or type checks for the parameters.
 
 - ### UnknownAsyncFunction
 
@@ -698,7 +698,7 @@ When validating a value matches an interface it may be desirable to instead use 
 
 - ### InterfacePattern
 
-  An alias for a [`Dictionary`](#dictionary) of [`TypeAssert`](#typeassert) functions. When used in conjunction with [`isStruct`](#isstruct) or [`asStruct`](#asstruct) they can  validate an `object` again the equivalent interface to the pattern.
+  An alias for a [`Dictionary`](#dictionary) of [`TypeAssert`](#typeassert) functions. When used in conjunction with [`isStruct`](#isstruct) or [`asStruct`](#asstruct) they can  validate an `object` against the equivalent interface to the pattern.
 
 ## Changelog
 
