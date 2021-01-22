@@ -19,4 +19,4 @@ export { Optional } from './Optional.type';
 export { Nullish } from './Nullish.type';
 export { UnknownFunction, UnknownAsyncFunction } from './UnknownFunction.type';
 export { InterfacePattern } from './InterfacePattern.type';
-export { TypeAssert } from './TypeAssert.type';
+export { TypeCheck } from './TypeCheck.type';

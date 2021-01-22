@@ -1,6 +1,6 @@
-import type { TypeAssert } from '../TypeAssert.type';
+import type { TypeCheck } from '../TypeCheck.type';
 import { isString } from './is-primitive';
-import { isArrayRecursive, isOptArrayRecursive, isOptRecordRecursive, isRecordRecursive } from './is-recursive';
+import { isArrayOf, isDictionaryOf, isOptArrayOf, isOptDictionaryOf } from './is-recursive';
 
 describe('is primitive', () => {
   class Dummy {}
@@ -33,7 +33,7 @@ describe('is primitive', () => {
     },
   ];
 
-  function tryExamples<T>(test: TypeAssert<T>, expected: boolean[]) {
+  function tryExamples<T>(test: TypeCheck<T>, expected: boolean[]) {
     for (let i = 0; i < examples.length; i++) {
       const example = examples[i];
       const passes = expected[i];
@@ -60,8 +60,8 @@ describe('is primitive', () => {
     }
   }
 
-  describe('isRecordRecursive', () => {
-    tryExamples(isRecordRecursive(isString), [
+  describe('isDictionaryOf', () => {
+    tryExamples(isDictionaryOf(isString), [
       false,
       false,
       false,
@@ -84,13 +84,13 @@ describe('is primitive', () => {
     ]);
 
     it('uses correct labels', () => {
-      expect(isRecordRecursive(isString).TYPE_NAME).toBe('Dictionary<string>');
-      expect(isRecordRecursive((_obj: unknown): _obj is unknown => true).TYPE_NAME).toBe('Dictionary<unknown>');
+      expect(isDictionaryOf(isString).TYPE_NAME).toBe('Dictionary<string>');
+      expect(isDictionaryOf((_obj: unknown): _obj is unknown => true).TYPE_NAME).toBe('Dictionary<unknown>');
     });
   });
 
-  describe('isOptRecordRecursive', () => {
-    tryExamples(isOptRecordRecursive(isString), [
+  describe('isOptDictionaryOf', () => {
+    tryExamples(isOptDictionaryOf(isString), [
       false,
       false,
       false,
@@ -113,13 +113,13 @@ describe('is primitive', () => {
     ]);
 
     it('uses correct labels', () => {
-      expect(isOptRecordRecursive(isString).TYPE_NAME).toBe('Optional<Dictionary<string>>');
-      expect(isOptRecordRecursive((_obj: unknown): _obj is unknown => true).TYPE_NAME).toBe('Optional<Dictionary<unknown>>');
+      expect(isOptDictionaryOf(isString).TYPE_NAME).toBe('Optional<Dictionary<string>>');
+      expect(isOptDictionaryOf((_obj: unknown): _obj is unknown => true).TYPE_NAME).toBe('Optional<Dictionary<unknown>>');
     });
   });
 
-  describe('isArrayRecursive', () => {
-    tryExamples(isArrayRecursive(isString), [
+  describe('isArrayOf', () => {
+    tryExamples(isArrayOf(isString), [
       false,
       false,
       false,
@@ -142,13 +142,13 @@ describe('is primitive', () => {
     ]);
 
     it('uses correct labels', () => {
-      expect(isArrayRecursive(isString).TYPE_NAME).toBe('string[]');
-      expect(isArrayRecursive((_obj: unknown): _obj is unknown => true).TYPE_NAME).toBe('unknown[]');
+      expect(isArrayOf(isString).TYPE_NAME).toBe('string[]');
+      expect(isArrayOf((_obj: unknown): _obj is unknown => true).TYPE_NAME).toBe('unknown[]');
     });
   });
 
-  describe('isOptArrayRecursive', () => {
-    tryExamples(isOptArrayRecursive(isString), [
+  describe('isOptArrayOf', () => {
+    tryExamples(isOptArrayOf(isString), [
       false,
       false,
       false,
@@ -171,8 +171,8 @@ describe('is primitive', () => {
     ]);
 
     it('uses correct labels', () => {
-      expect(isOptArrayRecursive(isString).TYPE_NAME).toBe('Optional<string[]>');
-      expect(isOptArrayRecursive((_obj: unknown): _obj is unknown => true).TYPE_NAME).toBe('Optional<unknown[]>');
+      expect(isOptArrayOf(isString).TYPE_NAME).toBe('Optional<string[]>');
+      expect(isOptArrayOf((_obj: unknown): _obj is unknown => true).TYPE_NAME).toBe('Optional<unknown[]>');
     });
   });
 });

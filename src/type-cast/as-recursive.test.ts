@@ -1,12 +1,12 @@
 import { isNumber, isOptString, isString } from '../type-check/is-primitive';
-import { asArrayRecursive, asOptArrayRecursive, asOptRecordRecursive, asRecordRecursive } from './as-recursive';
+import { asArrayOf, asOptArrayOf, asOptDictionaryOf, asDictionaryOf } from './as-recursive';
 
 describe('recursive casts', () => {
   const fn = () => false;
 
-  it('asArrayRecursive', () => {
-    const asStringArray = asArrayRecursive(isString);
-    const asOptStringArray = asArrayRecursive(isOptString);
+  it('asArrayOf', () => {
+    const asStringArray = asArrayOf(isString);
+    const asOptStringArray = asArrayOf(isOptString);
     // intended
     expect(asStringArray([])).toEqual([]);
     expect(asStringArray(['test', 'test'])).toEqual(['test', 'test']);
@@ -26,15 +26,15 @@ describe('recursive casts', () => {
     expect(() => asStringArray(fn)).toThrow('Unable to cast function to string[]');
   });
 
-  it('asArrayRecursive memoization', () => {
-    const asStringArray = asArrayRecursive(isString);
-    expect(asStringArray).toBe(asArrayRecursive(isString));
-    expect(asStringArray).not.toBe(asArrayRecursive(isNumber));
+  it('asArrayOf memoization', () => {
+    const asStringArray = asArrayOf(isString);
+    expect(asStringArray).toBe(asArrayOf(isString));
+    expect(asStringArray).not.toBe(asArrayOf(isNumber));
   });
 
-  it('asRecordRecursive', () => {
-    const asStringRecord = asRecordRecursive(isString);
-    const asOptStringRecord = asRecordRecursive(isOptString);
+  it('asDictionaryOf', () => {
+    const asStringRecord = asDictionaryOf(isString);
+    const asOptStringRecord = asDictionaryOf(isOptString);
 
     expect(asStringRecord({})).toEqual({});
     expect(asStringRecord({ a: 'test', b: 'test' })).toEqual({ a: 'test', b: 'test' });
@@ -54,19 +54,19 @@ describe('recursive casts', () => {
     expect(() => asStringRecord(fn)).toThrow('Unable to cast function to Dictionary<string>');
   });
 
-  it('asRecordRecursive memoization', () => {
-    const asStringRecord = asRecordRecursive(isString);
-    expect(asStringRecord).toBe(asRecordRecursive(isString));
-    expect(asStringRecord).not.toBe(asRecordRecursive(isNumber));
+  it('asDictionaryOf memoization', () => {
+    const asStringRecord = asDictionaryOf(isString);
+    expect(asStringRecord).toBe(asDictionaryOf(isString));
+    expect(asStringRecord).not.toBe(asDictionaryOf(isNumber));
   });
 });
 
 describe('optional recursive casts', () => {
   const fn = () => false;
 
-  it('asOptArrayRecursive', () => {
-    const asOptStringArray = asOptArrayRecursive(isString);
-    const asOptOptStringArray = asOptArrayRecursive(isOptString);
+  it('asOptArrayOf', () => {
+    const asOptStringArray = asOptArrayOf(isString);
+    const asOptOptStringArray = asOptArrayOf(isOptString);
     // intended
     expect(asOptStringArray([])).toEqual([]);
     expect(asOptStringArray(['test', 'test'])).toEqual(['test', 'test']);
@@ -84,15 +84,15 @@ describe('optional recursive casts', () => {
     expect(() => asOptStringArray(fn)).toThrow('Unable to cast function to Optional<string[]>');
   });
 
-  it('asOptArrayRecursive memoization', () => {
-    const asOptStringArray = asOptArrayRecursive(isString);
-    expect(asOptStringArray).toBe(asOptArrayRecursive(isString));
-    expect(asOptStringArray).not.toBe(asOptArrayRecursive(isNumber));
+  it('asOptArrayOf memoization', () => {
+    const asOptStringArray = asOptArrayOf(isString);
+    expect(asOptStringArray).toBe(asOptArrayOf(isString));
+    expect(asOptStringArray).not.toBe(asOptArrayOf(isNumber));
   });
 
-  it('asOptRecordRecursive', () => {
-    const asOptStringRecord = asOptRecordRecursive(isString);
-    const asOptOptStringRecord = asOptRecordRecursive(isOptString);
+  it('asOptDictionaryOf', () => {
+    const asOptStringRecord = asOptDictionaryOf(isString);
+    const asOptOptStringRecord = asOptDictionaryOf(isOptString);
     // intended
     expect(asOptStringRecord({})).toEqual({});
     expect(asOptStringRecord({ a: 'test', b: 'test' })).toEqual({ a: 'test', b: 'test' });
@@ -109,9 +109,9 @@ describe('optional recursive casts', () => {
     expect(() => asOptStringRecord(fn)).toThrow('Unable to cast function to Optional<Dictionary<string>>');
   });
 
-  it('asOptRecordRecursive memoization', () => {
-    const asOptStringRecord = asOptRecordRecursive(isString);
-    expect(asOptStringRecord).toBe(asOptRecordRecursive(isString));
-    expect(asOptStringRecord).not.toBe(asOptRecordRecursive(isNumber));
+  it('asOptDictionaryOf memoization', () => {
+    const asOptStringRecord = asOptDictionaryOf(isString);
+    expect(asOptStringRecord).toBe(asOptDictionaryOf(isString));
+    expect(asOptStringRecord).not.toBe(asOptDictionaryOf(isNumber));
   });
 });
