@@ -1,4 +1,4 @@
-import type { TypeAssert } from '../TypeAssert.type';
+import type { TypeCheck } from '../TypeCheck.type';
 
 import { isNumber, isString } from './is-primitive';
 import { isStruct, isOptStruct } from './is-struct';
@@ -81,7 +81,7 @@ describe('is struct', () => {
   });
 
   it('does not add a type to the label if the TypeAssert does not hold one', () => {
-    const test: TypeAssert<string> = (_obj: unknown): _obj is string => true;
+    const test: TypeCheck<string> = (_obj: unknown): _obj is string => true;
     const { TYPE_NAME } = isStruct({ a: test }); 
     expect(TYPE_NAME).toBe('{ a }');
   });
@@ -167,7 +167,7 @@ describe('is optional struct', () => {
   });
 
   it('does not add a type to the label if the TypeAssert does not hold one', () => {
-    const test: TypeAssert<string> = (_obj: unknown): _obj is string => true;
+    const test: TypeCheck<string> = (_obj: unknown): _obj is string => true;
     const { TYPE_NAME } = isOptStruct({ a: test }); 
     expect(TYPE_NAME).toBe('{ a }');
   });
