@@ -759,4 +759,10 @@ When validating a value matches an interface it may be desirable to instead use 
 - Add: `asInstance` and `asOptInstance` to allow casting a value to an instance of a given class.
 - Breaking Change: `asRecord`, `asOptRecord`, `asRecordRecursive` and `asOptRecordRecursive` have been renamed to `asDictionary`, `asOptDictionary`, `asDictionaryOf` and `asOptDictionaryOf` respectively.
 - Breaking Change: `asArrayRecursive` and `asOptArrayRecursive` have been renamed to `asArrayOf` and `asOptArrayOf` respectively.
-- Breaking Change: rename `TypeAssert` to `TypeCheck`
+- Breaking Change: rename `TypeAssert` to `TypeCheck`.
+
+### 2.1.0
+
+- Add: `makeStrictPartial` for converting `Partial<T>` to `StrictPartial`.
+- Add: types `StrictPartial` and `FuzzyPartial`, variants of the inbuilt `Partial` type.
+- Add: type `StrictRequired`, variant of `Required`.
