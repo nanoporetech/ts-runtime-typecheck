@@ -1,7 +1,7 @@
 # ts-runtime-typecheck
 
 ![100% coverage](https://img.shields.io/badge/coverage-100%25-success)
-![100% coverage](https://img.shields.io/badge/dependencies-0-success)
+![0 dependencies](https://img.shields.io/badge/dependencies-0-success)
 ![npm](https://img.shields.io/npm/dm/ts-runtime-typecheck)
 
 Simple functions for validating complex data.
@@ -44,6 +44,7 @@ npm install ts-runtime-typecheck
   - [v1.1.1](#v111)
   - [v1.2.0](#v120)
   - [v2.0.0](#v200)
+  - [v2.1.0](#v210)
 
 ## Type Casts
 
@@ -650,6 +651,10 @@ When validating a value matches an interface it may be desirable to instead use 
 
   Takes an `unknown` value and converts it to it's *boolean* representation. A value that cannot be cleanly converted will trigger an error.
 
+- ### makeStrictPartial
+
+  Takes a value of the generic type `T` and returns a copy of the object excluding any members that were `Nullish`. The returned object meets the type `StrictPartial<T>`.
+
 ### Reference: Types
 
 - ### JSONValue
@@ -699,6 +704,18 @@ When validating a value matches an interface it may be desirable to instead use 
 - ### InterfacePattern
 
   An alias for a [`Dictionary`](#dictionary) of [`TypeAssert`](#typeassert) functions. When used in conjunction with [`isStruct`](#isstruct) or [`asStruct`](#asstruct) they can  validate an `object` against the equivalent interface to the pattern.
+
+- ### StrictRequired
+
+  A variant of the inbuilt `Required<T>`, which is the opposite of `Optional<T>` in that it subtracts the type `undefined` from each member of the type `T`. StrictRequired varies in that it also subtracts the type `null` from each member. Ensuring that all members meet the constraint `NonNullable`.
+
+- ### StrictPartial
+
+  A variant of the `Partial<T>` inbuilt, and closely related to `FuzzyPartial`. `Partial` makes no guarantees about the members of the type `T`, as such they can be unions of `null`. This can introduce inconsistency for users of the type; expecting that members can be specified using either `null` or `undefined`, where only some can also use `null`. `StrictPartial` resolves this by specifying that no members of the type `T` can be `null`, ensuring a consistent interface.
+
+- ### FuzzyPartial
+
+  A variant of the `Partial<T>` inbuilt, and closely related to `StrictPartial`. `Partial` makes no guarantees about the members of the type `T`, as such they can be unions of `null`. This can introduce inconsistency for users of the type; expecting that members can be specified using either `null` or `undefined`, where only some can also use `null`. `FuzzyPartial` resolves this by specifying that all members of the type `T` can also be `null`, ensuring a consistent interface.
 
 ## Changelog
 
