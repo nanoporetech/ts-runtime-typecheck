@@ -715,7 +715,7 @@ When validating a value matches an interface it may be desirable to instead use 
 
 - ### FuzzyPartial
 
-  A variant of the `Partial<T>` inbuilt, and closely related to `StrictPartial`. `Partial` makes no guarantees about the members of the type `T`, as such they can be unions of `null`. This can introduce inconsistency for users of the type; expecting that members can be specified using either `null` or `undefined`, where only some can also use `null`. `FuzzyPartial` resolves this by specifying that all members of the type `T` can also be `null`, ensuring a consistent interface.
+  A variant of the `Partial<T>` inbuilt, and closely related to `StrictPartial`. `Partial` makes no guarantees about the members of the type `T`, as such they can be unions of `null`. This can introduce inconsistency for users of the type; expecting that members can be specified using either `null` or `undefined`, where only some can also use `null`. `FuzzyPartial` resolves this by specifying that all members of the type `T` can *ALSO* be `null`, ensuring a consistent interface.
 
 ## Changelog
 
