@@ -1,4 +1,4 @@
-import type { TypeCheck } from '../TypeAssert.type';
+import type { TypeCheck } from '../TypeCheck.type';
 import { isArray, isBoolean, isDefined, isDictionary, isFunction, isIndex, isIndexable, isNullish, isNumber, isOptArray, isOptBoolean, isOptDictionary, isOptFunction, isOptIndex, isOptIndexable, isOptNumber, isOptString, isString, isUndefined } from './is-primitive';
 
 describe('is primitive', () => {
