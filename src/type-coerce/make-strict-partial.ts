@@ -2,7 +2,8 @@ import type { Dictionary } from '../Dictionary.type';
 import type { StrictPartial } from '../StrictPartial.type';
 import { isDefined } from '../type-check/is-primitive';
 
-export function makeStrictPartial<T extends Dictionary>(value: T): StrictPartial<T> {
+// eslint-disable-next-line @typescript-eslint/ban-types
+export function makeStrictPartial<T extends object>(value: T): StrictPartial<T> {
   const result: Dictionary<NonNullable<unknown>> = {};
 
   for (const [key, prop] of Object.entries(value)) {
