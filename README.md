@@ -45,6 +45,7 @@ npm install ts-runtime-typecheck
   - [v1.2.0](#v120)
   - [v2.0.0](#v200)
   - [v2.1.0](#v210)
+  - [v2.1.1](#211)
 
 ## Type Casts
 
@@ -766,3 +767,7 @@ When validating a value matches an interface it may be desirable to instead use 
 - Add: `makeStrictPartial` for converting `Partial<T>` to `StrictPartial`.
 - Add: types `StrictPartial` and `FuzzyPartial`, variants of the inbuilt `Partial` type.
 - Add: type `StrictRequired`, variant of `Required`.
+
+### 2.1.1
+
+- Fix: incorrect constraint on `makeStrictPartial` prevented passing in non-indexable instances.
