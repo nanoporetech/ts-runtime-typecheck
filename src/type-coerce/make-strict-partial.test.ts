@@ -1,8 +1,14 @@
+import type { Optional } from '../Optional.type';
 import { makeStrictPartial } from './make-strict-partial';
 
 describe('make-strict-partial', () => {
   it ('removes undefined keys from the object', () => {
-    const source = {
+    interface Source {
+      a: Optional<string>;
+      b: Optional<Document>;
+      c: Optional<number>;
+    }
+    const source: Source = {
       a: undefined,
       b: undefined,
       c: 12,
