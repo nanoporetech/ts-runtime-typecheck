@@ -17,7 +17,7 @@ export const asFunction = typeCast(isFunction);
 // when a function is placed into a value
 export function asDefined<T> (obj: Optional<T>, fallback?: NonNullable<T>): NonNullable<T> {
   if (isDefined(obj)) {
-    return obj as NonNullable<T>;
+    return obj;
   }
   if (typeof fallback !== 'undefined') {
     return fallback;
