@@ -1,6 +1,6 @@
 {
   "name": "ts-runtime-typecheck",
-  "version": "2.1.1",
+  "version": "2.2.0",
   "description": "A collection of common types for TypeScript along with dynamic type cast methods.",
   "main": "cjs/index.js",
   "module": "mjs/index.mjs",
@@ -12,7 +12,7 @@
   },
   "repository": {
     "type": "git",
-    "url": "git@github.com:nanoporetech/ts-extended-types.git"
+    "url": "git@github.com:nanoporetech/ts-runtime-typecheck.git"
   },
   "author": "Iain Shorter",
   "license": "MPL-2.0",

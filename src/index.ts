@@ -13,14 +13,18 @@ export * from './type-check/is-recursive';
 export * from './type-coerce/make-primative';
 export * from './type-coerce/make-strict-partial';
 
-export { Index, Indexable } from './Index.type';
-export { JSONValue, JSONArray, JSONObject } from './JSONValue.type';
-export { Dictionary } from './Dictionary.type';
-export { Optional } from './Optional.type';
-export { Nullish } from './Nullish.type';
-export { UnknownFunction, UnknownAsyncFunction } from './UnknownFunction.type';
-export { InterfacePattern } from './InterfacePattern.type';
-export { TypeCheck } from './TypeCheck.type';
-export { StrictPartial } from './StrictPartial.type';
-export { StrictRequired } from './StrictRequired.type';
-export { FuzzyPartial } from './FuzzyPartial.type';
+export * from './type-assert/assert-defined';
+
+export { TypeAssertion } from './TypeAssertion';
+
+export type { Index, Indexable } from './Index.type';
+export type { JSONValue, JSONArray, JSONObject } from './JSONValue.type';
+export type { Dictionary } from './Dictionary.type';
+export type { Optional } from './Optional.type';
+export type { Nullish } from './Nullish.type';
+export type { UnknownFunction, UnknownAsyncFunction } from './UnknownFunction.type';
+export type { InterfacePattern } from './InterfacePattern.type';
+export type { TypeCheck } from './TypeCheck.type';
+export type { StrictPartial } from './StrictPartial.type';
+export type { StrictRequired } from './StrictRequired.type';
+export type { FuzzyPartial } from './FuzzyPartial.type';
