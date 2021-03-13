@@ -25,6 +25,7 @@ npm install ts-runtime-typecheck
   - [Fallback values](#fallback-values)
 - [Type Checks](#type-checks)
 - [Type Coerce](#type-coerce)
+- [Type Asserts](#type-asserts)
 - [JSON Types](#json-types)
 - [Ensuring an optional value is defined](#ensuring-an-optional-value-is-defined)
 - [Array/Object of Type Casts](#arrayobject-of-type-casts)
@@ -37,6 +38,7 @@ npm install ts-runtime-typecheck
   - [Reference: Type Checks](#reference-type-checks)
   - [Reference: Optional Type Checks](#reference-optional-type-checks)
   - [Reference: Type Coerce](#reference-type-coerce)
+  - [Reference: Type Assert](#reference-type-assert)
   - [Reference: Types](#reference-types)
 - [Changelog](#changelog)
   - [v1.0.0](#v100)
@@ -46,6 +48,7 @@ npm install ts-runtime-typecheck
   - [v2.0.0](#v200)
   - [v2.1.0](#v210)
   - [v2.1.1](#211)
+  - [v2.2.0](#220)
 
 ## Type Casts
 
@@ -150,6 +153,30 @@ makeNumber({
   toString () { return 'hello' }
 }) // Error: Unable to cast object to Number
 
+```
+
+---
+
+## Type Asserts
+
+**Type Assert** functions accept an `unknown` value and throw if the value does not meet the type requirement, it does not return a value. While this may seem very similar to [`TypeCasts`](#typecasts) it is capable of providing a hint to the TypeScript compiler without needing to reassign the value. As such it is very helpful for validating function arguments before using them.
+
+Each type assert takes an optional second argument that is a label for the passed value, this will be included in the thrown `TypeAssertion` error if it does not meet the type requirement, making it easier to isolate the type violation.
+
+At the moment only 1 `TypeAssert` exists which is `assertDefined`, it works in a similar way to `asDefined` in that it is generic and does not accept an unknown argument. It is useful in that you can use it to remove `Nullish` from an `Optional` type union.
+
+```typescript
+import { assertDefined } from 'ts-runtime-typecheck';
+
+function main (meaningOfLife: Optional<number>) {
+  meaningOfLife // number | null | undefined
+  assertDefined(meaningOfLife, 'Meaning of Life');
+  meaningOfLife // number
+  return 'but what is the question?';
+}
+
+main(42); // 'but what is the question?'
+main(); // TypeAssertion: Meaning of Life is not defined
 ```
 
 ---
@@ -656,6 +683,12 @@ When validating a value matches an interface it may be desirable to instead use 
 
   Takes a value of the generic type `T` and returns a copy of the object excluding any members that were `Nullish`. The returned object meets the type `StrictPartial<T>`.
 
+### Reference: Type Assert
+
+- ### assertDefined
+
+Assert [`Type | Nullish`](#nullish) is `Type`, where `Type` is a generic parameter. Accepts an optional name for the value that is included in the error if the value is nullish.
+
 ### Reference: Types
 
 - ### JSONValue
@@ -718,6 +751,10 @@ When validating a value matches an interface it may be desirable to instead use 
 
   A variant of the `Partial<T>` inbuilt, and closely related to `StrictPartial`. `Partial` makes no guarantees about the members of the type `T`, as such they can be unions of `null`. This can introduce inconsistency for users of the type; expecting that members can be specified using either `null` or `undefined`, where only some can also use `null`. `FuzzyPartial` resolves this by specifying that all members of the type `T` can *ALSO* be `null`, ensuring a consistent interface.
 
+- ### TypeAssertion
+
+  A custom error with the name `TypeAssertion`. This type is exported as a value so that Errors of this type can be isolated from other errors using instance checks. It is possible to use the constructor to create and throw your own Errors if you wish, **but this may change in future**.
+
 ## Changelog
 
 ### v1.0.0
@@ -771,3 +808,8 @@ When validating a value matches an interface it may be desirable to instead use 
 ### 2.1.1
 
 - Fix: incorrect constraint on `makeStrictPartial` prevented passing in non-indexable instances.
+
+### 2.2.0
+
+- Add: `assertDefined` throws if the passed value is `Nullish`.
+- Add: `TypeAssertion` error class thrown by TypeAsserts.
