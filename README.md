@@ -159,11 +159,11 @@ makeNumber({
 
 ## Type Asserts
 
-**Type Assert** functions accept an `unknown` value and throw if the value does not meet the type requirement, it does not return a value. While this may seem very similar to [`TypeCasts`](#typecasts) it is capable of providing a hint to the TypeScript compiler without needing to reassign the value. As such it is very helpful for validating function arguments before using them.
+**Type Assert** functions accept an `unknown` value and throw if the value does not meet the type requirement, they do not return a value. While this may seem very similar to [Type Casts](#type-casts) they are capable of providing a hint to the TypeScript compiler without needing to reassign the value. As such they are very helpful for validating function arguments before using them.
 
-Each type assert takes an optional second argument that is a label for the passed value, this will be included in the thrown `TypeAssertion` error if it does not meet the type requirement, making it easier to isolate the type violation.
+Each type assert takes an optional second argument that is a label for the passed value, this will be included in the thrown `TypeAssertion` error if the value does not meet the type requirement, making it easier to isolate the type violation.
 
-At the moment only 1 `TypeAssert` exists which is `assertDefined`, it works in a similar way to `asDefined` in that it is generic and does not accept an unknown argument. It is useful in that you can use it to remove `Nullish` from an `Optional` type union.
+At the moment only 1 `TypeAssert` function exists which is `assertDefined`. It works in a similar way to `asDefined`, in that it accepts a generic type for its input, which is expected to be a union including null and/or undefined and asserts that the value is NonNullable. This is especially helpful for dealing with optional function arguments, if you want to ensure they exist under a certain situation you can just call `assertDefined`.
 
 ```typescript
 import { assertDefined } from 'ts-runtime-typecheck';
@@ -687,7 +687,7 @@ When validating a value matches an interface it may be desirable to instead use 
 
 - ### assertDefined
 
-Assert [`Type | Nullish`](#nullish) is `Type`, where `Type` is a generic parameter. Accepts an optional name for the value that is included in the error if the value is nullish.
+Assert value of type [`Type | Nullish`](#nullish) is `Type`, where `Type` is a generic parameter. Accepts an optional name for the value that is included in the error if the value is nullish.
 
 ### Reference: Types
 
