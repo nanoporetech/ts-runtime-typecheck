@@ -49,6 +49,7 @@ npm install ts-runtime-typecheck
   - [v2.1.0](#v210)
   - [v2.1.1](#211)
   - [v2.2.0](#220)
+  - [v2.2.1](#221)
 
 ## Type Casts
 
@@ -813,3 +814,7 @@ Assert value of type [`Type | Nullish`](#nullish) is `Type`, where `Type` is a g
 
 - Add: `assertDefined` throws if the passed value is `Nullish`.
 - Add: `TypeAssertion` error class thrown by TypeAsserts.
+
+### 2.2.1
+
+- Fix: update sub-dependency to resolve [npm advisory 1654](https://www.npmjs.com/advisories/1654)
