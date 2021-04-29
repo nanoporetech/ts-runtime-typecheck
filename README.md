@@ -51,6 +51,7 @@ npm install ts-runtime-typecheck
   - [v2.2.0](#220)
   - [v2.2.1](#221)
   - [v2.2.2](#222)
+  - [v2.3.0](#230)
 
 ## Type Casts
 
@@ -823,3 +824,7 @@ Assert value of type [`Type | Nullish`](#nullish) is `Type`, where `Type` is a g
 ### 2.2.2
 
 - Fix: `asInstance`, `asOptInstance`, `isInstance` and `isOptInstance` were not exported from the package.
+
+### 2.3.0
+
+- Change: build target to ES2018 instead of ES3.
