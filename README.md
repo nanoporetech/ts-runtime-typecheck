@@ -50,6 +50,7 @@ npm install ts-runtime-typecheck
   - [v2.1.1](#211)
   - [v2.2.0](#220)
   - [v2.2.1](#221)
+  - [v2.2.2](#222)
 
 ## Type Casts
 
@@ -758,11 +759,11 @@ Assert value of type [`Type | Nullish`](#nullish) is `Type`, where `Type` is a g
 
 ## Changelog
 
-### v1.0.0
+### 1.0.0
 
 - Initial release
 
-### v1.1.0
+### 1.1.0
 
 - Documentation update.
 - Fix: asDefined was returning `unknown`.
@@ -771,12 +772,12 @@ Assert value of type [`Type | Nullish`](#nullish) is `Type`, where `Type` is a g
 - Change: Dictionary no longer contains `T | undefined` union.
 - Change: Optional type now also includes `null` in the type union.
 
-### v1.1.1
+### 1.1.1
 
 - Change: return type of `asOpt{TYPE}` is now `TYPE | undefined` instead of `Optional<TYPE>` ( removes null from union )
 - Documentation corrections.
 
-### v1.2.0
+### 1.2.0
 
 - Add: Introduce `isStruct` and `asStruct` that allow the inspection of a object to see if it meets a specific interface.
 - Add: Optional variants of [Type Checks](#reference-type-checks) with form `isOpt{TYPE}`.
@@ -787,7 +788,7 @@ Assert value of type [`Type | Nullish`](#nullish) is `Type`, where `Type` is a g
 - Add: `InterfacePattern` type.
 - Change: modify the type names in errors to be closer to the TypeScript names.
 
-### v2.0.0
+### 2.0.0
 
 - Add: `isUnion` and `isOptUnion` to allow checking if a value matches any type of a type union.
 - Add: `asUnion` and `asOptUnion` to allow casting a value to a type union.
@@ -818,3 +819,7 @@ Assert value of type [`Type | Nullish`](#nullish) is `Type`, where `Type` is a g
 ### 2.2.1
 
 - Fix: update sub-dependency to resolve [npm advisory 1654](https://www.npmjs.com/advisories/1654)
+
+### 2.2.2
+
+- Fix: `asInstance`, `asOptInstance`, `isInstance` and `isOptInstance` were not exported from the package.
