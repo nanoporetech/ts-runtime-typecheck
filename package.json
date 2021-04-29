@@ -1,6 +1,6 @@
 {
   "name": "ts-runtime-typecheck",
-  "version": "2.2.2",
+  "version": "2.3.0",
   "description": "A collection of common types for TypeScript along with dynamic type cast methods.",
   "main": "cjs/index.js",
   "module": "mjs/index.mjs",
