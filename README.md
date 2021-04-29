@@ -827,4 +827,4 @@ Assert value of type [`Type | Nullish`](#nullish) is `Type`, where `Type` is a g
 
 ### 2.3.0
 
-- Change: build target to ES2020 instead of ES3.
+- Change: build target to ES2018 instead of ES3.
