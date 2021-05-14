@@ -301,7 +301,7 @@ function main () {
 Validating the shape of an object using a combination of [`asDictionary`](#asdictionary) and other [Type Casts](#reference-type-casts) specific to property types can be a bit verbose. To simplify this scenario you can use [`asStruct`](#asstruct). This function takes an [`InterfacePattern`](#interfacepattern) that defines a specific structure and returns a new function that will cast an unknown value to that structure. An [`InterfacePattern`](#interfacepattern) is a fancy name for a [`Dictionary`](#dictionary) of [Type Checks](#reference-type-checks).
 
 ```typescript
-import { asStruct, isString, isOptString, isNumber } from 'ts-runtime-typecheck';
+import { asStruct, isString, isNumber } from 'ts-runtime-typecheck';
 
 interface Item {
   name: string;
@@ -312,6 +312,7 @@ const asItem = asStruct({ name: isString, value: isNumber })
 
 function main (obj: unknown) {
   const item: Item = asItem(obj);
+
   console.log(`${item.name} = ${item.value}`);
 }
 ```
@@ -319,11 +320,17 @@ function main (obj: unknown) {
 There is also a [Type Check](#reference-type-checks) variant of the this function called [`isStruct`](#isstruct) which works in a very similar way. As an [`InterfacePattern`](#interfacepattern) is composed of [Type Check](#reference-type-checks) functions it's possible to compose nested interface [Type Checks](#reference-type-checks).
 
 ```typescript
-import { asStruct, isString, isOptString, isNumber } from 'ts-runtime-typecheck';
+import { asStruct, isStruct, isString, isOptString, isNumber } from 'ts-runtime-typecheck';
+import type { Optional } from 'ts-runtime-typecheck';
 
 interface Declaration {
   item: Item;
   description: Optional<string>
+}
+
+interface Item {
+  name: string;
+  value: number;
 }
 
 const isItem = isStruct({ name: isString, value: isNumber });
@@ -331,6 +338,7 @@ const asDeclaration = asStruct({ item: isItem, description: isOptString });
 
 function main (obj: unknown) {
   const { item, description } = asDeclaration(obj);
+
   const comment: string = description ? `// ${description}` : '';
   console.log(`${item.name} = ${item.value} ${comment}`);
 }
@@ -828,3 +836,7 @@ Assert value of type [`Type | Nullish`](#nullish) is `Type`, where `Type` is a g
 ### 2.3.0
 
 - Change: build target to ES2018 instead of ES3.
+
+### Next
+
+- Documentation: Correct some typos in the `isStruct`/`asStruct` examples
