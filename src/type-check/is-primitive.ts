@@ -73,7 +73,7 @@ isPrimitive.TYPE_NAME = 'Primitive';
 export function isOptPrimitive(obj: unknown): obj is Primitive {
   return isPrimitive(obj) || isNullish(obj);
 }
-isPrimitive.TYPE_NAME = 'Optional<Primitive>';
+isOptPrimitive.TYPE_NAME = 'Optional<Primitive>';
 
 export function isIndexable(obj: unknown): obj is Indexable {
   return obj !== null && typeof obj === 'object';
