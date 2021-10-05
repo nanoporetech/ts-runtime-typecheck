@@ -1,4 +1,4 @@
-import { makeString, makeBoolean, makeNumber } from './make-primative';
+import { makeString, makeBoolean, makeNumber } from './make-primitive';
 
 it('makeString', () => {
   expect(makeString(42)).toBe('42');
