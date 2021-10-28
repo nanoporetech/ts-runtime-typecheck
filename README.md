@@ -1037,6 +1037,14 @@ Assert value of type `JSONValue | undefined` is `JSONObject | undefined`. Accept
 
 - Change: build target to ES2018 instead of ES3.
 
+### 2.4.0
+
+- Add: `invariant` function to assist type assertion
+- Add: JSON assertion functions
+- Add: Basic type assertion functions
+- Add: Literal type casts and checks
+- Add: Primitive type, casts and checks
+
 ### Next
 
 - Documentation: Correct some typos in the `isStruct`/`asStruct` examples
