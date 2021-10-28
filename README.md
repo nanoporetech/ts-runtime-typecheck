@@ -1044,7 +1044,4 @@ Assert value of type `JSONValue | undefined` is `JSONObject | undefined`. Accept
 - Add: Basic type assertion functions
 - Add: Literal type casts and checks
 - Add: Primitive type, casts and checks
-
-### Next
-
 - Documentation: Correct some typos in the `isStruct`/`asStruct` examples
