@@ -5,7 +5,7 @@ describe('make-strict-partial', () => {
   it ('removes undefined keys from the object', () => {
     interface Source {
       a: Optional<string>;
-      b: Optional<Document>;
+      b: Optional<boolean>;
       c: Optional<number>;
     }
     const source: Source = {

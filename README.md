@@ -166,8 +166,6 @@ makeNumber({
 
 Each type assert takes an optional second argument that is a label for the passed value, this will be included in the thrown `TypeAssertion` error if the value does not meet the type requirement, making it easier to isolate the type violation.
 
-At the moment only 1 `TypeAssert` function exists which is `assertDefined`. It works in a similar way to `asDefined`, in that it accepts a generic type for its input, which is expected to be a union including null and/or undefined and asserts that the value is NonNullable. This is especially helpful for dealing with optional function arguments, if you want to ensure they exist under a certain situation you can just call `assertDefined`.
-
 ```typescript
 import { assertDefined } from 'ts-runtime-typecheck';
 
@@ -180,6 +178,22 @@ function main (meaningOfLife: Optional<number>) {
 
 main(42); // 'but what is the question?'
 main(); // TypeAssertion: Meaning of Life is not defined
+```
+
+TypeAsserts cannot be based on generic types, due to limits in the TypeScript type system. Hence there is no equivalent to [`isStruct`](#isstruct) and similar [`TypeCheck`](#typecheck). However, there is an alternative. It's possible to utilise an invariant ( or assert) function with a [`TypeCheck`](#typecheck) to get the same effect, and an implementation of [`invariant`](#invariant) is provided for this purpose.
+
+```typescript
+import { invariant, isLiteral } from 'ts-runtime-typecheck';
+
+function main (meaningOfLife: unknown) {
+  meaningOfLife // unknown
+  invariant(isLiteral(42)(meaningOfLife), "Universe is broken, meaning of life isn't 42!");
+  meaningOfLife // 42
+  return 'but what is the question?';
+}
+
+main(42); // 'but what is the question?'
+main(); // TypeAssertion: Universe is broken, meaning of life isn't 42!
 ```
 
 ---
@@ -394,6 +408,44 @@ When validating a value matches an interface it may be desirable to instead use 
 
 ---
 
+## Literal types
+
+TypeScript supports value types for [`Primitive`](#primitive)s. For example
+
+```typescript
+let a: 'hello world' = 'hello world';
+
+a = 'goodbye world'; // Type '"goodbye world"' is not assignable to type '"hello world"'
+```
+
+You can use [`asLiteral`](#asliteral) and [`isLiteral`](#isliteral) to construct [`TypeCast`](#typecast)s and [`TypeCheck`](#typecheck)s respectively for these value types. These checks can be particularly useful for discriminated unions.
+
+```typescript
+interface A {
+  type: 'a';
+  value: number;
+}
+
+interface B {
+  type: 'b';
+  value: number;
+}
+
+const isA = isStruct({
+  type: isLiteral('a'),
+  value: isNumber,
+});
+
+function main (n: A | B) {
+  n // A | B
+  if (isA(n)) {
+    n // A
+  } else {
+    n // B
+  }
+}
+```
+
 ## Reference
 
 ### Reference: Type Casts
@@ -409,6 +461,10 @@ When validating a value matches an interface it may be desirable to instead use 
 - ### asIndex
 
   Cast `unknown` to [`Index`](#index). Accepts an optional fallback value that is emitted if the value is nullish and fallback is defined.
+
+- ### asPrimitive
+
+  Cast `unknown` to [`Primitive`](#primitive). Accepts an optional fallback value that is emitted if the value is nullish and fallback is defined.
 
 - ### asIndexable
 
@@ -462,6 +518,10 @@ When validating a value matches an interface it may be desirable to instead use 
 
   Takes a class (not a instance of a class) and returns a new Type Cast for an instance of that class.
 
+- ### asLiteral
+
+  Takes a [Primitive](#primitive) value and returns a new Type Cast for that specific value.
+
 ### Reference: Optional Type Casts
 
 - ### asOptString
@@ -475,6 +535,10 @@ When validating a value matches an interface it may be desirable to instead use 
 - ### asOptIndex
 
   Cast `unknown` value to [`Index | undefined`](#index). If value is [`Nullish`](#nullish) then return `undefined`.
+
+- ### asOptPrimitive
+
+  Cast `unknown` value to [`Primitive | undefined`](#primitive). If value is [`Nullish`](#nullish) then return `undefined`.
 
 - ### asOptIndexable
 
@@ -532,6 +596,10 @@ When validating a value matches an interface it may be desirable to instead use 
 
   Takes a class (not a instance of a class) and returns a new Type Cast for a Optional instance of that class.
 
+- ### asOptLiteral
+
+  Takes a [Primitive](#primitive) value and returns a new optional Type Cast for that specific value.
+
 ### Reference: Type Checks
 
 - ### isDictionary
@@ -557,6 +625,10 @@ When validating a value matches an interface it may be desirable to instead use 
 - ### isIndex
 
   Takes an `unknown` value and returns a boolean indicating if the value is of the type [`Index`](#index).
+
+- ### isPrimitive
+
+  Takes an `unknown` value and returns a boolean indicating if the value is of the type [`Primitive`](#primitive).
 
 - ### isIndexable
 
@@ -610,6 +682,10 @@ When validating a value matches an interface it may be desirable to instead use 
 
   Takes a class (not a instance of a class) and returns a new Type Check for an instance of that class.
 
+- ### isLiteral
+
+  Takes a [Primitive](#primitive) value and returns a new Type Check for that specific value.
+
 ### Reference: Optional Type Checks
 
 - ### isOptDictionary
@@ -631,6 +707,10 @@ When validating a value matches an interface it may be desirable to instead use 
 - ### isOptNumber
 
   Takes an `unknown` value and returns a boolean indicating if the value is of the type `Optional<number>`.
+
+- ### isOptPrimitive
+
+  Takes an `unknown` value and returns a boolean indicating if the value is of the type [`Optional<Primitive>`](#primitive).
 
 - ### isOptIndex
 
@@ -676,6 +756,10 @@ When validating a value matches an interface it may be desirable to instead use 
 
   Takes a class (not a instance of a class) and returns a new Type Check for a Optional instance of that class.
 
+- ### isOptLiteral
+
+  Takes a [Primitive](#primitive) value and returns a new optional Type Check for that specific value.
+
 ### Reference: Type Coerce
 
 - ### makeString
@@ -700,6 +784,118 @@ When validating a value matches an interface it may be desirable to instead use 
 
 Assert value of type [`Type | Nullish`](#nullish) is `Type`, where `Type` is a generic parameter. Accepts an optional name for the value that is included in the error if the value is nullish.
 
+- ### assertNumber
+
+Assert value of type `unknown` is `number`. Accepts an optional name for the value that is included in the error if the value is not a number.
+
+- ### assertString
+
+Assert value of type `unknown` is `string`. Accepts an optional name for the value that is included in the error if the value is not a `string`.
+
+- ### assertBoolean
+
+Assert value of type `unknown` is `boolean`. Accepts an optional name for the value that is included in the error if the value is not a `boolean`.
+
+- ### assertIndex
+
+Assert value of type `unknown` is `Index`. Accepts an optional name for the value that is included in the error if the value is not a `Index`.
+
+- ### assertPrimitive
+
+Assert value of type `unknown` is `Primitive`. Accepts an optional name for the value that is included in the error if the value is not a `Primitive`.
+
+- ### assertArray
+
+Assert value of type `unknown` is `unknown[]`. Accepts an optional name for the value that is included in the error if the value is not a `unknown[]`.
+
+- ### assertDictionary
+
+Assert value of type `unknown` is `Dictionary`. Accepts an optional name for the value that is included in the error if the value is not a `Dictionary`.
+
+- ### assertIndexable
+
+Assert value of type `unknown` is `Indexable`. Accepts an optional name for the value that is included in the error if the value is not a `Indexable`.
+
+- ### assertFunction
+
+Assert value of type `unknown` is `UnknownFunction`. Accepts an optional name for the value that is included in the error if the value is not a `UnknownFunction`.
+
+- ### assertOptNumber
+
+Assert value of type `unknown` is `Optional<number>`. Accepts an optional name for the value that is included in the error if the value is not a `Optional<number>`.
+
+- ### assertOptString
+
+Assert value of type `unknown` is `Optional<string>`. Accepts an optional name for the value that is included in the error if the value is not a `Optional<string>`.
+
+- ### assertOptBoolean
+
+Assert value of type `unknown` is `Optional<boolean>`. Accepts an optional name for the value that is included in the error if the value is not a `Optional<boolean>`.
+
+- ### assertOptIndex
+
+Assert value of type `unknown` is `Optional<Index>`. Accepts an optional name for the value that is included in the error if the value is not a `Optional<Index>`.
+
+- ### assertOptPrimitive
+
+Assert value of type `unknown` is `Optional<Primitive>`. Accepts an optional name for the value that is included in the error if the value is not a `Optional<Primitive>`.
+
+- ### assertOptArray
+
+Assert value of type `unknown` is `Optional<unknown[]>`. Accepts an optional name for the value that is included in the error if the value is not a `Optional<unknown[]>`.
+
+- ### assertOptDictionary
+
+Assert value of type `unknown` is `Optional<Dictionary>`. Accepts an optional name for the value that is included in the error if the value is not a `Optional<Dictionary>`.
+
+- ### assertOptIndexable
+
+Assert value of type `unknown` is `Optional<Indexable>`. Accepts an optional name for the value that is included in the error if the value is not a `Optional<Indexable>`.
+
+- ### assertOptFunction
+
+Assert value of type `unknown` is `Optional<UnknownFunction>`. Accepts an optional name for the value that is included in the error if the value is not a `Optional<UnknownFunction>`.
+
+- ### assertJSONValue
+
+Assert value of type `unknown` is `JSONValue`. Accepts an optional name for the value that is included in the error if the value is not a `JSONValue`.
+
+- ### assertJSONArray
+
+Assert value of type `JSONValue` is `JSONArray`. Accepts an optional name for the value that is included in the error if the value is not a `JSONArray`.
+
+- ### assertJSONObject
+
+Assert value of type `JSONValue` is `JSONObject`. Accepts an optional name for the value that is included in the error if the value is not a `JSONObject`.
+
+- ### assertOptJSONValue
+
+Assert value of type `unknown` is `JSONValue | undefined`. Accepts an optional name for the value that is included in the error if the value is not a `JSONValue | undefined`.
+
+- ### assertOptJSONArray
+
+Assert value of type `JSONValue | undefined` is `JSONArray | undefined`. Accepts an optional name for the value that is included in the error if the value is not a `JSONArray | undefined`.
+
+- ### assertOptJSONObject
+
+Assert value of type `JSONValue | undefined` is `JSONObject | undefined`. Accepts an optional name for the value that is included in the error if the value is not a `JSONObject | undefined`.
+
+### Reference: Helper functions
+
+- ### invariant
+
+  An invariant is a logical declaration about a condition which the programmer knows to be true, but the compiler cannot. Many of the patterns in ts-runtime-typecheck are based around this concept, albeit to encourage a stricter and safer environment. This helper accepts a logical condition and a message. If the condition is true nothing happens, if it's false then a [`TypeAssertion`](#typeassertion) is thrown with the given message. If the condition is the result of a [`TypeCheck`](#typecheck) then the type predicate is enforced by the invariant.
+  
+  ```typescript
+  import { invariant, isString } from 'ts-runtime-typecheck';
+
+  function main (username: unknown) {
+    invariant(isString(username), 'Expected username to be a string');
+
+    username // string
+  }
+  ```
+
 ### Reference: Types
 
 - ### JSONValue
@@ -721,6 +917,10 @@ Assert value of type [`Type | Nullish`](#nullish) is `Type`, where `Type` is a g
 - ### Index
 
   A union of the `number` and `string` types that represent a value that could be used to index an element within a JS `Object`.
+
+- ### Primitive
+
+  A union of the `number`, `string` and `boolean` types that are the key primitive values in JS.
 
 - ### Indexable
 
@@ -836,6 +1036,14 @@ Assert value of type [`Type | Nullish`](#nullish) is `Type`, where `Type` is a g
 ### 2.3.0
 
 - Change: build target to ES2018 instead of ES3.
+
+### 2.4.0
+
+- Add: `invariant` function to assist type assertion
+- Add: JSON assertion functions
+- Add: Basic type assertion functions
+- Add: Literal type casts and checks
+- Add: Primitive type, casts and checks
 
 ### Next
 

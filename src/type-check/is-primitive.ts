@@ -3,6 +3,7 @@ import type { Nullish } from '../Nullish.type';
 import type { Dictionary } from '../Dictionary.type';
 import type { Optional } from '../Optional.type';
 import type { UnknownFunction } from '../UnknownFunction.type';
+import type { Primitive } from '../Primitive.type';
 
 export function isDictionary(obj: unknown): obj is Dictionary {
   return obj !== null && typeof obj === 'object' && Array.isArray(obj) === false;
@@ -63,6 +64,16 @@ export function isOptIndex(obj: unknown): obj is Optional<Index> {
   return isIndex(obj) || isNullish(obj);
 }
 isOptIndex.TYPE_NAME = 'Optional<Index>';
+
+export function isPrimitive(obj: unknown): obj is Primitive {
+  return typeof obj === 'number' || typeof obj === 'string' || typeof obj === 'boolean';
+}
+isPrimitive.TYPE_NAME = 'Primitive';
+
+export function isOptPrimitive(obj: unknown): obj is Primitive {
+  return isPrimitive(obj) || isNullish(obj);
+}
+isOptPrimitive.TYPE_NAME = 'Optional<Primitive>';
 
 export function isIndexable(obj: unknown): obj is Indexable {
   return obj !== null && typeof obj === 'object';

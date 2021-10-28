@@ -1,5 +1,6 @@
+import { isPrimitive } from '../type-check/is-primitive';
 import type { TypeCheck } from '../TypeCheck.type';
-import { isArray, isBoolean, isDefined, isDictionary, isFunction, isIndex, isIndexable, isNullish, isNumber, isOptArray, isOptBoolean, isOptDictionary, isOptFunction, isOptIndex, isOptIndexable, isOptNumber, isOptString, isString, isUndefined } from './is-primitive';
+import { isArray, isBoolean, isDefined, isDictionary, isFunction, isIndex, isIndexable, isNullish, isNumber, isOptArray, isOptBoolean, isOptDictionary, isOptFunction, isOptIndex, isOptIndexable, isOptNumber, isOptPrimitive, isOptString, isString, isUndefined } from './is-primitive';
 
 describe('is primitive', () => {
   class Dummy {}
@@ -193,6 +194,36 @@ describe('is primitive', () => {
       true,
       true,
       false,
+      true,
+      true,
+      false,
+      false,
+      false,
+      false,
+      false
+    ]);
+  });
+
+  it('isPrimitive', () => {
+    tryExamples(isPrimitive, [
+      true,
+      true,
+      true,
+      false,
+      false,
+      false,
+      false,
+      false,
+      false,
+      false
+    ]);
+  });
+
+  it('isOptPrimitive', () => {
+    tryExamples(isOptPrimitive, [
+      true,
+      true,
+      true,
       true,
       true,
       false,

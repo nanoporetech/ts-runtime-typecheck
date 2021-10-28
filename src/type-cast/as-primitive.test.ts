@@ -1,4 +1,4 @@
-import { asArray, asBoolean, asDefined, asFunction, asIndex, asIndexable, asNumber, asOptArray, asOptBoolean, asOptFunction, asOptIndex, asOptIndexable, asOptNumber, asOptDictionary, asOptString, asDictionary, asString } from './as-primitive';
+import { asArray, asBoolean, asDefined, asFunction, asIndex, asIndexable, asNumber, asOptArray, asOptBoolean, asOptFunction, asOptIndex, asOptIndexable, asOptNumber, asOptDictionary, asOptString, asDictionary, asString, asPrimitive, asOptPrimitive } from './as-primitive';
 
 describe('primative casts', () => {
   const fn = () => false;
@@ -80,6 +80,25 @@ describe('primative casts', () => {
     expect(() => asIndexable(null)).toThrow('Unable to cast object to Indexable');
     expect(() => asIndexable(undefined)).toThrow('Unable to cast undefined to Indexable');
     expect(() => asIndexable(fn)).toThrow('Unable to cast function to Indexable');
+  });
+  it('asPrimitive', () => {
+    // intended
+    expect(asPrimitive(12)).toBe(12);
+    expect(asPrimitive('a')).toBe('a');
+    expect(asPrimitive(false)).toBe(false);
+    // fallback
+    expect(asPrimitive(null, 12)).toBe(12);
+    expect(asPrimitive(undefined, 12)).toBe(12);
+    expect(asPrimitive(null, 'a')).toBe('a');
+    expect(asPrimitive(undefined, 'a')).toBe('a');
+    expect(asPrimitive(null, false)).toBe(false);
+    expect(asPrimitive(undefined, true)).toBe(true);
+    // should fail
+    expect(() => asPrimitive(null)).toThrow('Unable to cast object to Primitive');
+    expect(() => asPrimitive(undefined)).toThrow('Unable to cast undefined to Primitive');
+    expect(() => asPrimitive([])).toThrow('Unable to cast object to Primitive');
+    expect(() => asPrimitive({})).toThrow('Unable to cast object to Primitive');
+    expect(() => asPrimitive(fn)).toThrow('Unable to cast function to Primitive');
   });
   it('asBoolean', () => {
     // intended
@@ -178,6 +197,18 @@ describe('primative casts', () => {
     expect(() => asOptIndex([])).toThrow('Unable to cast object to Optional<Index>');
     expect(() => asOptIndex({})).toThrow('Unable to cast object to Optional<Index>');
     expect(() => asOptIndex(fn)).toThrow('Unable to cast function to Optional<Index>');
+  });
+  it('asOptPrimitive', () => {
+    // intended
+    expect(asOptPrimitive(12)).toBe(12);
+    expect(asOptPrimitive('a')).toBe('a');
+    expect(asOptPrimitive(false)).toBe(false);
+    expect(asOptPrimitive(null)).toBeUndefined();
+    expect(asOptPrimitive(undefined)).toBeUndefined();
+    // should fail
+    expect(() => asOptPrimitive([])).toThrow('Unable to cast object to Optional<Primitive>');
+    expect(() => asOptPrimitive({})).toThrow('Unable to cast object to Optional<Primitive>');
+    expect(() => asOptPrimitive(fn)).toThrow('Unable to cast function to Optional<Primitive>');
   });
   it('asOptIndexable', () => {
     // intended

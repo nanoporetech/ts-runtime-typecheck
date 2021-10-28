@@ -37,10 +37,10 @@ export function makeBoolean(obj: unknown): boolean {
   }
   if (isString(obj)) {
     switch (obj) {
-    case 'true':
-      return true;
-    case 'false':
-      return false;
+      case 'true':
+        return true;
+      case 'false':
+        return false;
     }
   }
 
