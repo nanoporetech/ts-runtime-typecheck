@@ -18,8 +18,11 @@ export * from './type-coerce/make-primitive';
 export * from './type-coerce/make-strict-partial';
 
 export * from './type-assert/assert-defined';
+export * from './type-assert/assert-json';
+export * from './type-assert/assert-primitive';
 
 export { TypeAssertion } from './TypeAssertion';
+export { invariant } from './invariant';
 
 export type { Index, Indexable } from './Index.type';
 export type { Primitive } from './Primitive.type';

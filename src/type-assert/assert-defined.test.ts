@@ -2,7 +2,7 @@ import { assertDefined } from './assert-defined';
 
 const fn = () => false;
 
-it('asDefined', () => {
+it('assertDefined', () => {
   // intended
   assertDefined(12);
   assertDefined('hi');

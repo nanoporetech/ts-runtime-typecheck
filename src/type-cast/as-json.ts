@@ -12,12 +12,12 @@ export const asJSONValue = typeCast(isJSONValue);
  * `Input` must be `JSONValue`, this is because validating if unknown is JSONValue is a complex recursive test, 
  * which we want to avoid if possible.
  */
-const __isJSONArray = isJSONArray as TypeCheck<JSONArray>;
-const __isJSONObject = isJSONObject as TypeCheck<JSONObject>;
+const unsafeIsJSONArray = isJSONArray as TypeCheck<JSONArray>;
+const unsafeIsJSONObject = isJSONObject as TypeCheck<JSONObject>;
 
-export const asJSONArray = typeCast(__isJSONArray) as TypeCast<JSONArray, JSONValue>;
-export const asJSONObject = typeCast(__isJSONObject) as TypeCast<JSONObject, JSONValue>;
+export const asJSONArray = typeCast(unsafeIsJSONArray) as TypeCast<JSONArray, JSONValue>;
+export const asJSONObject = typeCast(unsafeIsJSONObject) as TypeCast<JSONObject, JSONValue>;
 
 export const asOptJSONValue = optTypeCast(isJSONValue);
-export const asOptJSONArray = optTypeCast(__isJSONArray) as OptionalTypeCast<JSONArray, JSONValue>;
-export const asOptJSONObject = optTypeCast(__isJSONObject) as OptionalTypeCast<JSONObject, JSONValue>;
+export const asOptJSONArray = optTypeCast(unsafeIsJSONArray) as OptionalTypeCast<JSONArray, JSONValue>;
+export const asOptJSONObject = optTypeCast(unsafeIsJSONObject) as OptionalTypeCast<JSONObject, JSONValue>;
