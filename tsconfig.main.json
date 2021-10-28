@@ -4,7 +4,7 @@
 		"outDir": ".",
 		"lib": ["es2020"],
 		"removeComments": true,
-		"target": "es2020",
+		"target": "es2018",
 		"strict": true,
 		"noUnusedLocals": true,
 		"noUnusedParameters": true,
