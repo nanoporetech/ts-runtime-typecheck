@@ -1,22 +1,22 @@
 import typescript from 'rollup-plugin-typescript2';
-import pkg from './package.json';
+import { main as MAIN, module as MODULE } from './package.json';
 import { dirname } from 'path';
 
 export default {
   input: 'src/index.ts',
   preserveModules: true,
   plugins: [
-    typescript()
+    typescript({ tsconfig: './tsconfig.main.json' })
   ],
   output: [
     {
-      dir: `dist/${dirname(pkg.main)}`,
+      dir: `dist/${dirname(MAIN)}`,
       sourcemap: true,
       entryFileNames: '[name].js',
       format: 'cjs'
     },
     {
-      dir: `dist/${dirname(pkg.module)}`,
+      dir: `dist/${dirname(MODULE)}`,
       sourcemap: true,
       entryFileNames: '[name].mjs',
       format: 'esm'
