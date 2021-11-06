@@ -11,11 +11,13 @@ export default {
   output: [
     {
       dir: `dist/${dirname(pkg.main)}`,
+      sourcemap: true,
       entryFileNames: '[name].js',
       format: 'cjs'
     },
     {
       dir: `dist/${dirname(pkg.module)}`,
+      sourcemap: true,
       entryFileNames: '[name].mjs',
       format: 'esm'
     }
