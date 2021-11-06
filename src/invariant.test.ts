@@ -12,7 +12,6 @@ it('does not throw with a truthy value', () => {
 it('throws a type assertion', () => {
   try {
     invariant(false, 'message C');
-    throw 'spanner';
   } catch (error) {
     expect(error).toBeInstanceOf(TypeAssertion);
   }
