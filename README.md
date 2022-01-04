@@ -40,6 +40,8 @@ npm install ts-runtime-typecheck
   - [Reference: Type Coerce](#reference-type-coerce)
   - [Reference: Type Assert](#reference-type-assert)
   - [Reference: Types](#reference-types)
+  - [Reference: Helper functions](#reference-helper-functions)
+
 - [Changelog](#changelog)
   - [v1.0.0](#v100)
   - [v1.1.0](#v110)
@@ -52,6 +54,8 @@ npm install ts-runtime-typecheck
   - [v2.2.1](#221)
   - [v2.2.2](#222)
   - [v2.3.0](#230)
+  - [v2.4.0](#240)
+  - [v2.5.0](#250)
 
 ## Type Casts
 
@@ -896,6 +900,33 @@ Assert value of type `JSONValue | undefined` is `JSONObject | undefined`. Accept
   }
   ```
 
+- ### inspectType
+
+Inspects the type of a given value and returns a description of it as a string. Useful for constructing debug messages from unknown values. Instances of classes are described using the name of their class. Abstract objects are traversed recursively so that their elements can also be described as well. Recursion uses a depth limit to prevent overlarge descriptions. Once the limit has been reached objects will be described as `Dictionary`.
+
+An optional second argument can be passed to modify the default behaviour. For example you can change the `maxDepth` limit from it's default of `3`; a value of `0` would prevent recursion whereas `Infinity` would remove the limit.
+
+Arrays currently do not feature recursive type description, but this might be introduced in future.
+
+Internally this is used to describe values in type error messages.
+
+```typescript
+import { inspectType } from 'ts-runtime-typecheck';
+
+class Example {}
+
+inspectType('hello world'); // string
+inspectType(null) // null
+inspectType([]) // Array
+inspectType(new Example) // Example
+inspectType({}) // {}
+inspectType({
+  foo: 'hello',
+  bar: 'world'
+}) // { foo: string, bar: string }
+inspectType({ foo: 'bar' }, { maxDepth: 0 }); // Dictionary
+```
+
 ### Reference: Types
 
 - ### JSONValue
@@ -1045,3 +1076,8 @@ Assert value of type `JSONValue | undefined` is `JSONObject | undefined`. Accept
 - Add: Literal type casts and checks
 - Add: Primitive type, casts and checks
 - Documentation: Correct some typos in the `isStruct`/`asStruct` examples
+
+### 2.5.0
+
+- Add: `inspectType` function to describe the type of a value
+- Fix: `makeNumber` no longer returns a number strings prefixed with a number
