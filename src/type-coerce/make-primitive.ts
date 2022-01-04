@@ -1,3 +1,4 @@
+import { inspectType } from '../inspectType';
 import { isString, isNumber, isBoolean } from '../type-check/is-primitive';
 
 export function makeString(obj: unknown): string {
@@ -8,7 +9,7 @@ export function makeString(obj: unknown): string {
     return obj.toString();
   }
 
-  throw new Error(`Unable to cast ${typeof obj} to String`);
+  throw new Error(`Unable to cast ${inspectType(obj)} to String`);
 }
 
 export function makeNumber(obj: unknown): number {
@@ -25,7 +26,7 @@ export function makeNumber(obj: unknown): number {
     return +obj;
   }
 
-  throw new Error(`Unable to cast ${typeof obj} to Number`);
+  throw new Error(`Unable to cast ${inspectType(obj)} to Number`);
 }
 
 export function makeBoolean(obj: unknown): boolean {
@@ -44,5 +45,5 @@ export function makeBoolean(obj: unknown): boolean {
     }
   }
 
-  throw new Error(`Unable to cast ${typeof obj} to Boolean`);
+  throw new Error(`Unable to cast ${inspectType(obj)} to Boolean`);
 }

@@ -23,6 +23,7 @@ export * from './type-assert/assert-primitive';
 
 export { TypeAssertion } from './TypeAssertion';
 export { invariant } from './invariant';
+export { inspectType } from './inspectType';
 
 export type { Index, Indexable } from './Index.type';
 export type { Primitive } from './Primitive.type';
