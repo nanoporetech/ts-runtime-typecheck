@@ -1,7 +1,13 @@
 import type { Dictionary } from './Dictionary.type';
 import { stringifyDefinition } from './stringifyDefinition';
 
-export function inspectType (value: unknown, maxDepth = 3): string {
+export interface InspectTypeOptions {
+  maxDepth?: number;
+}
+
+export function inspectType (value: unknown, opts: InspectTypeOptions = {}): string {
+  const { maxDepth = 3 } = opts;
+
   if (typeof value !== 'object') {
     return typeof value;
   }
@@ -27,9 +33,11 @@ export function inspectType (value: unknown, maxDepth = 3): string {
 
   // We construct a definition by recursively calling inspectType on the elements of the Dictionary
   const result: Dictionary<string> = {};
-  
+  // reduce the depth limit by 1 when we recurse
+  const nestedOptions = { ...opts, maxDepth: maxDepth - 1 };
+
   for (const [k, v] of Object.entries(value)) {
-    result[k] = inspectType(v, maxDepth - 1);
+    result[k] = inspectType(v, nestedOptions);
   }
 
   // Then serialise the definition

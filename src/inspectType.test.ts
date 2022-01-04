@@ -20,7 +20,7 @@ describe('inspectType', () => {
     expect(inspectType({})).toBe('{}');
   });
   it('empty object with 0 depth', () => {
-    expect(inspectType({}, 0)).toBe('Dictionary');
+    expect(inspectType({}, { maxDepth: 0 })).toBe('Dictionary');
   });
   it('object with single element', () => {
     expect(inspectType({ hello: 'world' })).toBe('{ hello: string }');
