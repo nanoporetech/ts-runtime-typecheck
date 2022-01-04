@@ -17,9 +17,9 @@ describe('asStruct', () => {
     expect(() => asEmptyStruct('test')).toThrow(`Unable to cast string to ${label}`);
     expect(() => asEmptyStruct(0)).toThrow(`Unable to cast number to ${label}`);
     expect(() => asEmptyStruct(false)).toThrow(`Unable to cast boolean to ${label}`);
-    expect(() => asEmptyStruct(null)).toThrow(`Unable to cast object to ${label}`);
+    expect(() => asEmptyStruct(null)).toThrow(`Unable to cast null to ${label}`);
     expect(() => asEmptyStruct(undefined)).toThrow(`Unable to cast undefined to ${label}`);
-    expect(() => asEmptyStruct([])).toThrow(`Unable to cast object to ${label}`);
+    expect(() => asEmptyStruct([])).toThrow(`Unable to cast Array to ${label}`);
     expect(() => asEmptyStruct(fn)).toThrow(`Unable to cast function to ${label}`);
   });
 
@@ -32,14 +32,14 @@ describe('asStruct', () => {
     expect(asSimpleStruct(null, { value: 'hello' })).toEqual({ value: 'hello' });
     expect(asSimpleStruct(undefined, { value: 'hello' })).toEqual({ value: 'hello' });
     // should fail
-    expect(() => asSimpleStruct({ value: 12 })).toThrow(`Unable to cast object to ${label}`);
-    expect(() => asSimpleStruct({})).toThrow(`Unable to cast object to ${label}`);
+    expect(() => asSimpleStruct({ value: 12 })).toThrow(`Unable to cast { value: number } to ${label}`);
+    expect(() => asSimpleStruct({})).toThrow(`Unable to cast {} to ${label}`);
     expect(() => asSimpleStruct('test')).toThrow(`Unable to cast string to ${label}`);
     expect(() => asSimpleStruct(0)).toThrow(`Unable to cast number to ${label}`);
     expect(() => asSimpleStruct(false)).toThrow(`Unable to cast boolean to ${label}`);
-    expect(() => asSimpleStruct(null)).toThrow(`Unable to cast object to ${label}`);
+    expect(() => asSimpleStruct(null)).toThrow(`Unable to cast null to ${label}`);
     expect(() => asSimpleStruct(undefined)).toThrow(`Unable to cast undefined to ${label}`);
-    expect(() => asSimpleStruct([])).toThrow(`Unable to cast object to ${label}`);
+    expect(() => asSimpleStruct([])).toThrow(`Unable to cast Array to ${label}`);
     expect(() => asSimpleStruct(fn)).toThrow(`Unable to cast function to ${label}`);
   });
 
@@ -53,15 +53,15 @@ describe('asStruct', () => {
     expect(asNestedStruct(null, { value: { value: 'hello' } })).toEqual({ value: { value: 'hello' } });
     expect(asNestedStruct(undefined, { value: { value: 'hello' } })).toEqual({ value: { value: 'hello' } });
     // should fail
-    expect(() => asNestedStruct({ value: {}})).toThrow(`Unable to cast object to ${label}`);
-    expect(() => asNestedStruct({ value: 12 })).toThrow(`Unable to cast object to ${label}`);
-    expect(() => asNestedStruct({})).toThrow(`Unable to cast object to ${label}`);
+    expect(() => asNestedStruct({ value: {}})).toThrow(`Unable to cast { value: {} } to ${label}`);
+    expect(() => asNestedStruct({ value: 12 })).toThrow(`Unable to cast { value: number } to ${label}`);
+    expect(() => asNestedStruct({})).toThrow(`Unable to cast {} to ${label}`);
     expect(() => asNestedStruct('test')).toThrow(`Unable to cast string to ${label}`);
     expect(() => asNestedStruct(0)).toThrow(`Unable to cast number to ${label}`);
     expect(() => asNestedStruct(false)).toThrow(`Unable to cast boolean to ${label}`);
-    expect(() => asNestedStruct(null)).toThrow(`Unable to cast object to ${label}`);
+    expect(() => asNestedStruct(null)).toThrow(`Unable to cast null to ${label}`);
     expect(() => asNestedStruct(undefined)).toThrow(`Unable to cast undefined to ${label}`);
-    expect(() => asNestedStruct([])).toThrow(`Unable to cast object to ${label}`);
+    expect(() => asNestedStruct([])).toThrow(`Unable to cast Array to ${label}`);
     expect(() => asNestedStruct(fn)).toThrow(`Unable to cast function to ${label}`);
   });
 });
@@ -78,7 +78,7 @@ describe('asOptStruct', () => {
     expect(() => asEmptyStruct('test')).toThrow(`Unable to cast string to ${label}`);
     expect(() => asEmptyStruct(0)).toThrow(`Unable to cast number to ${label}`);
     expect(() => asEmptyStruct(false)).toThrow(`Unable to cast boolean to ${label}`);
-    expect(() => asEmptyStruct([])).toThrow(`Unable to cast object to ${label}`);
+    expect(() => asEmptyStruct([])).toThrow(`Unable to cast Array to ${label}`);
     expect(() => asEmptyStruct(fn)).toThrow(`Unable to cast function to ${label}`);
   });
 
@@ -90,11 +90,11 @@ describe('asOptStruct', () => {
     expect(asSimpleStruct(null)).toBeUndefined();
     expect(asSimpleStruct(undefined)).toBeUndefined();
     // should fail
-    expect(() => asSimpleStruct({})).toThrow(`Unable to cast object to ${label}`);
+    expect(() => asSimpleStruct({})).toThrow(`Unable to cast {} to ${label}`);
     expect(() => asSimpleStruct('test')).toThrow(`Unable to cast string to ${label}`);
     expect(() => asSimpleStruct(0)).toThrow(`Unable to cast number to ${label}`);
     expect(() => asSimpleStruct(false)).toThrow(`Unable to cast boolean to ${label}`);
-    expect(() => asSimpleStruct([])).toThrow(`Unable to cast object to ${label}`);
+    expect(() => asSimpleStruct([])).toThrow(`Unable to cast Array to ${label}`);
     expect(() => asSimpleStruct(fn)).toThrow(`Unable to cast function to ${label}`);
   });
 
@@ -107,13 +107,13 @@ describe('asOptStruct', () => {
     expect(asNestedStruct(null)).toBeUndefined();
     expect(asNestedStruct(undefined)).toBeUndefined();
     // should fail
-    expect(() => asNestedStruct({ value: {}})).toThrow(`Unable to cast object to ${label}`);
-    expect(() => asNestedStruct({ value: 12 })).toThrow(`Unable to cast object to ${label}`);
-    expect(() => asNestedStruct({})).toThrow(`Unable to cast object to ${label}`);
+    expect(() => asNestedStruct({ value: {}})).toThrow(`Unable to cast { value: {} } to ${label}`);
+    expect(() => asNestedStruct({ value: 12 })).toThrow(`Unable to cast { value: number } to ${label}`);
+    expect(() => asNestedStruct({})).toThrow(`Unable to cast {} to ${label}`);
     expect(() => asNestedStruct('test')).toThrow(`Unable to cast string to ${label}`);
     expect(() => asNestedStruct(0)).toThrow(`Unable to cast number to ${label}`);
     expect(() => asNestedStruct(false)).toThrow(`Unable to cast boolean to ${label}`);
-    expect(() => asNestedStruct([])).toThrow(`Unable to cast object to ${label}`);
+    expect(() => asNestedStruct([])).toThrow(`Unable to cast Array to ${label}`);
     expect(() => asNestedStruct(fn)).toThrow(`Unable to cast function to ${label}`);
   });
 });

@@ -16,13 +16,13 @@ describe('recursive casts', () => {
     expect(asStringArray(null, [])).toEqual([]);
     expect(asStringArray(undefined, [])).toEqual([]);
     // should fail
-    expect(() => asStringArray([null, 'test'])).toThrow('Unable to cast object to string[]');
+    expect(() => asStringArray([null, 'test'])).toThrow('Unable to cast Array to string[]');
     expect(() => asStringArray(12)).toThrow('Unable to cast number to string[]');
     expect(() => asStringArray('hi')).toThrow('Unable to cast string to string[]');
     expect(() => asStringArray(false)).toThrow('Unable to cast boolean to string[]');
-    expect(() => asStringArray(null)).toThrow('Unable to cast object to string[]');
+    expect(() => asStringArray(null)).toThrow('Unable to cast null to string[]');
     expect(() => asStringArray(undefined)).toThrow('Unable to cast undefined to string[]');
-    expect(() => asStringArray({})).toThrow('Unable to cast object to string[]');
+    expect(() => asStringArray({})).toThrow('Unable to cast {} to string[]');
     expect(() => asStringArray(fn)).toThrow('Unable to cast function to string[]');
   });
 
@@ -44,13 +44,13 @@ describe('recursive casts', () => {
     expect(asStringRecord(null, {})).toEqual({});
     expect(asStringRecord(undefined, {})).toEqual({});
     // should fail
-    expect(() => asStringRecord({ a: 'test', b: null })).toThrow('Unable to cast object to Dictionary<string>');
+    expect(() => asStringRecord({ a: 'test', b: null })).toThrow('Unable to cast { a: string, b: null } to Dictionary<string>');
     expect(() => asStringRecord(12)).toThrow('Unable to cast number to Dictionary<string>');
     expect(() => asStringRecord('hi')).toThrow('Unable to cast string to Dictionary<string>');
     expect(() => asStringRecord(false)).toThrow('Unable to cast boolean to Dictionary<string>');
-    expect(() => asStringRecord(null)).toThrow('Unable to cast object to Dictionary<string>');
+    expect(() => asStringRecord(null)).toThrow('Unable to cast null to Dictionary<string>');
     expect(() => asStringRecord(undefined)).toThrow('Unable to cast undefined to Dictionary<string>');
-    expect(() => asStringRecord([])).toThrow('Unable to cast object to Dictionary<string>');
+    expect(() => asStringRecord([])).toThrow('Unable to cast Array to Dictionary<string>');
     expect(() => asStringRecord(fn)).toThrow('Unable to cast function to Dictionary<string>');
   });
 
@@ -76,11 +76,11 @@ describe('optional recursive casts', () => {
     expect(asOptStringArray(null)).toEqual(undefined);
     expect(asOptStringArray(undefined)).toEqual(undefined);
     // should fail
-    expect(() => asOptStringArray([null, 'test'])).toThrow('Unable to cast object to Optional<string[]>');
+    expect(() => asOptStringArray([null, 'test'])).toThrow('Unable to cast Array to Optional<string[]>');
     expect(() => asOptStringArray(12)).toThrow('Unable to cast number to Optional<string[]>');
     expect(() => asOptStringArray('hi')).toThrow('Unable to cast string to Optional<string[]>');
     expect(() => asOptStringArray(false)).toThrow('Unable to cast boolean to Optional<string[]>');
-    expect(() => asOptStringArray({})).toThrow('Unable to cast object to Optional<string[]>');
+    expect(() => asOptStringArray({})).toThrow('Unable to cast {} to Optional<string[]>');
     expect(() => asOptStringArray(fn)).toThrow('Unable to cast function to Optional<string[]>');
   });
 
@@ -101,11 +101,11 @@ describe('optional recursive casts', () => {
     expect(asOptStringRecord(null)).toEqual(undefined);
     expect(asOptStringRecord(undefined)).toEqual(undefined);
     // should fail
-    expect(() => asOptStringRecord({ a: 'test', b: null })).toThrow('Unable to cast object to Optional<Dictionary<string>>');
+    expect(() => asOptStringRecord({ a: 'test', b: null })).toThrow('Unable to cast { a: string, b: null } to Optional<Dictionary<string>>');
     expect(() => asOptStringRecord(12)).toThrow('Unable to cast number to Optional<Dictionary<string>>');
     expect(() => asOptStringRecord('hi')).toThrow('Unable to cast string to Optional<Dictionary<string>>');
     expect(() => asOptStringRecord(false)).toThrow('Unable to cast boolean to Optional<Dictionary<string>>');
-    expect(() => asOptStringRecord([])).toThrow('Unable to cast object to Optional<Dictionary<string>>');
+    expect(() => asOptStringRecord([])).toThrow('Unable to cast Array to Optional<Dictionary<string>>');
     expect(() => asOptStringRecord(fn)).toThrow('Unable to cast function to Optional<Dictionary<string>>');
   });
 

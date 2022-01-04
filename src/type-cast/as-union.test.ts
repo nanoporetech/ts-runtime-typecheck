@@ -12,7 +12,7 @@ describe('asUnion', () => {
 
     expect(cast('hello')).toBe('hello');
     expect(cast(42)).toBe(42);
-    expect(() => cast(null)).toThrow('Unable to cast object to string | number');
+    expect(() => cast(null)).toThrow('Unable to cast null to string | number');
   });
 });
 describe('isOptUnion', () => {

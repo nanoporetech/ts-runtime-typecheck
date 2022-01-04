@@ -1,3 +1,4 @@
+import { inspectType } from '../inspectType';
 import type { Optional } from '../Optional.type';
 
 import { isString, isNumber, isDefined, isArray, isBoolean, isFunction, isIndex, isDictionary, isIndexable, isPrimitive } from '../type-check/is-primitive';
@@ -23,7 +24,7 @@ export function asDefined<T> (obj: Optional<T>, fallback?: NonNullable<T>): NonN
   if (typeof fallback !== 'undefined') {
     return fallback;
   }
-  throw new Error(`Unable to cast ${typeof obj} to NonNullable<unknown>`);
+  throw new Error(`Unable to cast ${inspectType(obj)} to NonNullable<unknown>`);
 }
 
 export const asOptString = optTypeCast(isString);
