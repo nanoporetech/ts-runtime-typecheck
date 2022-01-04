@@ -16,7 +16,7 @@ export function makeNumber(obj: unknown): number {
     return obj;
   }
   if (isString(obj)) {
-    const value = parseFloat(obj);
+    const value = +obj; // unlike parseFloat this will return NaN for strings like '4four'
     if (!isNaN(value)) {
       return value;
     }
