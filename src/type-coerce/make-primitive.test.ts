@@ -19,6 +19,7 @@ it('makeNumber', () => {
   expect(makeNumber(true)).toBe(1);
   expect(makeNumber(false)).toBe(0);
   expect(() => makeNumber(null)).toThrow('Unable to cast object to Number');
+  expect(() => makeNumber('4four')).toThrow('Unable to cast string to Number');
   expect(() => makeNumber(undefined)).toThrow('Unable to cast undefined to Number');
   expect(() => makeNumber(() => true)).toThrow('Unable to cast function to Number');
   expect(() => makeNumber([])).toThrow('Unable to cast object to Number');
