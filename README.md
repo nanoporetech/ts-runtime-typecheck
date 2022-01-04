@@ -39,8 +39,8 @@ npm install ts-runtime-typecheck
   - [Reference: Optional Type Checks](#reference-optional-type-checks)
   - [Reference: Type Coerce](#reference-type-coerce)
   - [Reference: Type Assert](#reference-type-assert)
-  - [Reference: Types](#reference-types)
   - [Reference: Helper functions](#reference-helper-functions)
+  - [Reference: Types](#reference-types)
 
 - [Changelog](#changelog)
   - [v1.0.0](#v100)
@@ -902,7 +902,7 @@ Assert value of type `JSONValue | undefined` is `JSONObject | undefined`. Accept
 
 - ### inspectType
 
-Inspects the type of a given value and returns a description of it as a string. Useful for constructing debug messages from unknown values. Instances of classes are described using the name of their class. Abstract objects are traversed recursively so that their elements can also be described as well. Recursion uses a depth limit to prevent overlarge descriptions. Once the limit has been reached objects will be described as `Dictionary`.
+Inspects the type of a given value and returns a description of it as a string. Useful for constructing debug messages from unknown values. Instances of classes are described using the name of their class. Abstract objects are traversed recursively so that their elements can be described as well. Recursion uses a depth limit to prevent overlarge descriptions. Once the limit has been reached abstract objects will be described as `Dictionary`.
 
 An optional second argument can be passed to modify the default behaviour. For example you can change the `maxDepth` limit from it's default of `3`; a value of `0` would prevent recursion whereas `Infinity` would remove the limit.
 
@@ -1081,3 +1081,4 @@ inspectType({ foo: 'bar' }, { maxDepth: 0 }); // Dictionary
 
 - Add: `inspectType` function to describe the type of a value
 - Fix: `makeNumber` no longer returns a number strings prefixed with a number
+- Change: Type error messages now use the more descriptive `inspectType` instead of `typeof` for erroneous values
