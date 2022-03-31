@@ -1,6 +1,6 @@
 import type { Optional } from '../Optional.type';
 import type { TypeCheck } from '../TypeCheck.type';
-import type { OptionalTypeCast } from '../TypeCast.type';
+import type { OptionalTypeCast, TypeCast } from '../TypeCast.type';
 
 import { isNullish } from '../type-check/is-primitive';
 import { inspectType } from '../inspectType';
@@ -17,7 +17,7 @@ export function optTypeCast<Input, Output> (isType: TypeCheck<Output>): Optional
   };
 }
 
-export function typeCast<Output> (isType: TypeCheck<Output>): (obj: unknown, fallback?: Output) => Output {
+export function typeCast<Output> (isType: TypeCheck<Output>): TypeCast<Output> {
   return (obj: unknown, fallback?: Output) => {
     if (isType(obj)) {
       return obj;

@@ -15,7 +15,7 @@ describe('asUnion', () => {
     expect(() => cast(null)).toThrow('Unable to cast null to string | number');
   });
 });
-describe('isOptUnion', () => {
+describe('asOptUnion', () => {
   it('accepts a single param', () => {
     const cast = asOptUnion(isString);
 

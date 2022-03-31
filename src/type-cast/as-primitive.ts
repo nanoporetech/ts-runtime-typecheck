@@ -17,6 +17,12 @@ export const asFunction = typeCast(isFunction);
 // NOTE this *could* work with the typeCast helper
 // but unfortunately generic parameters cannot be preserved
 // when a function is placed into a value
+export function asDefined<T> (obj: Optional<T>): NonNullable<T>;
+/**
+ * @deprecated The fallback argument is depreciated.
+ * Please use `asDefined(value ?? fallback)` instead.
+ */
+export function asDefined<T> (obj: Optional<T>, fallback?: NonNullable<T>): NonNullable<T>;
 export function asDefined<T> (obj: Optional<T>, fallback?: NonNullable<T>): NonNullable<T> {
   if (isDefined(obj)) {
     return obj;

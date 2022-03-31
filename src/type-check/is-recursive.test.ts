@@ -36,26 +36,26 @@ describe('is primitive', () => {
   function tryExamples<T>(test: TypeCheck<T>, expected: boolean[]) {
     for (let i = 0; i < examples.length; i++) {
       const example = examples[i];
-      const passes = expected[i];
+      const shouldPass = expected[i];
       let label = '';
       switch (typeof example) {
-      case 'symbol':
-        label = example.toString();
-        break;
-      case 'object':
-        if (example === null) {
-          label = 'null';
-        }
-        else {
+        case 'symbol':
+          label = example.toString();
+          break;
+        case 'object':
+          if (example === null) {
+            label = 'null';
+          }
+          else {
+            label = JSON.stringify(example);
+          }
+          break;
+        default:
           label = JSON.stringify(example);
-        }
-        break;
-      default:
-        label = example + '';
-        break;
+          break;
       }
-      it(`${label} is ${test.TYPE_NAME} === ${passes}`, () => {
-        expect(test(example)).toBe(passes);
+      it(`${label} is ${test.TYPE_NAME ?? 'unknown'} === ${shouldPass ? 'true' : 'false'}`, () => {
+        expect(test(example)).toBe(shouldPass);
       });
     }
   }
@@ -85,7 +85,7 @@ describe('is primitive', () => {
 
     it('uses correct labels', () => {
       expect(isDictionaryOf(isString).TYPE_NAME).toBe('Dictionary<string>');
-      expect(isDictionaryOf((_obj: unknown): _obj is unknown => true).TYPE_NAME).toBe('Dictionary<unknown>');
+      expect(isDictionaryOf((obj: unknown): obj is unknown => obj === obj).TYPE_NAME).toBe('Dictionary<unknown>');
     });
   });
 
@@ -114,7 +114,7 @@ describe('is primitive', () => {
 
     it('uses correct labels', () => {
       expect(isOptDictionaryOf(isString).TYPE_NAME).toBe('Optional<Dictionary<string>>');
-      expect(isOptDictionaryOf((_obj: unknown): _obj is unknown => true).TYPE_NAME).toBe('Optional<Dictionary<unknown>>');
+      expect(isOptDictionaryOf((obj: unknown): obj is unknown => obj === obj).TYPE_NAME).toBe('Optional<Dictionary<unknown>>');
     });
   });
 
@@ -143,7 +143,7 @@ describe('is primitive', () => {
 
     it('uses correct labels', () => {
       expect(isArrayOf(isString).TYPE_NAME).toBe('string[]');
-      expect(isArrayOf((_obj: unknown): _obj is unknown => true).TYPE_NAME).toBe('unknown[]');
+      expect(isArrayOf((obj: unknown): obj is unknown => obj === obj).TYPE_NAME).toBe('unknown[]');
     });
   });
 
@@ -172,7 +172,7 @@ describe('is primitive', () => {
 
     it('uses correct labels', () => {
       expect(isOptArrayOf(isString).TYPE_NAME).toBe('Optional<string[]>');
-      expect(isOptArrayOf((_obj: unknown): _obj is unknown => true).TYPE_NAME).toBe('Optional<unknown[]>');
+      expect(isOptArrayOf((obj: unknown): obj is unknown => obj === obj).TYPE_NAME).toBe('Optional<unknown[]>');
     });
   });
 });

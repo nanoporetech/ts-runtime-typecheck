@@ -2,13 +2,13 @@ import { isInstance, isOptInstance } from './is-instance';
 
 describe('is instance', () => {
   class BaseClass {
-    inner = 0
+    inner = 0;
   }
   class ExtendedClass extends BaseClass {
-    outer = 'a word'
+    outer = 'a word';
   }
   class Similar {
-    inner = 1
+    inner = 1;
   }
 
   const base = new BaseClass;
@@ -37,13 +37,13 @@ describe('is instance', () => {
 
 describe('is optional instance', () => {
   class BaseClass {
-    inner = 0
+    inner = 0;
   }
   class ExtendedClass extends BaseClass {
-    outer = 'a word'
+    outer = 'a word';
   }
   class Similar {
-    inner = 1
+    inner = 1;
   }
 
   const base = new BaseClass;
