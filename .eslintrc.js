@@ -58,6 +58,13 @@ module.exports = {
         leadingUnderscore: 'require',
         trailingUnderscore: 'forbid'
       },
+      // enforce boolean values include a specific prefix
+      {
+        selector: ["variable", "parameter"],
+        types: ["boolean"],
+        format: ["PascalCase"],
+        prefix: ["is", "should", "has", "can", "did", "will"]
+      },
       // all other variables should be camelCase
       {
         selector: ['variableLike'],

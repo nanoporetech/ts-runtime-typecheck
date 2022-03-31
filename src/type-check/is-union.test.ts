@@ -13,7 +13,7 @@ describe('isUnion', () => {
     expect(isUnion(isString, isNumber, isNullish)(null)).toBeTruthy();
   });
   it('accepts test with no TYPE_NAME', () => {
-    expect(isUnion((_n: unknown): _n is number => true).TYPE_NAME).toBe('unknown');
+    expect(isUnion((n: unknown): n is number => n === n).TYPE_NAME).toBe('unknown');
   });
 });
 describe('isOptUnion', () => {
@@ -33,6 +33,6 @@ describe('isOptUnion', () => {
     expect(isOptUnion(isNullish)(undefined)).toBeTruthy();
   });
   it('accepts test with no TYPE_NAME', () => {
-    expect(isOptUnion((_n: unknown): _n is number => true).TYPE_NAME).toBe('Optional<unknown>');
+    expect(isOptUnion((n: unknown): n is number => n === n).TYPE_NAME).toBe('Optional<unknown>');
   });
 });

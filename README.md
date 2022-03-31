@@ -22,7 +22,6 @@ npm install ts-runtime-typecheck
 
 - [Installation](#installation)
 - [Type Casts](#type-casts)
-  - [Fallback values](#fallback-values)
 - [Type Checks](#type-checks)
 - [Type Coerce](#type-coerce)
 - [Type Asserts](#type-asserts)
@@ -33,29 +32,7 @@ npm install ts-runtime-typecheck
 - [Union types](#union-types)
 - [Class instances](#class-instances)
 - [Reference](#reference)
-  - [Reference: Type Casts](#reference-type-casts)
-  - [Reference: Optional Type Casts](#reference-optional-type-casts)
-  - [Reference: Type Checks](#reference-type-checks)
-  - [Reference: Optional Type Checks](#reference-optional-type-checks)
-  - [Reference: Type Coerce](#reference-type-coerce)
-  - [Reference: Type Assert](#reference-type-assert)
-  - [Reference: Helper functions](#reference-helper-functions)
-  - [Reference: Types](#reference-types)
-
 - [Changelog](#changelog)
-  - [v1.0.0](#v100)
-  - [v1.1.0](#v110)
-  - [v1.1.1](#v111)
-  - [v1.2.0](#v120)
-  - [v2.0.0](#v200)
-  - [v2.1.0](#v210)
-  - [v2.1.1](#211)
-  - [v2.2.0](#220)
-  - [v2.2.1](#221)
-  - [v2.2.2](#222)
-  - [v2.3.0](#230)
-  - [v2.4.0](#240)
-  - [v2.5.0](#250)
 
 ## Type Casts
 
@@ -79,27 +56,9 @@ square('10')
 
 **Type Casts** are meant to primarily validate questionable values that are expected to be in a well defined structure. Such as network responses, interfacing with untyped JavaScript or reading data back from a file. If you are looking to validate a type, without throwing an error then take a look at [Type Checks](#type-checks).
 
-### Fallback values
+### Optional Type Casts
 
-The standard type cast functions take a second optional parameter, which is a _fallback_ value. In the situation that the input is [`Nullish`](#nullish) and the fallback parameter has been defined the function will return the fallback parameter instead of throwing. This is very helpful for validating the input of an optional value, and providing a default value.
-
-```typescript
-import { asString } from 'ts-runtime-typecheck';
-
-function printName (name: unknown) {
-  const value: string = asString(name, 'Dave');
-  console.log(`Hello ${value}, how are you today?`);
-}
-
-printName()
-// Hello Dave, how are you today?
-printName('James')
-// Hello James, now are you today?
-printName(42)
-// Error: Unable to cast number to string
-```
-
-In the situation you want to check a value meets an [`Optional`](#optional) type there exists an alternate function for each type cast. These take the form [`asOpt{TYPE}`](#reference-optional-type-casts). Unlike the standard functions they do not allow for a fallback value, but when a [`Nullish`](#nullish) value is passed in they will always emit `undefined`. If the input is not [`Nullish`](#nullish), then it behaves the same as the standard type casts. If the type condition is met then it emits the value, otherwise it will throw.
+In the situation you want to check a value meets an [`Optional`](#optional) type there exists an alternate function for each type cast. These take the form [`asOpt{TYPE}`](#reference-optional-type-casts). Unlike the standard functions when a [`Nullish`](#nullish) value is passed in they will emit `undefined` instead of throwing. If the input is not [`Nullish`](#nullish), then it behaves the same as the standard type casts. If the type condition is met then it emits the value, otherwise it will throw.
 
 ---
 
@@ -184,7 +143,7 @@ main(42); // 'but what is the question?'
 main(); // TypeAssertion: Meaning of Life is not defined
 ```
 
-TypeAsserts cannot be based on generic types, due to limits in the TypeScript type system. Hence there is no equivalent to [`isStruct`](#isstruct) and similar [`TypeCheck`](#typecheck). However, there is an alternative. It's possible to utilise an invariant ( or assert) function with a [`TypeCheck`](#typecheck) to get the same effect, and an implementation of [`invariant`](#invariant) is provided for this purpose.
+TypeAsserts cannot be based on generic types, due to limits in the TypeScript type system. Hence there is no analogous function to [`isStruct`](#isstruct) and similar [`TypeCheck`](#typecheck). However, there is an alternative. It's possible to utilise an invariant ( or assert) function with a [`TypeCheck`](#typecheck) to get the same effect, and an implementation of [`invariant`](#invariant) is provided for this purpose.
 
 ```typescript
 import { invariant, isLiteral } from 'ts-runtime-typecheck';
@@ -262,7 +221,7 @@ const obj = asJSONValue(almost_right);
 
 ## Ensuring an optional value is defined
 
-A common situation is that you have an [`Optional`](#optional) value, with a well defined type. At a specific time it should be defined, but the type system is not aware of this. TypeScript will allow you to cast the value to a non-optional type using `!`, but this is often discouraged in style guides. As an alternative solution you can use the [`asDefined`](#asdefined) function, which removes the optionality from a type union. As with the other type casts this can take a fallback value, and will throw if the condition is not met. However, the output type matches the input type with [`Nullish`](#nullish) subtracted.
+A common situation is that you have an [`Optional`](#optional) value, with a well defined type. At a specific time it should be defined, but the type system is not aware of this. TypeScript will allow you to cast the value to a non-optional type using `!`, but this is often discouraged in style guides. As an alternative solution you can use the [`asDefined`](#asdefined) function, which removes the optionality from a type union.
 
 ```typescript
 import { asDefined } from 'ts-runtime-typecheck';
@@ -456,63 +415,63 @@ function main (n: A | B) {
 
 - ### asString
 
-  Cast `unknown` to `string`. Accepts an optional fallback value that is emitted if the value is nullish and fallback is defined.
+  Cast `unknown` to `string`.
 
 - ### asNumber
 
-  Cast `unknown` to `number`. Accepts an optional fallback value that is emitted if the value is nullish and fallback is defined.
+  Cast `unknown` to `number`.
 
 - ### asIndex
 
-  Cast `unknown` to [`Index`](#index). Accepts an optional fallback value that is emitted if the value is nullish and fallback is defined.
+  Cast `unknown` to [`Index`](#index).
 
 - ### asPrimitive
 
-  Cast `unknown` to [`Primitive`](#primitive). Accepts an optional fallback value that is emitted if the value is nullish and fallback is defined.
+  Cast `unknown` to [`Primitive`](#primitive).
 
 - ### asIndexable
 
-  Cast `unknown` to [`Indexable`](#indexable). Accepts an optional fallback value that is emitted if the value is nullish and fallback is defined.
+  Cast `unknown` to [`Indexable`](#indexable).
 
 - ### asBoolean
 
-  Cast `unknown` to `boolean`. Accepts an optional fallback value that is emitted if the value is nullish and fallback is defined.
+  Cast `unknown` to `boolean`.
 
 - ### asArray
 
-  Cast `unknown` to `Array<unknown>`. Accepts an optional fallback value that is emitted if the value is nullish and fallback is defined.
+  Cast `unknown` to `Array<unknown>`.
 
 - ### asDictionary
 
-  Cast `unknown` to [`Dictionary<unknown>`](#dictionary). Accepts an optional fallback value that is emitted if the value is nullish and fallback is defined.
+  Cast `unknown` to [`Dictionary<unknown>`](#dictionary).
 
 - ### asFunction
 
-  Cast `unknown` to [`UnknownFunction`](#unknownfunction). Accepts an optional fallback value that is emitted if the value is nullish and fallback is defined.
+  Cast `unknown` to [`UnknownFunction`](#unknownfunction).
 
 - ### asDefined
 
-  Cast [`Type | Nullish`](#nullish) to `Type`, where `Type` is a generic parameter. Accepts an optional fallback value that is emitted if the value is nullish and fallback is defined.
+  Cast [`Type | Nullish`](#nullish) to `Type`, where `Type` is a generic parameter.
 
 - ### asJSONValue
 
-  Cast `unknown` to [`JSONValue`](#jsonvalue). This function recursively validates the value, and hence will fail if given a cyclic value. Accepts an optional fallback value that is emitted if the value is nullish and fallback is defined.
+  Cast `unknown` to [`JSONValue`](#jsonvalue). This function recursively validates the value, and hence will fail if given a cyclic value.
 
 - ### asJSONObject
 
-  Cast [`JSONValue`](#jsonvalue) to [`JSONObject`](#jsonobject). Unlike [`asJSONValue`](#asjsonvalue) this does not perform recursive validation, hence it only accepts a [`JSONValue`](#jsonvalue) so that the sub-elements are of a known type. Accepts an optional fallback value that is emitted if the value is nullish and fallback is defined.
+  Cast [`JSONValue`](#jsonvalue) to [`JSONObject`](#jsonobject). Unlike [`asJSONValue`](#asjsonvalue) this does not perform recursive validation, hence it only accepts a [`JSONValue`](#jsonvalue) so that the sub-elements are of a known type.
 
 - ### asJSONArray
   
-  Cast [`JSONValue`](#jsonvalue) to [`JSONArray`](#jsonarray). Unlike [`asJSONValue`](#asjsonvalue) this does not perform recursive validation, hence it only accepts a [`JSONValue`](#jsonvalue) so that the sub-elements are of a known type. Accepts an optional fallback value that is emitted if the value is nullish and fallback is defined.
+  Cast [`JSONValue`](#jsonvalue) to [`JSONArray`](#jsonarray). Unlike [`asJSONValue`](#asjsonvalue) this does not perform recursive validation, hence it only accepts a [`JSONValue`](#jsonvalue) so that the sub-elements are of a known type.
 
 - ### asArrayOf
   
-  Takes a Type Cast function for `Type` and returns a new Type Cast function for `Array<Type>` where type is a generic parameter. The emitted Type Cast function accepts an optional fallback value that is emitted if the value is nullish and fallback is defined. Refer to [Array/Object of Type Casts](#arrayobject-of-type-casts) for examples.
+  Takes a Type Cast function for `Type` and returns a new Type Cast function for `Array<Type>` where type is a generic parameter. Refer to [Array/Object of Type Casts](#arrayobject-of-type-casts) for examples.
 
 - ### asDictionaryOf
   
-  Takes a Type Cast function for `Type` and returns a new Type Cast function for [`Dictionary<Type>`](#dictionary) where type is a generic parameter. The emitted Type Cast function accepts an optional fallback value that is emitted if the value is nullish and fallback is defined. Refer to [Array/Object of Type Casts](#arrayobject-of-type-casts) for examples.
+  Takes a Type Cast function for `Type` and returns a new Type Cast function for [`Dictionary<Type>`](#dictionary) where type is a generic parameter. Refer to [Array/Object of Type Casts](#arrayobject-of-type-casts) for examples.
 
 - ### asStruct
   
@@ -1082,3 +1041,8 @@ inspectType({ foo: 'bar' }, { maxDepth: 0 }); // Dictionary
 - Add: `inspectType` function to describe the type of a value
 - Fix: `makeNumber` no longer returns a number strings prefixed with a number
 - Change: Type error messages now use the more descriptive `inspectType` instead of `typeof` for erroneous values
+
+### 2.5.1
+
+- Change: Depreciate the fallback parameter for all TypeCasts
+- Documentation: Simplify the contents into primary headings only
