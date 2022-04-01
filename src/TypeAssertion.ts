@@ -1,4 +1,3 @@
-// just applies the name 'TypeAssertion' to the error
 // Alias exists for forwards/backwards compatibility.
 // We used to define a custom error which was just Error with the name TypeAssertion
 // but it's better to use a built in here.
