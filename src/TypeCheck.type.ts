@@ -6,3 +6,7 @@ export interface TypeCheck<T> {
 export type UnwrapTypeCheck<T extends TypeCheck<unknown>> = T extends TypeCheck<infer P> ? P : never;
 // extract the result type from an array of type asserts and return the resulting union
 export type UnwrapTypeCheckArray<T extends TypeCheck<unknown>[]> = T extends TypeCheck<infer P>[] ? P : never;
+
+export type UnwrapTypeCheckTuple<T extends TypeCheck<unknown>[]> = {
+  [Index in keyof T]: T[Index] extends TypeCheck<infer P> ? P : never  
+}

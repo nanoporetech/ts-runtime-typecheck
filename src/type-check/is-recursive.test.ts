@@ -1,3 +1,4 @@
+import { getTypeName } from '../TypeCheck';
 import type { TypeCheck } from '../TypeCheck.type';
 import { isString } from './is-primitive';
 import { isArrayOf, isDictionaryOf, isOptArrayOf, isOptDictionaryOf } from './is-recursive';
@@ -54,7 +55,7 @@ describe('is primitive', () => {
           label = JSON.stringify(example);
           break;
       }
-      it(`${label} is ${test.TYPE_NAME ?? 'unknown'} === ${shouldPass ? 'true' : 'false'}`, () => {
+      it(`${label} is ${getTypeName(test)} === ${shouldPass ? 'true' : 'false'}`, () => {
         expect(test(example)).toBe(shouldPass);
       });
     }

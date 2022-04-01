@@ -4,6 +4,7 @@ import type { OptionalTypeCast, TypeCast } from '../TypeCast.type';
 
 import { isNullish } from '../type-check/is-primitive';
 import { inspectType } from '../inspectType';
+import { getTypeName } from '../TypeCheck';
 
 export function optTypeCast<Input, Output> (isType: TypeCheck<Output>): OptionalTypeCast<Output, Optional<Input>> {
   return (obj: Optional<Input>) => {
@@ -13,7 +14,7 @@ export function optTypeCast<Input, Output> (isType: TypeCheck<Output>): Optional
     if (isType(obj)) {
       return obj;
     }
-    throw new Error(`Unable to cast ${inspectType(obj)} to Optional<${isType.TYPE_NAME ?? 'unknown'}>`);
+    throw new Error(`Unable to cast ${inspectType(obj)} to Optional<${getTypeName(isType)}>`);
   };
 }
 
@@ -25,6 +26,6 @@ export function typeCast<Output> (isType: TypeCheck<Output>): TypeCast<Output> {
     if (isNullish(obj) && typeof fallback !== 'undefined') {
       return fallback;
     }
-    throw new Error(`Unable to cast ${inspectType(obj)} to ${isType.TYPE_NAME ?? 'unknown'}`);
+    throw new Error(`Unable to cast ${inspectType(obj)} to ${getTypeName(isType)}`);
   };
 }
