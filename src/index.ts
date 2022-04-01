@@ -5,6 +5,7 @@ export * from './type-cast/as-union';
 export * from './type-cast/as-recursive';
 export * from './type-cast/as-instance';
 export * from './type-cast/as-literal';
+export * from './type-cast/as-guarded-function';
 
 export * from './type-check/is-json';
 export * from './type-check/is-primitive';

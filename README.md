@@ -31,6 +31,7 @@ npm install ts-runtime-typecheck
 - [Validating interfaces](#validating-interfaces)
 - [Union types](#union-types)
 - [Class instances](#class-instances)
+- [Guarded functions](#guarded-functions)
 - [Reference](#reference)
 - [Changelog](#changelog)
 
@@ -221,19 +222,33 @@ const obj = asJSONValue(almost_right);
 
 ## Ensuring an optional value is defined
 
-A common situation is that you have an [`Optional`](#optional) value, with a well defined type. At a specific time it should be defined, but the type system is not aware of this. TypeScript will allow you to cast the value to a non-optional type using `!`, but this is often discouraged in style guides. As an alternative solution you can use the [`asDefined`](#asdefined) function, which removes the optionality from a type union.
+A common situation is that you have an [`Optional`](#optional) value, with a well defined type. At a specific time it should be defined, but the type system is not aware of this. TypeScript will allow you to cast the value to a non-optional type using `!`, but this is often discouraged in style guides. A safer alternative is to use [`asDefined`](#asdefined) and friends, which can be used to subtract the optionality from the type.
 
 ```typescript
-import { asDefined } from 'ts-runtime-typecheck';
+import { asDefined, assertDefined, isDefined } from 'ts-runtime-typecheck';
 
-function setup (useComplexType: boolean = false, complexInst?: ComplexType) {
-  if (useComplexType) {
-    const inst: ComplexType = asDefined(complexInst);
-    inst.doComplexThing();
+function doThing (value: number) {
+  // [...]
+}
+
+function branching (value?: number) {
+  // used for conditions, allows for an alternative to throwing or custom error behavior
+  if (isDefined(value)) {
+    doThing(value)
+  } else {
+    console.log('bad things')
   }
-  else {
-    doSimpleThing();
-  }
+}
+
+function inline (value?: number) {
+  // used inline, throws if the value is Nullish otherwise returns the value
+  doThing(asDefined(value))
+}
+
+function assertion (value?: number) {
+  // used to ensure execution doesn't progress if the value isn't defined, throws if the value is Nullish
+  assertDefined(value)
+  doThing(value)
 }
 ```
 
@@ -409,6 +424,25 @@ function main (n: A | B) {
 }
 ```
 
+---
+
+## Guarded Functions
+
+TypeScript provides excellent compile time protections against misusing functions. The number of parameters, the types of parameters and the return type of the function are all statically type checked. But it provides no *runtime* protections. In a pure TS project this isn't normally required, but sometimes you need to pass around abstract functions and have them behave reliably. Alternatively you could be authoring a library and want to ensure that developers using your library without TS use your functions correctly. In both these scenarios you can wrap the function using `asGuardedFunction`, specifying the return and parameter types. This will return a new function that when called will validate the incoming arguments, and the outgoing return value at runtime. If the types don't match up it will throw an error. The resulting function will have accurate parameter and return types, irrespective of the original function.
+
+```typescript
+
+import { asGuardedFunction } from 'ts-runtime-typecheck';
+
+export const publicFunction = asGuardedFunction(
+  (a: number, b: number) => `${(a / b) * 100}%`, // function to wrap
+  isString, // return value
+  isNumber, isNumber // parameters
+);
+```
+
+---
+
 ## Reference
 
 ### Reference: Type Casts
@@ -475,7 +509,7 @@ function main (n: A | B) {
 
 - ### asStruct
   
-  Takes an [`InterfacePattern`](#interfacepattern) which is equivalent to `Type` and returns a new Type Cast function for `Type`, where `Type` is an interface defined by the [`TypeAsserts`](#typeassert) specified in the pattern. Refer to [Validating interfaces](#validating-interfaces) for examples.
+  Takes an [`InterfacePattern`](#interfacepattern) which is equivalent to `Type` and returns a new Type Cast function for `Type`, where `Type` is an interface defined by the [`TypeChecks`](#typecheck) specified in the pattern. Refer to [Validating interfaces](#validating-interfaces) for examples.
 
 - ### asInstance
 
@@ -484,6 +518,10 @@ function main (n: A | B) {
 - ### asLiteral
 
   Takes a [Primitive](#primitive) value and returns a new Type Cast for that specific value.
+
+- ### asGuardedFunction
+
+  Takes a unknown value and a series of [`TypeChecks`](#typecheck) and returns a strongly typed function. It will be a new function that wraps the original with runtime type validation, ensuring that the arguments and return value are the expected types. The first [`TypeCheck`](#typecheck) is for the return value, and subsequent variadic [`TypeChecks`](#typecheck) are used for validating arguments.
 
 ### Reference: Optional Type Casts
 
@@ -934,7 +972,7 @@ inspectType({ foo: 'bar' }, { maxDepth: 0 }); // Dictionary
 
 - ### TypeCheck
 
-  An alias for a function that meets the requirements of TypeScript [Type Guards](https://www.typescriptlang.org/docs/handbook/advanced-types.html#user-defined-type-guards). They take the format `(value: unknown) => value is TYPE`. With the exception of specialist JSON checks all [Type Checks](#reference-type-checks) conform to this type.
+  An alias for a function that meets the requirements of TypeScript [Type Guards](https://www.typescriptlang.org/docs/handbook/advanced-types.html#user-defined-type-guards). They take the format `(value: unknown) => value is TYPE`. With the exception of specialist JSON checks all [TypeChecks](#reference-type-checks) conform to this type.
 
 - ### InterfacePattern
 
@@ -1042,7 +1080,9 @@ inspectType({ foo: 'bar' }, { maxDepth: 0 }); // Dictionary
 - Fix: `makeNumber` no longer returns a number strings prefixed with a number
 - Change: Type error messages now use the more descriptive `inspectType` instead of `typeof` for erroneous values
 
-### 2.5.1
+### 2.6.0
 
+- Add: `asGuardedFunction` to wrap a function with parameter/return value type checks
 - Change: Depreciate the fallback parameter for all TypeCasts
 - Documentation: Simplify the contents into primary headings only
+- Change: Instead of being a custom subclass of Error TypeAssertion is now an alias to TypeError
