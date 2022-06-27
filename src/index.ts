@@ -34,7 +34,7 @@ export type { Optional } from './Optional.type';
 export type { Nullish } from './Nullish.type';
 export type { UnknownFunction, UnknownAsyncFunction } from './UnknownFunction.type';
 export type { InterfacePattern } from './InterfacePattern.type';
-export type { TypeCheck } from './TypeCheck.type';
+export type { TypeCheck, UnwrapTypeCheck } from './TypeCheck.type';
 export type { StrictPartial } from './StrictPartial.type';
 export type { StrictRequired } from './StrictRequired.type';
 export type { FuzzyPartial } from './FuzzyPartial.type';
