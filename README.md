@@ -974,6 +974,10 @@ inspectType({ foo: 'bar' }, { maxDepth: 0 }); // Dictionary
 
   An alias for a function that meets the requirements of TypeScript [Type Guards](https://www.typescriptlang.org/docs/handbook/advanced-types.html#user-defined-type-guards). They take the format `(value: unknown) => value is TYPE`. With the exception of specialist JSON checks all [TypeChecks](#reference-type-checks) conform to this type.
 
+- ### UnwrapTypeCheck
+
+  A helper type that extracts the type predicate from a TypeCheck type. Useful if you want to define a TypeChecks and use it as the basis for the related type instead of defining it separately and needing to maintain both.
+
 - ### InterfacePattern
 
   An alias for a [`Dictionary`](#dictionary) of [`TypeAssert`](#typeassert) functions. When used in conjunction with [`isStruct`](#isstruct) or [`asStruct`](#asstruct) they can  validate an `object` against the equivalent interface to the pattern.
@@ -1086,3 +1090,7 @@ inspectType({ foo: 'bar' }, { maxDepth: 0 }); // Dictionary
 - Change: Depreciate the fallback parameter for all TypeCasts
 - Documentation: Simplify the contents into primary headings only
 - Change: Instead of being a custom subclass of Error TypeAssertion is now an alias to TypeError
+
+### 2.7.0
+
+- Add: `UnwrapTypeCheck` extracts the type predicate from the specified TypeCheck.
